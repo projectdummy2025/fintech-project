@@ -29,7 +29,6 @@
   - [ ] Buat folder structure sesuai architecture
   - [ ] Setup `.gitignore` untuk exclude sensitive files
   - [ ] Inisialisasi Git repository
-  - [ ] Buat `composer.json` (optional untuk autoloading)
 
 - [ ] **1.2 Prepare Database Schema**
   - [ ] Design ERD lengkap dengan relationships
