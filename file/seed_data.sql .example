@@ -1,0 +1,94 @@
+
+-- Personal Finance Webapp - Seed Data
+
+-- Purpose: Sample data for development and testing
+
+
+USE fintech_db;
+
+
+-- Seed Users
+
+-- Password for all users: "password123"
+-- Hash generated using: password_hash('password123', PASSWORD_BCRYPT)
+INSERT INTO users (username, password_hash) VALUES
+('john_doe', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('jane_smith', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('demo_user', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+
+
+-- Seed Wallets
+
+INSERT INTO wallets (user_id, name, description) VALUES
+-- John's wallets
+(1, 'Cash', 'Physical cash on hand'),
+(1, 'BCA Savings', 'Bank Central Asia savings account'),
+(1, 'GoPay', 'GoPay e-wallet'),
+-- Jane's wallets
+(2, 'Cash', 'Daily cash'),
+(2, 'Mandiri Debit', 'Bank Mandiri debit account'),
+(2, 'OVO', 'OVO e-wallet'),
+-- Demo user wallets
+(3, 'Main Wallet', 'Primary wallet for demo');
+
+-- ============================================
+-- Seed Categories
+-- ============================================
+INSERT INTO categories (user_id, name, type) VALUES
+-- John's income categories
+(1, 'Salary', 'income'),
+(1, 'Freelance', 'income'),
+(1, 'Investment', 'income'),
+-- John's expense categories
+(1, 'Food & Drinks', 'expense'),
+(1, 'Transportation', 'expense'),
+(1, 'Shopping', 'expense'),
+(1, 'Bills & Utilities', 'expense'),
+(1, 'Entertainment', 'expense'),
+-- Jane's income categories
+(2, 'Salary', 'income'),
+(2, 'Side Business', 'income'),
+-- Jane's expense categories
+(2, 'Groceries', 'expense'),
+(2, 'Healthcare', 'expense'),
+(2, 'Education', 'expense'),
+(2, 'Rent', 'expense'),
+-- Demo user categories
+(3, 'Income', 'income'),
+(3, 'Expense', 'expense');
+
+-- ============================================
+-- Seed Transactions
+-- ============================================
+INSERT INTO transactions (user_id, wallet_id, category_id, amount, type, notes, date) VALUES
+-- John's transactions (November 2025)
+(1, 2, 1, 15000000.00, 'income', 'Monthly salary November', '2025-11-01'),
+(1, 1, 4, 150000.00, 'expense', 'Lunch at restaurant', '2025-11-02'),
+(1, 3, 5, 50000.00, 'expense', 'Grab ride to office', '2025-11-03'),
+(1, 2, 7, 500000.00, 'expense', 'Electricity bill', '2025-11-05'),
+(1, 1, 4, 75000.00, 'expense', 'Coffee and snacks', '2025-11-07'),
+(1, 2, 2, 3000000.00, 'income', 'Web development project', '2025-11-10'),
+(1, 3, 6, 250000.00, 'expense', 'Online shopping', '2025-11-12'),
+(1, 1, 8, 200000.00, 'expense', 'Movie tickets', '2025-11-15'),
+
+-- John's transactions (December 2025)
+(1, 2, 1, 15000000.00, 'income', 'Monthly salary December', '2025-12-01'),
+(1, 1, 4, 120000.00, 'expense', 'Breakfast', '2025-12-02'),
+
+-- Jane's transactions (November 2025)
+(2, 5, 9, 8000000.00, 'income', 'Monthly salary', '2025-11-01'),
+(2, 4, 11, 500000.00, 'expense', 'Weekly groceries', '2025-11-03'),
+(2, 5, 14, 2500000.00, 'expense', 'Monthly rent', '2025-11-05'),
+(2, 6, 12, 300000.00, 'expense', 'Doctor visit', '2025-11-08'),
+(2, 5, 10, 1500000.00, 'income', 'Online store profit', '2025-11-15'),
+(2, 4, 11, 450000.00, 'expense', 'Groceries', '2025-11-18'),
+
+-- Jane's transactions (December 2025)
+(2, 5, 9, 8000000.00, 'income', 'Monthly salary', '2025-12-01'),
+
+-- Demo user transactions
+(3, 7, 15, 5000000.00, 'income', 'Demo income', '2025-11-01'),
+(3, 7, 16, 1000000.00, 'expense', 'Demo expense', '2025-11-15'),
+(3, 7, 15, 5000000.00, 'income', 'Demo income', '2025-12-01');
+
+

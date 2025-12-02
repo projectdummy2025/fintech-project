@@ -1,0 +1,95 @@
+-- ============================================
+-- Personal Finance Webapp - Database Schema
+-- ============================================
+-- Database: fintech_db
+-- Engine: InnoDB (MariaDB/MySQL)
+-- Charset: utf8mb4_unicode_ci
+-- ============================================
+
+-- Create Database
+CREATE DATABASE IF NOT EXISTS fintech_db
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+USE fintech_db;
+
+-- ============================================
+-- Table: users
+-- ============================================
+CREATE TABLE users (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_username (username)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================
+-- Table: wallets
+-- ============================================
+CREATE TABLE wallets (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_user_id (user_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================
+-- Table: categories
+-- ============================================
+CREATE TABLE categories (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    type ENUM('income', 'expense') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_user_id (user_id),
+    INDEX idx_type (type),
+    INDEX idx_user_type (user_id, type),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================
+-- Table: transactions
+-- ============================================
+CREATE TABLE transactions (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    wallet_id INT UNSIGNED NOT NULL,
+    category_id INT UNSIGNED NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    type ENUM('income', 'expense') NOT NULL,
+    notes TEXT,
+    date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    -- Indexes for performance optimization
+    INDEX idx_user_id (user_id),
+    INDEX idx_wallet_id (wallet_id),
+    INDEX idx_category_id (category_id),
+    INDEX idx_date (date),
+    INDEX idx_type (type),
+    INDEX idx_user_date (user_id, date),
+    INDEX idx_user_type (user_id, type),
+    INDEX idx_user_wallet (user_id, wallet_id),
+    INDEX idx_user_category (user_id, category_id),
+    -- Foreign Keys
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (wallet_id) REFERENCES wallets(id) ON DELETE RESTRICT,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================
+-- Optimization Notes:
+-- ============================================
+-- 1. All tables use InnoDB for ACID compliance and foreign key support
+-- 2. Composite indexes (idx_user_date, idx_user_type, etc.) optimize common queries:
+--    - Dashboard summary (filter by user + date range)
+--    - Transaction list (filter by user + wallet/category)
+--    - Monthly reports (filter by user + date)
+-- 3. ON DELETE CASCADE for users ensures data cleanup
+-- 4. ON DELETE RESTRICT for wallets/categories prevents accidental data loss
+-- 5. utf8mb4 charset supports full Unicode including emojis
+-- ============================================

@@ -1,0 +1,94 @@
+# Database configuration (contains credentials)
+config/database.php
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Backup files (may contain sensitive data)
+*.db
+*.sqlite
+*.sqlite3
+db.json
+database/
+migrations/
+seeds/
+*.sql
+dump.sql
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Composer (if used)
+/vendor/
+composer.lock
+
+# Log files
+storage/logs/*.log
+storage/logs/*.txt
+*.log
+
+# Temporary files
+storage/temp/*
+storage/cache/*
+tmp/
+temp/
+
+# Keep directory structure but ignore contents
+!storage/logs/.gitkeep
+!storage/temp/.gitkeep
+!storage/cache/.gitkeep
+
+# PHP session files (if stored in project directory)
+storage/sessions/*
+!storage/sessions/.gitkeep
+
+# User uploads
+public/uploads/*
+!public/uploads/.gitkeep
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+
+# Deployment scripts (may contain credentials)
+deploy.sh
+deploy.php
+
+# Compressed files for upload
+*.zip
+*.tar.gz
+*.rar
+
+# Test files
+tests/temp/*
+phpunit.xml
+
+# Debug files
+debug.log
+error.log
+
+
+node_modules/
+package-lock.json
+
+# Git merge files
+*.orig
+
+# Patch files
+*.patch
+*.diff
