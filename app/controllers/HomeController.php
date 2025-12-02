@@ -9,7 +9,7 @@ class HomeController extends Controller {
         
         // Test Database Connection
         try {
-            $db = get_db_connection();
+            $db = Database::getConnection();
             echo "<p style='color:green'>Database connection successful!</p>";
         } catch (Exception $e) {
             echo "<p style='color:red'>Database connection failed: " . $e->getMessage() . "</p>";
