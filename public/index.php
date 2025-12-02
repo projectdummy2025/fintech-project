@@ -47,6 +47,7 @@ require_once __DIR__ . '/../app/core/Database.php';
 // Load Controllers
 require_once __DIR__ . '/../app/controllers/HomeController.php';
 require_once __DIR__ . '/../app/controllers/AuthController.php';
+require_once __DIR__ . '/../app/controllers/DashboardController.php';
 
 // Initialize Router
 $router = new Router();
@@ -61,6 +62,9 @@ $router->post('/login', ['AuthController', 'login']);
 $router->get('/register', ['AuthController', 'register']);
 $router->post('/register', ['AuthController', 'register']);
 $router->get('/logout', ['AuthController', 'logout']);
+
+// Dashboard Routes
+$router->get('/dashboard', ['DashboardController', 'index']);
 
 // Dispatch
 $router->dispatch();
