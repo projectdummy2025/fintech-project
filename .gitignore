@@ -3,6 +3,7 @@ config/database.php
 
 # Environment files
 .env
+.env.php    
 .env.local
 .env.production
 

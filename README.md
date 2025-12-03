@@ -33,7 +33,30 @@ Personal Finance Webapp adalah aplikasi web ringan untuk pelacakan keuangan prib
 
 ---
 
-## 🛠️ Technology Stack
+## � Deployment to InfinityFree
+1.  **Prepare Files**:
+    *   Pastikan file `.htaccess` sudah ada di folder `app/`, `config/`, dan `storage/` (Isinya: `Deny from all`).
+    *   Compress semua file project (kecuali `.git` dan `node_modules`) menjadi `.zip`.
+
+2.  **Upload**:
+    *   Buka File Manager (MonstaFTP) di InfinityFree.
+    *   Masuk ke folder `htdocs`.
+    *   Upload dan Extract file `.zip` di dalam `htdocs`.
+    *   **PENTING**: Pastikan `index.php` berada langsung di dalam `htdocs`, bukan di subfolder. Jika ada di subfolder `public`, pindahkan isinya ke root `htdocs` dan sesuaikan path `require` di `index.php`.
+
+3.  **Database**:
+    *   Buat database baru di Panel InfinityFree (MySQL Databases).
+    *   Buka phpMyAdmin.
+    *   Import file `file/schema.sql` (atau `schema.sql .example`).
+    *   Update `config/database.php` dengan credentials dari InfinityFree (Host, Username, Password, DB Name).
+
+4.  **Security Check**:
+    *   Coba akses `yourdomain.com/config/database.php`. Harus muncul **403 Forbidden**.
+    *   Coba akses `yourdomain.com/app/models/User.php`. Harus muncul **403 Forbidden**.
+
+---
+
+## �🛠️ Technology Stack
 
 | Component | Technology |
 |-----------|-----------|
@@ -44,27 +67,27 @@ Personal Finance Webapp adalah aplikasi web ringan untuk pelacakan keuangan prib
 
 ---
 
-## 📁 Directory Structure
+## 📁 Directory Structure (InfinityFree / Production)
 
 ```
-fintech-project/
-├── public/                 # Public-facing files
-│   ├── index.php          # Entry point
-│   ├── css/               # Stylesheets
-│   ├── js/                # JavaScript files
-│   └── assets/            # Images, fonts, etc.
-├── app/                   # Application logic
+htdocs/                    # Root folder di hosting
+├── app/                   # Application logic (Protected via .htaccess)
 │   ├── controllers/       # Request handlers
 │   ├── models/            # Data models
 │   ├── views/             # HTML templates
-│   └── core/              # Core framework files
-├── config/                # Configuration files
-│   └── database.php       # Database configuration
-├── storage/               # Storage for logs, cache
+│   ├── core/              # Core framework files
+│   └── .htaccess          # Deny from all
+├── config/                # Configuration files (Protected via .htaccess)
+│   ├── database.php       # Database configuration
+│   └── .htaccess          # Deny from all
+├── storage/               # Storage for logs (Protected via .htaccess)
 │   └── logs/              # Application logs
-├── README.md              # This file
-├── DEVELOPMENT_PLAN.md    # Development roadmap
-└── composer.json          # Dependencies (optional)
+├── public/                # (Optional: Assets can go here or directly in root)
+│   ├── css/
+│   └── js/
+├── index.php              # Entry point
+├── .htaccess              # Main routing rules
+└── README.md              # This file
 ```
 
 ---

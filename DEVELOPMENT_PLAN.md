@@ -293,12 +293,12 @@
   - [ ] Check file permissions
   - [ ] Test dengan different browsers
 
-- [ ] **6.4 Upload to Hosting**
-  - [ ] Compress files untuk upload
-  - [ ] Upload via FTP/File Manager
-  - [ ] Extract files di public_html
-  - [ ] Import database schema
-  - [ ] Set proper file permissions (755/644)
+- [ ] **6.4 Upload to Hosting (InfinityFree)**
+  - [ ] Compress files (app, config, public contents, storage, index.php)
+  - [ ] Upload ke folder `htdocs`
+  - [ ] **Ensure Security**: Verify `.htaccess` di `app/`, `config/`, `storage/`
+  - [ ] Import database schema via phpMyAdmin
+  - [ ] Update `config/database.php` dengan production credentials
 
 - [ ] **6.5 Final Verification**
   - [ ] Test complete user flow (register → login → transactions)

@@ -15,8 +15,8 @@ session_set_cookie_params([
 session_start();
 
 // Load Config
-$appConfig = require_once __DIR__ . '/../config/app.php';
-require_once __DIR__ . '/../config/database.php';
+$appConfig = require_once __DIR__ . '/config/app.php';
+require_once __DIR__ . '/config/database.php';
 
 // Error Handling
 if ($appConfig['debug']) {
@@ -31,7 +31,7 @@ if ($appConfig['debug']) {
 
 // Custom Error Handler for Logging
 set_error_handler(function($errno, $errstr, $errfile, $errline) {
-    $logFile = __DIR__ . '/../storage/logs/app.log';
+    $logFile = __DIR__ . '/storage/logs/app.log';
     $message = "[" . date('Y-m-d H:i:s') . "] Error: $errstr in $errfile on line $errline" . PHP_EOL;
     error_log($message, 3, $logFile);
     
@@ -40,14 +40,18 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 });
 
 // Load Core Classes
-require_once __DIR__ . '/../app/core/Router.php';
-require_once __DIR__ . '/../app/core/Controller.php';
-require_once __DIR__ . '/../app/core/Database.php';
+require_once __DIR__ . '/app/Core/Router.php';
+require_once __DIR__ . '/app/Core/Controller.php';
+require_once __DIR__ . '/app/Core/Database.php';
+require_once __DIR__ . '/app/Core/Csrf.php';
+
+// Load Models
+require_once __DIR__ . '/app/Models/User.php';
 
 // Load Controllers
-require_once __DIR__ . '/../app/controllers/HomeController.php';
-require_once __DIR__ . '/../app/controllers/AuthController.php';
-require_once __DIR__ . '/../app/controllers/DashboardController.php';
+require_once __DIR__ . '/app/Controllers/HomeController.php';
+require_once __DIR__ . '/app/Controllers/AuthController.php';
+require_once __DIR__ . '/app/Controllers/DashboardController.php';
 
 // Initialize Router
 $router = new Router();
