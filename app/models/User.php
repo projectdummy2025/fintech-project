@@ -16,8 +16,9 @@ class User {
      * @return array|false
      */
     public function findByUsernameOrEmail($identifier) {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE username = :identifier OR email = :identifier LIMIT 1");
-        $stmt->bindParam(':identifier', $identifier);
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE username = :username OR email = :email LIMIT 1");
+        $stmt->bindParam(':username', $identifier);
+        $stmt->bindParam(':email', $identifier);
         $stmt->execute();
         return $stmt->fetch();
     }
