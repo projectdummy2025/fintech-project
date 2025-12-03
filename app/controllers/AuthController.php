@@ -41,7 +41,7 @@ class AuthController extends Controller {
                     return;
                 }
 
-                $user = $userModel->findByUsername($username);
+                $user = $userModel->findByUsernameOrEmail($username);
 
                 if ($user && $userModel->verifyPassword($password, $user['password_hash'])) {
                     // Login Success
