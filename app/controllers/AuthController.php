@@ -31,6 +31,16 @@ class AuthController extends Controller {
                 $data['error'] = 'Username and password are required.';
             } else {
                 $userModel = new User();
+                $ip_address = $_SERVER['REMOTE_ADDR'];
+
+                // 1. Check Brute Force Limit (Max 5 attempts in 15 minutes)
+                $attempts = $userModel->getLoginAttemptsCount($ip_address, $username, 15);
+                if ($attempts >= 5) {
+                    $data['error'] = 'Too many failed attempts. Please try again in 15 minutes.';
+                    $this->view('auth/login', $data);
+                    return;
+                }
+
                 $user = $userModel->findByUsername($username);
 
                 if ($user && $userModel->verifyPassword($password, $user['password_hash'])) {
@@ -39,10 +49,17 @@ class AuthController extends Controller {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
                     
+                    // Update Last Login & Clear Attempts
+                    $userModel->updateLastLogin($user['id']);
+                    $userModel->clearLoginAttempts($ip_address, $username);
+                    
                     header('Location: /dashboard');
                     exit;
                 } else {
-                    $data['error'] = 'Invalid username or password.';
+                    // Login Failed
+                    $userModel->recordLoginAttempt($ip_address, $username);
+                    $remaining = 5 - ($attempts + 1);
+                    $data['error'] = "Invalid username or password. ($remaining attempts remaining)";
                 }
             }
         }
@@ -70,12 +87,15 @@ class AuthController extends Controller {
             }
 
             $username = trim($_POST['username'] ?? '');
+            $email = trim($_POST['email'] ?? '');
             $password = $_POST['password'] ?? '';
             $confirm_password = $_POST['confirm_password'] ?? '';
 
             // Validation
-            if (empty($username) || empty($password)) {
+            if (empty($username) || empty($email) || empty($password)) {
                 $data['error'] = 'All fields are required.';
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $data['error'] = 'Invalid email format.';
             } elseif (strlen($password) < 6) {
                 $data['error'] = 'Password must be at least 6 characters.';
             } elseif ($password !== $confirm_password) {
@@ -83,12 +103,14 @@ class AuthController extends Controller {
             } else {
                 $userModel = new User();
                 
-                // Check if username exists
+                // Check if username or email exists
                 if ($userModel->findByUsername($username)) {
                     $data['error'] = 'Username already taken.';
+                } elseif ($userModel->isEmailTaken($email)) {
+                    $data['error'] = 'Email already registered.';
                 } else {
                     // Create User
-                    if ($userModel->create($username, $password)) {
+                    if ($userModel->create($username, $email, $password)) {
                         $data['success'] = 'Registration successful! Please login.';
                         // Optional: Auto login here
                     } else {
