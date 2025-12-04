@@ -83,6 +83,7 @@ $router->post('/wallets/create', ['WalletController', 'create']);
 $router->get('/wallets/edit/(\d+)', ['WalletController', 'edit']);
 $router->post('/wallets/edit/(\d+)', ['WalletController', 'edit']);
 $router->get('/wallets/delete/(\d+)', ['WalletController', 'delete']);
+$router->post('/wallets/transfer-and-delete', ['WalletController', 'transferAndDelete']);
 
 // Category Routes
 $router->get('/categories', ['CategoryController', 'index']);
@@ -91,6 +92,7 @@ $router->post('/categories/create', ['CategoryController', 'create']);
 $router->get('/categories/edit/(\d+)', ['CategoryController', 'edit']);
 $router->post('/categories/edit/(\d+)', ['CategoryController', 'edit']);
 $router->get('/categories/delete/(\d+)', ['CategoryController', 'delete']);
+$router->post('/categories/transfer-and-delete', ['CategoryController', 'transferAndDelete']);
 
 // Transaction Routes
 $router->get('/transactions', ['TransactionController', 'index']);

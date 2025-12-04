@@ -224,7 +224,7 @@ class TransactionController extends Controller {
         }
 
         $transactionModel = new Transaction();
-        
+
         // Check if transaction belongs to user
         if ($transactionModel->belongsToUser($id, $_SESSION['user_id'])) {
             if ($transactionModel->delete($id, $_SESSION['user_id'])) {
@@ -232,6 +232,8 @@ class TransactionController extends Controller {
             } else {
                 $_SESSION['error'] = 'Failed to delete transaction. Please try again.';
             }
+        } else {
+            $_SESSION['error'] = 'Unauthorized: Transaction does not belong to you.';
         }
 
         header('Location: /transactions');

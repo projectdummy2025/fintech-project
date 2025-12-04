@@ -142,8 +142,7 @@
                                 </td>
                                 <td>
                                     <a href="/transactions/edit/<?= $transaction['id'] ?>" class="btn btn-sm btn-outline-primary">Edit</a>
-                                    <a href="/transactions/delete/<?= $transaction['id'] ?>" class="btn btn-sm btn-outline-danger"
-                                       onclick="return confirm('Are you sure you want to delete this transaction?')">Delete</a>
+                                    <a href="/transactions/delete/<?= $transaction['id'] ?>" class="btn btn-sm btn-outline-danger">Delete</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -57,8 +57,7 @@
                                 <small class="text-muted">Created: <?= date('M j, Y', strtotime($wallet['created_at'])) ?></small>
                                 <div class="mt-2">
                                     <a href="/wallets/edit/<?= $wallet['id'] ?>" class="btn btn-sm btn-outline-primary">Edit</a>
-                                    <a href="/wallets/delete/<?= $wallet['id'] ?>" class="btn btn-sm btn-outline-danger" 
-                                       onclick="return confirm('Are you sure you want to delete this wallet?')">Delete</a>
+                                    <a href="/wallets/delete/<?= $wallet['id'] ?>" class="btn btn-sm btn-outline-danger">Delete</a>
                                 </div>
                             </div>
                         </div>

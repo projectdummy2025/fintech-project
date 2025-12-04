@@ -90,15 +90,83 @@ class Wallet {
      */
     public function delete($id, $userId) {
         try {
-            // Note: Due to foreign key constraint with ON DELETE RESTRICT,
-            // we can't delete a wallet if it has associated transactions
-            // Additional logic would be needed to handle this properly
+            $this->db->beginTransaction();
+
+            // First, check if wallet has associated transactions
+            $checkStmt = $this->db->prepare("SELECT COUNT(*) as count FROM transactions WHERE wallet_id = :wallet_id");
+            $checkStmt->bindParam(':wallet_id', $id);
+            $checkStmt->execute();
+            $result = $checkStmt->fetch();
+
+            if ($result['count'] > 0) {
+                // Wallet has transactions, we need to handle them first
+                // Option 1: Prevent deletion if transactions exist
+                $this->db->rollback();
+                return false;
+
+                // Option 2: Move transactions to another wallet (would need to be passed as parameter)
+                // For now, we'll go with option 1 for safety
+            }
+
+            // If no transactions, delete the wallet
             $stmt = $this->db->prepare("DELETE FROM wallets WHERE id = :id AND user_id = :user_id");
             $stmt->bindParam(':id', $id);
             $stmt->bindParam(':user_id', $userId);
-            return $stmt->execute();
+            $result = $stmt->execute();
+
+            $this->db->commit();
+            return $result;
         } catch (PDOException $e) {
+            $this->db->rollback();
             error_log("Wallet Delete Error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Delete a wallet and transfer its transactions to another wallet
+     *
+     * @param int $id
+     * @param int $userId
+     * @param int $newWalletId The wallet to transfer transactions to
+     * @return bool
+     */
+    public function deleteWithTransfer($id, $userId, $newWalletId) {
+        try {
+            $this->db->beginTransaction();
+
+            // Verify that both wallets belong to the user
+            $walletCheck = $this->db->prepare("SELECT COUNT(*) as count FROM wallets WHERE id IN (:id, :new_id) AND user_id = :user_id");
+            $walletCheck->bindParam(':id', $id);
+            $walletCheck->bindParam(':new_id', $newWalletId);
+            $walletCheck->bindParam(':user_id', $userId);
+            $walletCheck->execute();
+            $result = $walletCheck->fetch();
+
+            if ($result['count'] != 2) {
+                // One or both wallets don't belong to the user
+                $this->db->rollback();
+                return false;
+            }
+
+            // Update transactions to use the new wallet
+            $updateStmt = $this->db->prepare("UPDATE transactions SET wallet_id = :new_wallet_id WHERE wallet_id = :wallet_id AND user_id = :user_id");
+            $updateStmt->bindParam(':new_wallet_id', $newWalletId);
+            $updateStmt->bindParam(':wallet_id', $id);
+            $updateStmt->bindParam(':user_id', $userId);
+            $updateStmt->execute();
+
+            // Delete the old wallet
+            $deleteStmt = $this->db->prepare("DELETE FROM wallets WHERE id = :id AND user_id = :user_id");
+            $deleteStmt->bindParam(':id', $id);
+            $deleteStmt->bindParam(':user_id', $userId);
+            $result = $deleteStmt->execute();
+
+            $this->db->commit();
+            return $result;
+        } catch (PDOException $e) {
+            $this->db->rollback();
+            error_log("Wallet Delete With Transfer Error: " . $e->getMessage());
             return false;
         }
     }

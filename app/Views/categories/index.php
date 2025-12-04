@@ -68,8 +68,7 @@
                                     <td><?= date('M j, Y', strtotime($category['created_at'])) ?></td>
                                     <td>
                                         <a href="/categories/edit/<?= $category['id'] ?>" class="btn btn-sm btn-outline-primary">Edit</a>
-                                        <a href="/categories/delete/<?= $category['id'] ?>" class="btn btn-sm btn-outline-danger"
-                                           onclick="return confirm('Are you sure you want to delete this category?')">Delete</a>
+                                        <a href="/categories/delete/<?= $category['id'] ?>" class="btn btn-sm btn-outline-danger">Delete</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -86,8 +85,7 @@
                                     <td><?= date('M j, Y', strtotime($category['created_at'])) ?></td>
                                     <td>
                                         <a href="/categories/edit/<?= $category['id'] ?>" class="btn btn-sm btn-outline-primary">Edit</a>
-                                        <a href="/categories/delete/<?= $category['id'] ?>" class="btn btn-sm btn-outline-danger"
-                                           onclick="return confirm('Are you sure you want to delete this category?')">Delete</a>
+                                        <a href="/categories/delete/<?= $category['id'] ?>" class="btn btn-sm btn-outline-danger">Delete</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

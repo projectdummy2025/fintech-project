@@ -123,14 +123,76 @@ class WalletController extends Controller {
         }
 
         $walletModel = new Wallet();
-        
+
         // Check if wallet belongs to user
         if ($walletModel->belongsToUser($id, $_SESSION['user_id'])) {
-            // Note: Deletion might fail due to foreign key constraints if transactions exist
-            if ($walletModel->delete($id, $_SESSION['user_id'])) {
-                $_SESSION['message'] = 'Wallet deleted successfully!';
+            // Get all other wallets for the user to transfer transactions to
+            $allWallets = $walletModel->getAllByUser($_SESSION['user_id']);
+
+            // Check if wallet has transactions
+            $checkStmt = $walletModel->db->prepare("SELECT COUNT(*) as count FROM transactions WHERE wallet_id = :wallet_id");
+            $checkStmt->bindParam(':wallet_id', $id);
+            $checkStmt->execute();
+            $result = $checkStmt->fetch();
+            $transactionCount = $result['count'];
+
+            if ($transactionCount > 0) {
+                // Wallet has transactions, show transfer form
+                $otherWallets = array_filter($allWallets, function($wallet) use ($id) {
+                    return $wallet['id'] != $id;
+                });
+
+                // If no other wallets exist, we can't transfer
+                if (empty($otherWallets)) {
+                    $_SESSION['error'] = 'Cannot delete wallet because it has transactions and no other wallets to transfer to. Create another wallet first.';
+                    header('Location: /wallets');
+                    exit;
+                }
+
+                $data = [
+                    'title' => 'Transfer Transactions and Delete Wallet',
+                    'walletToDelete' => $walletModel->getByIdAndUser($id, $_SESSION['user_id']),
+                    'otherWallets' => $otherWallets,
+                    'transactionCount' => $transactionCount,
+                    'error' => null
+                ];
+
+                $this->view('wallets/transfer_before_delete', $data);
+                return;
             } else {
-                $_SESSION['error'] = 'Failed to delete wallet. It may have associated transactions.';
+                // No transactions, safe to delete
+                if ($walletModel->delete($id, $_SESSION['user_id'])) {
+                    $_SESSION['message'] = 'Wallet deleted successfully!';
+                } else {
+                    $_SESSION['error'] = 'Failed to delete wallet.';
+                }
+                header('Location: /wallets');
+                exit;
+            }
+        } else {
+            $_SESSION['error'] = 'Unauthorized: Wallet does not belong to you.';
+            header('Location: /wallets');
+            exit;
+        }
+    }
+
+    public function transferAndDelete() {
+        // Auth Middleware: Check if user is logged in
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $walletModel = new Wallet();
+
+            $walletId = $_POST['wallet_id'] ?? null;
+            $newWalletId = $_POST['new_wallet_id'] ?? null;
+
+            if ($walletModel->deleteWithTransfer($walletId, $_SESSION['user_id'], $newWalletId)) {
+                $_SESSION['message'] = 'Wallet deleted successfully and transactions transferred!';
+            } else {
+                $_SESSION['error'] = 'Failed to delete wallet and transfer transactions.';
             }
         }
 
