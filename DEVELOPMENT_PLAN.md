@@ -10,7 +10,7 @@
 |-------|----------|--------|
 | Phase 1: Foundation | 2-3 hari | ✅ Completed |
 | Phase 2: Authentication | 2-3 hari | ✅ Completed |
-| Phase 3: Core Finance Logic | 4-5 hari | ⏳ In Progress |
+| Phase 3: Core Finance Logic | 4-5 hari | ✅ Completed |
 | Phase 4: Views | 3-4 hari | ⏳ Pending |
 | Phase 5: Enhancements | 2-3 hari | ⏳ Pending |
 | Phase 6: Deployment | 1-2 hari | ⏳ Pending |
@@ -108,43 +108,43 @@
 
 ### Tasks
 
-- [ ] **3.1 Wallet CRUD**
-  - [ ] Buat `Wallet.php` model
-  - [ ] Implement create wallet functionality
-  - [ ] Implement read/list wallets per user
-  - [ ] Implement update wallet
-  - [ ] Implement delete wallet (dengan validation)
-  - [ ] Add default wallet creation saat user register
+- [x] **3.1 Wallet CRUD**
+  - [x] Buat `Wallet.php` model
+  - [x] Implement create wallet functionality
+  - [x] Implement read/list wallets per user
+  - [x] Implement update wallet
+  - [x] Implement delete wallet (dengan validation)
+  - [x] Add default wallet creation saat user register
 
-- [ ] **3.2 Category CRUD**
-  - [ ] Buat `Category.php` model
-  - [ ] Implement create category (income/expense)
-  - [ ] Implement read/list categories per user
-  - [ ] Implement update category
-  - [ ] Implement delete category (dengan validation)
-  - [ ] Seed default categories untuk new users
+- [x] **3.2 Category CRUD**
+  - [x] Buat `Category.php` model
+  - [x] Implement create category (income/expense)
+  - [x] Implement read/list categories per user
+  - [x] Implement update category
+  - [x] Implement delete category (dengan validation)
+  - [x] Seed default categories untuk new users
 
-- [ ] **3.3 Transaction Create/Read**
-  - [ ] Buat `Transaction.php` model
+- [x] **3.3 Transaction Create/Read**
+  - [x] Buat `Transaction.php` model
   - [ ] Implement create transaction form
-  - [ ] Validate transaction data (amount, date, etc.)
-  - [ ] Save transaction ke database
-  - [ ] Implement read/list transactions per user
-  - [ ] Add pagination untuk transaction list
+  - [x] Validate transaction data (amount, date, etc.)
+  - [x] Save transaction ke database
+  - [x] Implement read/list transactions per user
+  - [x] Add pagination untuk transaction list
 
-- [ ] **3.4 Filters for Month/Category/Wallet**
-  - [ ] Implement filter by month/year
-  - [ ] Implement filter by category
-  - [ ] Implement filter by wallet
+- [x] **3.4 Filters for Month/Category/Wallet**
+  - [x] Implement filter by month/year
+  - [x] Implement filter by category
+  - [x] Implement filter by wallet
   - [ ] Implement combined filters
-  - [ ] Add search functionality (by notes)
+  - [x] Add search functionality (by notes)
 
-- [ ] **3.5 Dashboard Summary Logic**
-  - [ ] Calculate total income per period
-  - [ ] Calculate total expense per period
-  - [ ] Calculate surplus/deficit
-  - [ ] Group transactions by category
-  - [ ] Calculate wallet balances
+- [x] **3.5 Dashboard Summary Logic**
+  - [x] Calculate total income per period
+  - [x] Calculate total expense per period
+  - [x] Calculate surplus/deficit
+  - [x] Group transactions by category
+  - [x] Calculate wallet balances
   - [ ] Implement date range selection
 
 ### Deliverables
@@ -326,14 +326,14 @@
 
 ## 📊 Progress Tracking
 
-### Current Status: **Phase 1 - Foundation** ⏳
+### Current Status: **Phase 4 - Views** ⏳
 
-**Overall Progress:** 0% (0/6 phases complete)
+**Overall Progress:** 50% (3/6 phases complete)
 
 ### Next Steps
-1. Initialize project structure
-2. Setup database schema
-3. Configure development environment
+1. Implement create transaction form (UI)
+2. Implement combined filters and date range selection (UI)
+3. Design and build the remaining views for CRUD operations
 
 ---
 

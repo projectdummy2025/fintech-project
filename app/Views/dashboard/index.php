@@ -84,7 +84,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach (array_slice($recentTransactions, 0, 5) as $transaction): ?>
+                                        <?php foreach ($recentTransactions as $transaction): ?>
                                             <tr>
                                                 <td><?= date('M j', strtotime($transaction['date'])) ?></td>
                                                 <td>
@@ -104,6 +104,21 @@
                                     </tbody>
                                 </table>
                             </div>
+                            
+                            <!-- Pagination -->
+                            <?php if ($totalPages > 1): ?>
+                                <nav>
+                                    <ul class="pagination pagination-sm justify-content-end">
+                                        <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
+                                            <a class="page-link" href="?page=<?= $currentPage - 1 ?>&month=<?= $currentMonth ?>&year=<?= $currentYear ?>">Previous</a>
+                                        </li>
+                                        <li class="page-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
+                                            <a class="page-link" href="?page=<?= $currentPage + 1 ?>&month=<?= $currentMonth ?>&year=<?= $currentYear ?>">Next</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            <?php endif; ?>
+
                             <a href="/transactions" class="btn btn-sm btn-outline-primary">View All Transactions</a>
                         <?php else: ?>
                             <p class="text-muted">No transactions found for this period. <a href="/transactions/create">Add your first transaction</a>.</p>

@@ -111,20 +111,19 @@ class AuthController extends Controller {
                 } elseif ($userModel->isEmailTaken($email)) {
                     $data['error'] = 'Email already registered.';
                 } else {
-                    // Create User
-                    if ($userModel->create($username, $email, $password)) {
-                        // Get the user ID of the newly created user
-                        $userId = $userModel->findByUsername($username)['id'];
+                    // Create User and get new User ID
+                    $newUserId = $userModel->create($username, $email, $password);
 
+                    if ($newUserId) {
                         // Create default wallet and categories for the new user
                         $walletModel = new Wallet();
                         $categoryModel = new Category();
 
                         // Create default wallet
-                        $walletModel->create($userId, 'Cash', 'Default cash wallet');
+                        $walletModel->create($newUserId, 'Cash', 'Default cash wallet');
 
                         // Create default categories
-                        $categoryModel->createDefaultCategories($userId);
+                        $categoryModel->createDefaultCategories($newUserId);
 
                         $data['success'] = 'Registration successful! Please login.';
                         // Optional: Auto login here

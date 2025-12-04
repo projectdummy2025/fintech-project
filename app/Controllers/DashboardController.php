@@ -37,11 +37,26 @@ class DashboardController extends Controller {
         // Get dashboard summary
         $summary = $transactionModel->getSummary($userId, $startDate, $endDate);
 
-        // Get recent transactions
-        $recentTransactions = $transactionModel->getAllByUser($userId, [
+        // Pagination
+        $perPage = 10;
+        $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        if ($currentPage < 1) {
+            $currentPage = 1;
+        }
+        $offset = ($currentPage - 1) * $perPage;
+
+        // Filters based on month and year for transactions
+        $filters = [
             'month' => $month,
             'year' => $year
-        ], 10, 0);
+        ];
+
+        // Get total transactions for pagination
+        $totalTransactions = $transactionModel->countAllByUser($userId, $filters);
+        $totalPages = ceil($totalTransactions / $perPage);
+
+        // Get recent transactions with pagination
+        $recentTransactions = $transactionModel->getAllByUser($userId, $filters, $perPage, $offset);
 
         // Get transactions grouped by category for expenses
         $expenseByCategory = $transactionModel->getGroupedByCategory($userId, $startDate, $endDate, 'expense');
@@ -70,7 +85,9 @@ class DashboardController extends Controller {
             'categories' => $categories,
             'currentYear' => $year,
             'currentMonth' => $month,
-            'monthName' => date('F', mktime(0, 0, 0, $month, 10)) // Month name
+            'monthName' => date('F', mktime(0, 0, 0, $month, 10)), // Month name
+            'currentPage' => $currentPage,
+            'totalPages' => $totalPages
         ];
 
         $this->view('dashboard/index', $data);

@@ -71,6 +71,49 @@ class Transaction {
     }
 
     /**
+     * Count all transactions for a user with optional filters
+     *
+     * @param int $userId
+     * @param array $filters
+     * @return int
+     */
+    public function countAllByUser($userId, $filters = []) {
+        $sql = "SELECT COUNT(t.id) 
+                FROM transactions t
+                LEFT JOIN categories c ON t.category_id = c.id
+                LEFT JOIN wallets w ON t.wallet_id = w.id
+                WHERE t.user_id = :user_id";
+        $params = [':user_id' => $userId];
+
+        // Apply filters (same as getAllByUser)
+        if (!empty($filters['month']) && !empty($filters['year'])) {
+            $sql .= " AND YEAR(t.date) = :year AND MONTH(t.date) = :month";
+            $params[':year'] = $filters['year'];
+            $params[':month'] = $filters['month'];
+        }
+        if (!empty($filters['category_id'])) {
+            $sql .= " AND t.category_id = :category_id";
+            $params[':category_id'] = $filters['category_id'];
+        }
+        if (!empty($filters['wallet_id'])) {
+            $sql .= " AND t.wallet_id = :wallet_id";
+            $params[':wallet_id'] = $filters['wallet_id'];
+        }
+        if (!empty($filters['type']) && in_array($filters['type'], ['income', 'expense'])) {
+            $sql .= " AND t.type = :type";
+            $params[':type'] = $filters['type'];
+        }
+        if (!empty($filters['search'])) {
+            $sql .= " AND (c.name LIKE :search OR w.name LIKE :search OR t.notes LIKE :search)";
+            $params[':search'] = '%' . $filters['search'] . '%';
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn();
+    }
+
+    /**
      * Get a transaction by ID and user
      *
      * @param int $id

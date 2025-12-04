@@ -66,10 +66,14 @@ class User {
             $stmt->bindParam(':username', $username);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password_hash', $passwordHash);
-            return $stmt->execute();
+            
+            if ($stmt->execute()) {
+                return $this->db->lastInsertId();
+            }
+            return false;
         } catch (PDOException $e) {
             // Handle duplicate entry or other errors
-            error_log("User Create Error: " . $e->getMessage());
+            error_log("User Create Error: ". $e->getMessage());
             return false;
         }
     }
