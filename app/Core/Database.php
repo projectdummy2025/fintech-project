@@ -21,8 +21,10 @@ class Database {
 
             $dsn = "mysql:host={$config['host']};dbname={$config['dbname']};charset={$config['charset']}";
         
+            $options = $config['options'] ?? [];
+
             try {
-                self::$instance = new PDO($dsn, $config['username'], $config['password'], $config['options']);
+                self::$instance = new PDO($dsn, $config['username'], $config['password'], $options);
             } catch (PDOException $e) {
                 // Log error
                 error_log("Database Connection Error: " . $e->getMessage());

@@ -3,9 +3,11 @@
 require_once __DIR__ . '/../Core/Controller.php';
 require_once __DIR__ . '/../Core/Csrf.php';
 require_once __DIR__ . '/../Models/User.php';
+require_once __DIR__ . '/../Models/Wallet.php';
+require_once __DIR__ . '/../Models/Category.php';
 
 class AuthController extends Controller {
-    
+
     public function login() {
         // If already logged in, redirect to dashboard
         if (isset($_SESSION['user_id'])) {
@@ -48,11 +50,11 @@ class AuthController extends Controller {
                     session_regenerate_id(true); // Prevent Session Fixation
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
-                    
+
                     // Update Last Login & Clear Attempts
                     $userModel->updateLastLogin($user['id']);
                     $userModel->clearLoginAttempts($ip_address, $username);
-                    
+
                     header('Location: /dashboard');
                     exit;
                 } else {
@@ -102,7 +104,7 @@ class AuthController extends Controller {
                 $data['error'] = 'Passwords do not match.';
             } else {
                 $userModel = new User();
-                
+
                 // Check if username or email exists
                 if ($userModel->findByUsername($username)) {
                     $data['error'] = 'Username already taken.';
@@ -111,6 +113,19 @@ class AuthController extends Controller {
                 } else {
                     // Create User
                     if ($userModel->create($username, $email, $password)) {
+                        // Get the user ID of the newly created user
+                        $userId = $userModel->findByUsername($username)['id'];
+
+                        // Create default wallet and categories for the new user
+                        $walletModel = new Wallet();
+                        $categoryModel = new Category();
+
+                        // Create default wallet
+                        $walletModel->create($userId, 'Cash', 'Default cash wallet');
+
+                        // Create default categories
+                        $categoryModel->createDefaultCategories($userId);
+
                         $data['success'] = 'Registration successful! Please login.';
                         // Optional: Auto login here
                     } else {
@@ -134,7 +149,7 @@ class AuthController extends Controller {
             );
         }
         session_destroy();
-        
+
         header('Location: /login');
         exit;
     }

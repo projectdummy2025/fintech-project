@@ -47,11 +47,17 @@ require_once __DIR__ . '/app/Core/Csrf.php';
 
 // Load Models
 require_once __DIR__ . '/app/Models/User.php';
+require_once __DIR__ . '/app/Models/Wallet.php';
+require_once __DIR__ . '/app/Models/Category.php';
+require_once __DIR__ . '/app/Models/Transaction.php';
 
 // Load Controllers
 require_once __DIR__ . '/app/Controllers/HomeController.php';
 require_once __DIR__ . '/app/Controllers/AuthController.php';
 require_once __DIR__ . '/app/Controllers/DashboardController.php';
+require_once __DIR__ . '/app/Controllers/WalletController.php';
+require_once __DIR__ . '/app/Controllers/CategoryController.php';
+require_once __DIR__ . '/app/Controllers/TransactionController.php';
 
 // Initialize Router
 $router = new Router();
@@ -69,6 +75,30 @@ $router->get('/logout', ['AuthController', 'logout']);
 
 // Dashboard Routes
 $router->get('/dashboard', ['DashboardController', 'index']);
+
+// Wallet Routes
+$router->get('/wallets', ['WalletController', 'index']);
+$router->get('/wallets/create', ['WalletController', 'create']);
+$router->post('/wallets/create', ['WalletController', 'create']);
+$router->get('/wallets/edit/(\d+)', ['WalletController', 'edit']);
+$router->post('/wallets/edit/(\d+)', ['WalletController', 'edit']);
+$router->get('/wallets/delete/(\d+)', ['WalletController', 'delete']);
+
+// Category Routes
+$router->get('/categories', ['CategoryController', 'index']);
+$router->get('/categories/create', ['CategoryController', 'create']);
+$router->post('/categories/create', ['CategoryController', 'create']);
+$router->get('/categories/edit/(\d+)', ['CategoryController', 'edit']);
+$router->post('/categories/edit/(\d+)', ['CategoryController', 'edit']);
+$router->get('/categories/delete/(\d+)', ['CategoryController', 'delete']);
+
+// Transaction Routes
+$router->get('/transactions', ['TransactionController', 'index']);
+$router->get('/transactions/create', ['TransactionController', 'create']);
+$router->post('/transactions/create', ['TransactionController', 'create']);
+$router->get('/transactions/edit/(\d+)', ['TransactionController', 'edit']);
+$router->post('/transactions/edit/(\d+)', ['TransactionController', 'edit']);
+$router->get('/transactions/delete/(\d+)', ['TransactionController', 'delete']);
 
 // Dispatch
 $router->dispatch();

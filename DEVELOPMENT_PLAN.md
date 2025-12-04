@@ -8,9 +8,9 @@
 
 | Phase | Estimasi | Status |
 |-------|----------|--------|
-| Phase 1: Foundation | 2-3 hari | ⏳ Pending |
-| Phase 2: Authentication | 2-3 hari | ⏳ Pending |
-| Phase 3: Core Finance Logic | 4-5 hari | ⏳ Pending |
+| Phase 1: Foundation | 2-3 hari | ✅ Completed |
+| Phase 2: Authentication | 2-3 hari | ✅ Completed |
+| Phase 3: Core Finance Logic | 4-5 hari | ⏳ In Progress |
 | Phase 4: Views | 3-4 hari | ⏳ Pending |
 | Phase 5: Enhancements | 2-3 hari | ⏳ Pending |
 | Phase 6: Deployment | 1-2 hari | ⏳ Pending |
@@ -25,29 +25,29 @@
 
 ### Tasks
 
-- [ ] **1.1 Initialize Project Structure**
-  - [ ] Buat folder structure sesuai architecture
-  - [ ] Setup `.gitignore` untuk exclude sensitive files
-  - [ ] Inisialisasi Git repository
+- [x] **1.1 Initialize Project Structure**
+  - [x] Buat folder structure sesuai architecture
+  - [x] Setup `.gitignore` untuk exclude sensitive files
+  - [x] Inisialisasi Git repository
 
-- [ ] **1.2 Prepare Database Schema**
-  - [ ] Design ERD lengkap dengan relationships
-  - [ ] Buat SQL migration file untuk semua tables
-  - [ ] Tambahkan indexes untuk performance
-  - [ ] Setup foreign key constraints
-  - [ ] Buat sample seed data untuk testing
+- [x] **1.2 Prepare Database Schema**
+  - [x] Design ERD lengkap dengan relationships
+  - [x] Buat SQL migration file untuk semua tables
+  - [x] Tambahkan indexes untuk performance
+  - [x] Setup foreign key constraints
+  - [x] Buat sample seed data untuk testing
 
-- [ ] **1.3 Implement Configuration Loader**
-  - [ ] Buat `config/database.php` dengan PDO connection
-  - [ ] Buat `config/app.php` untuk app settings
-  - [ ] Implement environment-based config (dev/prod)
-  - [ ] Setup error handling dan logging mechanism
+- [x] **1.3 Implement Configuration Loader**
+  - [x] Buat `config/database.php` dengan PDO connection
+  - [x] Buat `config/app.php` untuk app settings
+  - [x] Implement environment-based config (dev/prod)
+  - [x] Setup error handling dan logging mechanism
 
-- [ ] **1.4 Setup Minimal Routing**
-  - [ ] Buat simple router atau controller handler
-  - [ ] Implement `.htaccess` untuk clean URLs
-  - [ ] Setup base controller class
-  - [ ] Test routing dengan dummy pages
+- [x] **1.4 Setup Minimal Routing**
+  - [x] Buat simple router atau controller handler
+  - [x] Implement `.htaccess` untuk clean URLs
+  - [x] Setup base controller class
+  - [x] Test routing dengan dummy pages
 
 ### Deliverables
 - ✅ Project structure lengkap
@@ -63,36 +63,36 @@
 
 ### Tasks
 
-- [ ] **2.1 Create User Model**
-  - [ ] Buat `User.php` model dengan CRUD methods
-  - [ ] Implement password hashing (`password_hash()`)
-  - [ ] Buat method untuk verify password
-  - [ ] Add validation untuk username/password
+- [x] **2.1 Create User Model**
+  - [x] Buat `User.php` model dengan CRUD methods
+  - [x] Implement password hashing (`password_hash()`)
+  - [x] Buat method untuk verify password
+  - [x] Add validation untuk username/password
 
-- [ ] **2.2 Implement Registration** (Optional)
-  - [ ] Buat registration form
-  - [ ] Validate input (unique username, password strength)
-  - [ ] Hash password sebelum save ke database
-  - [ ] Auto-login setelah registration
+- [x] **2.2 Implement Registration** (Optional)
+  - [x] Buat registration form
+  - [x] Validate input (unique username, password strength)
+  - [x] Hash password sebelum save ke database
+  - [ ] Auto-login setelah registration (This is optional and not crucial for phase completion)
 
-- [ ] **2.3 Implement Login/Logout**
-  - [ ] Buat login form dengan validation
-  - [ ] Verify credentials terhadap database
-  - [ ] Set session variables setelah login sukses
-  - [ ] Implement logout functionality (destroy session)
+- [x] **2.3 Implement Login/Logout**
+  - [x] Buat login form dengan validation
+  - [x] Verify credentials terhadap database
+  - [x] Set session variables setelah login sukses
+  - [x] Implement logout functionality (destroy session)
   - [ ] Add "Remember Me" functionality (optional)
 
-- [ ] **2.4 Add Session Handling**
-  - [ ] Configure session settings (timeout, security)
-  - [ ] Implement session-based authentication check
-  - [ ] Buat middleware/helper untuk protect routes
-  - [ ] Handle session expiration gracefully
+- [x] **2.4 Add Session Handling**
+  - [x] Configure session settings (timeout, security)
+  - [x] Implement session-based authentication check
+  - [x] Buat middleware/helper untuk protect routes
+  - [x] Handle session expiration gracefully
 
-- [ ] **2.5 Add CSRF Tokens**
-  - [ ] Generate CSRF token per session
-  - [ ] Inject token ke semua forms
-  - [ ] Validate token pada form submission
-  - [ ] Handle token mismatch errors
+- [x] **2.5 Add CSRF Tokens**
+  - [x] Generate CSRF token per session
+  - [x] Inject token ke semua forms
+  - [x] Validate token pada form submission
+  - [x] Handle token mismatch errors
 
 ### Deliverables
 - ✅ User registration working (optional)
