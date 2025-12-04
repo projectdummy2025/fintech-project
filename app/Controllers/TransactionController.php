@@ -86,8 +86,8 @@ class TransactionController extends Controller {
         $walletModel = new Wallet();
         $categoryModel = new Category();
 
-        // Get all wallets and categories for the form
-        $wallets = $walletModel->getAllByUser($_SESSION['user_id']);
+        // Get all wallets and categories for the form with wallet balances
+        $wallets = $walletModel->getBalancesByUser($_SESSION['user_id']);
         $categories = $categoryModel->getAllByUser($_SESSION['user_id']);
 
         $data = [

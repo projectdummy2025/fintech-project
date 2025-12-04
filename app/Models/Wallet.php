@@ -194,14 +194,39 @@ class Wallet {
      */
     public function getBalance($walletId) {
         $stmt = $this->db->prepare("
-            SELECT 
+            SELECT
                 COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE -amount END), 0) AS balance
-            FROM transactions 
+            FROM transactions
             WHERE wallet_id = :wallet_id
         ");
         $stmt->bindParam(':wallet_id', $walletId);
         $stmt->execute();
         $result = $stmt->fetch();
         return (float)$result['balance'];
+    }
+
+    /**
+     * Get balances for all wallets of a user
+     *
+     * @param int $userId
+     * @return array
+     */
+    public function getBalancesByUser($userId) {
+        $stmt = $this->db->prepare("
+            SELECT
+                w.id,
+                w.name,
+                w.description,
+                w.created_at,
+                COALESCE(SUM(CASE WHEN t.type = 'income' THEN t.amount ELSE -t.amount END), 0) AS balance
+            FROM wallets w
+            LEFT JOIN transactions t ON w.id = t.wallet_id
+            WHERE w.user_id = :user_id
+            GROUP BY w.id, w.name, w.description, w.created_at
+            ORDER BY w.created_at DESC
+        ");
+        $stmt->bindParam(':user_id', $userId);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 }

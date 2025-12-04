@@ -38,7 +38,13 @@
             <div class="card-body">
                 <h5 class="card-title">Wallet to Delete: <?= htmlspecialchars($walletToDelete['name']) ?></h5>
                 <p class="card-text">
-                    <strong>Description:</strong> 
+                    <strong>Balance:</strong>
+                    <span class="<?= $walletToDelete['balance'] >= 0 ? 'text-success' : 'text-danger' ?>">
+                        Rp <?= number_format($walletToDelete['balance'], 2) ?>
+                    </span>
+                </p>
+                <p class="card-text">
+                    <strong>Description:</strong>
                     <?php if (!empty($walletToDelete['description'])): ?>
                         <?= htmlspecialchars($walletToDelete['description']) ?>
                     <?php else: ?>

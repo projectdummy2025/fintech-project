@@ -67,8 +67,8 @@ class DashboardController extends Controller {
         // Get transactions grouped by wallet
         $walletBalances = $transactionModel->getGroupedByWallet($userId, $startDate, $endDate);
 
-        // Get all wallets for filter dropdown
-        $wallets = $walletModel->getAllByUser($userId);
+        // Get all wallets for filter dropdown with balances
+        $wallets = $walletModel->getBalancesByUser($userId);
 
         // Get all categories for filter dropdown
         $categories = $categoryModel->getAllByUser($userId);

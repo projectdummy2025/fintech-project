@@ -42,6 +42,12 @@
                 <input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($_POST['name'] ?? $wallet['name'] ?? '') ?>" required>
             </div>
             <div class="mb-3">
+                <label class="form-label">Current Balance</label>
+                <p class="form-control-plaintext <?= $wallet['balance'] >= 0 ? 'text-success' : 'text-danger' ?>">
+                    <strong>Rp <?= number_format($wallet['balance'], 2) ?></strong>
+                </p>
+            </div>
+            <div class="mb-3">
                 <label for="description" class="form-label">Description (Optional)</label>
                 <textarea class="form-control" id="description" name="description" rows="3"><?= htmlspecialchars($_POST['description'] ?? $wallet['description'] ?? '') ?></textarea>
             </div>

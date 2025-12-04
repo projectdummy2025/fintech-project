@@ -45,7 +45,7 @@
                             <option value="">Select Wallet</option>
                             <?php foreach ($wallets as $wallet): ?>
                                 <option value="<?= $wallet['id'] ?>" <?= ($wallet['id'] == ($_POST['wallet_id'] ?? $transaction['wallet_id'] ?? '')) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($wallet['name']) ?>
+                                    <?= htmlspecialchars($wallet['name']) ?> (Rp <?= number_format($wallet['balance'], 2) ?>)
                                 </option>
                             <?php endforeach; ?>
                         </select>

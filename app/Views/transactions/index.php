@@ -52,7 +52,7 @@
                             <option value="">All Wallets</option>
                             <?php foreach ($wallets as $wallet): ?>
                                 <option value="<?= $wallet['id'] ?>" <?= $wallet['id'] == ($filters['wallet_id'] ?? null) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($wallet['name']) ?>
+                                    <?= htmlspecialchars($wallet['name']) ?> (Rp <?= number_format($wallet['balance'], 2) ?>)
                                 </option>
                             <?php endforeach; ?>
                         </select>

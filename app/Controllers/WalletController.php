@@ -14,7 +14,7 @@ class WalletController extends Controller {
         }
 
         $walletModel = new Wallet();
-        $wallets = $walletModel->getAllByUser($_SESSION['user_id']);
+        $wallets = $walletModel->getBalancesByUser($_SESSION['user_id']);
 
         $data = [
             'title' => 'Wallets',
@@ -74,13 +74,16 @@ class WalletController extends Controller {
         }
 
         $walletModel = new Wallet();
-        
+
         // Check if wallet belongs to user
         $wallet = $walletModel->getByIdAndUser($id, $_SESSION['user_id']);
         if (!$wallet) {
             header('Location: /wallets');
             exit;
         }
+
+        // Get the wallet balance
+        $wallet['balance'] = $walletModel->getBalance($id);
 
         $data = [
             'title' => 'Edit Wallet',
@@ -103,7 +106,9 @@ class WalletController extends Controller {
             } else {
                 if ($walletModel->update($id, $_SESSION['user_id'], $name, $description)) {
                     $data['success'] = 'Wallet updated successfully!';
-                    $data['wallet'] = $walletModel->getByIdAndUser($id, $_SESSION['user_id']); // Refresh wallet data
+                    // Refresh wallet data and balance
+                    $data['wallet'] = $walletModel->getByIdAndUser($id, $_SESSION['user_id']);
+                    $data['wallet']['balance'] = $walletModel->getBalance($id);
                 } else {
                     $data['error'] = 'Failed to update wallet. Please try again.';
                 }
@@ -149,9 +154,13 @@ class WalletController extends Controller {
                     exit;
                 }
 
+                // Get the wallet to delete with its balance
+                $walletToDelete = $walletModel->getByIdAndUser($id, $_SESSION['user_id']);
+                $walletToDelete['balance'] = $walletModel->getBalance($id);
+
                 $data = [
                     'title' => 'Transfer Transactions and Delete Wallet',
-                    'walletToDelete' => $walletModel->getByIdAndUser($id, $_SESSION['user_id']),
+                    'walletToDelete' => $walletToDelete,
                     'otherWallets' => $otherWallets,
                     'transactionCount' => $transactionCount,
                     'error' => null

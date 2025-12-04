@@ -54,6 +54,12 @@
                                         No description
                                     <?php endif; ?>
                                 </p>
+                                <p class="card-text">
+                                    <strong>Balance: </strong>
+                                    <span class="<?= $wallet['balance'] >= 0 ? 'text-success' : 'text-danger' ?>">
+                                        Rp <?= number_format($wallet['balance'], 2) ?>
+                                    </span>
+                                </p>
                                 <small class="text-muted">Created: <?= date('M j, Y', strtotime($wallet['created_at'])) ?></small>
                                 <div class="mt-2">
                                     <a href="/wallets/edit/<?= $wallet['id'] ?>" class="btn btn-sm btn-outline-primary">Edit</a>
