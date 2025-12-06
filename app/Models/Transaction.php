@@ -19,10 +19,10 @@ class Transaction {
      * @return array
      */
     public function getAllByUser($userId, $filters = [], $limit = null, $offset = null) {
-        $sql = "SELECT t.*, c.name as category_name, c.type as category_type, w.name as wallet_name 
+        $sql = "SELECT t.*, c.name as category_name, c.type as category_type, w.name as wallet_name
                 FROM transactions t
-                LEFT JOIN categories c ON t.category_id = c.id
-                LEFT JOIN wallets w ON t.wallet_id = w.id
+                LEFT JOIN categories c ON t.category_id = c.id AND c.user_id = :user_id
+                LEFT JOIN wallets w ON t.wallet_id = w.id AND w.user_id = :user_id
                 WHERE t.user_id = :user_id";
         $params = [':user_id' => $userId];
 
@@ -78,10 +78,10 @@ class Transaction {
      * @return int
      */
     public function countAllByUser($userId, $filters = []) {
-        $sql = "SELECT COUNT(t.id) 
+        $sql = "SELECT COUNT(t.id)
                 FROM transactions t
-                LEFT JOIN categories c ON t.category_id = c.id
-                LEFT JOIN wallets w ON t.wallet_id = w.id
+                LEFT JOIN categories c ON t.category_id = c.id AND c.user_id = :user_id
+                LEFT JOIN wallets w ON t.wallet_id = w.id AND w.user_id = :user_id
                 WHERE t.user_id = :user_id";
         $params = [':user_id' => $userId];
 
@@ -121,10 +121,10 @@ class Transaction {
      * @return array|false
      */
     public function getByIdAndUser($id, $userId) {
-        $sql = "SELECT t.*, c.name as category_name, c.type as category_type, w.name as wallet_name 
+        $sql = "SELECT t.*, c.name as category_name, c.type as category_type, w.name as wallet_name
                 FROM transactions t
-                LEFT JOIN categories c ON t.category_id = c.id
-                LEFT JOIN wallets w ON t.wallet_id = w.id
+                LEFT JOIN categories c ON t.category_id = c.id AND c.user_id = :user_id
+                LEFT JOIN wallets w ON t.wallet_id = w.id AND w.user_id = :user_id
                 WHERE t.id = :id AND t.user_id = :user_id LIMIT 1";
         
         $stmt = $this->db->prepare($sql);
@@ -307,14 +307,14 @@ class Transaction {
      * @return array
      */
     public function getGroupedByCategory($userId, $startDate = null, $endDate = null, $type = null) {
-        $sql = "SELECT 
+        $sql = "SELECT
                     c.id as category_id,
                     c.name as category_name,
                     c.type as category_type,
                     SUM(t.amount) as total_amount,
                     COUNT(t.id) as transaction_count
                 FROM transactions t
-                LEFT JOIN categories c ON t.category_id = c.id
+                LEFT JOIN categories c ON t.category_id = c.id AND c.user_id = :user_id
                 WHERE t.user_id = :user_id";
         
         $params = [':user_id' => $userId];
@@ -357,7 +357,7 @@ class Transaction {
                     SUM(CASE WHEN t.type = 'income' THEN t.amount ELSE 0 END) as total_income,
                     SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END) as total_expense
                 FROM transactions t
-                LEFT JOIN wallets w ON t.wallet_id = w.id
+                LEFT JOIN wallets w ON t.wallet_id = w.id AND w.user_id = :user_id
                 WHERE t.user_id = :user_id";
 
         $params = [':user_id' => $userId];
