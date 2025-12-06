@@ -73,10 +73,10 @@
                         <h3 class="card-text">Rp <?= number_format($totalWalletBalance ?? 0, 2) ?></h3>
                         <?php if (isset($balanceChange)): ?>
                             <small class="text-light">
-                                <?php if ($balanceChange >= 0): ?>
-                                    <span class="text-success">↑ +Rp <?= number_format($balanceChange, 2) ?> (<?= number_format($balanceChangePercent, 1) ?>%)</span>
+                                <?php if (($balanceChange ?? 0) >= 0): ?>
+                                    <span class="text-success">↑ +Rp <?= number_format($balanceChange ?? 0, 2) ?> (<?= number_format($balanceChangePercent ?? 0, 1) ?>%)</span>
                                 <?php else: ?>
-                                    <span class="text-danger">↓ Rp <?= number_format($balanceChange, 2) ?> (<?= number_format($balanceChangePercent, 1) ?>%)</span>
+                                    <span class="text-danger">↓ Rp <?= number_format($balanceChange ?? 0, 2) ?> (<?= number_format($balanceChangePercent ?? 0, 1) ?>%)</span>
                                 <?php endif; ?>
                             </small>
                         <?php endif; ?>
@@ -115,9 +115,9 @@
                                                 </td>
                                                 <td class="text-end">
                                                     <?php if ($transaction['type'] === 'income'): ?>
-                                                        <span class="text-success">+<?= number_format($transaction['amount'], 2) ?></span>
+                                                        <span class="text-success">+<?= number_format($transaction['amount'] ?? 0, 2) ?></span>
                                                     <?php else: ?>
-                                                        <span class="text-danger">-<?= number_format($transaction['amount'], 2) ?></span>
+                                                        <span class="text-danger">-<?= number_format($transaction['amount'] ?? 0, 2) ?></span>
                                                     <?php endif; ?>
                                                 </td>
                                             </tr>
@@ -153,7 +153,7 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">Wallet Balances</h5>
-                        <span class="badge bg-primary">Total: <?= count($walletBalances) ?> wallets</span>
+                        <span class="badge bg-primary">Total: <?= count($walletBalances ?? []) ?> wallets</span>
                     </div>
                     <div class="card-body">
                         <?php if (!empty($walletBalances)): ?>
@@ -170,15 +170,15 @@
                                             <tr>
                                                 <td><?= htmlspecialchars($wallet['wallet_name']) ?></td>
                                                 <td class="text-end">
-                                                    <span class="<?= $wallet['net_balance'] >= 0 ? 'text-success' : 'text-danger' ?>">
-                                                        Rp <?= number_format($wallet['net_balance'], 2) ?>
+                                                    <span class="<?= ($wallet['net_balance'] ?? 0) >= 0 ? 'text-success' : 'text-danger' ?>">
+                                                        Rp <?= number_format($wallet['net_balance'] ?? 0, 2) ?>
                                                     </span>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
                                         <tr class="table-light fw-bold">
                                             <td>TOTAL</td>
-                                            <td class="text-end">Rp <?= number_format($totalWalletBalance, 2) ?></td>
+                                            <td class="text-end">Rp <?= number_format($totalWalletBalance ?? 0, 2) ?></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -212,7 +212,7 @@
                                         <?php foreach ($expenseByCategory as $category): ?>
                                             <tr>
                                                 <td><?= htmlspecialchars($category['category_name']) ?></td>
-                                                <td class="text-end text-danger">-<?= number_format($category['total_amount'], 2) ?></td>
+                                                <td class="text-end text-danger">-<?= number_format($category['total_amount'] ?? 0, 2) ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
@@ -245,7 +245,7 @@
                                         <?php foreach ($incomeByCategory as $category): ?>
                                             <tr>
                                                 <td><?= htmlspecialchars($category['category_name']) ?></td>
-                                                <td class="text-end text-success">+<?= number_format($category['total_amount'], 2) ?></td>
+                                                <td class="text-end text-success">+<?= number_format($category['total_amount'] ?? 0, 2) ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
