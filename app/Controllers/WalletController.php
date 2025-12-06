@@ -135,11 +135,7 @@ class WalletController extends Controller {
             $allWallets = $walletModel->getAllByUser($_SESSION['user_id']);
 
             // Check if wallet has transactions
-            $checkStmt = $walletModel->db->prepare("SELECT COUNT(*) as count FROM transactions WHERE wallet_id = :wallet_id");
-            $checkStmt->bindParam(':wallet_id', $id);
-            $checkStmt->execute();
-            $result = $checkStmt->fetch();
-            $transactionCount = $result['count'];
+            $transactionCount = $walletModel->getTransactionCount($id);
 
             if ($transactionCount > 0) {
                 // Wallet has transactions, show transfer form

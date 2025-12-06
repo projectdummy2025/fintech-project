@@ -187,6 +187,20 @@ class Wallet {
     }
 
     /**
+     * Get transaction count for a wallet
+     *
+     * @param int $walletId
+     * @return int
+     */
+    public function getTransactionCount($walletId) {
+        $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM transactions WHERE wallet_id = :wallet_id");
+        $stmt->bindParam(':wallet_id', $walletId);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        return (int)$result['count'];
+    }
+
+    /**
      * Get wallet balance by calculating transactions
      *
      * @param int $walletId

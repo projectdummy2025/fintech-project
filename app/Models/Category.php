@@ -209,6 +209,20 @@ class Category {
     }
 
     /**
+     * Get transaction count for a category
+     *
+     * @param int $categoryId
+     * @return int
+     */
+    public function getTransactionCount($categoryId) {
+        $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM transactions WHERE category_id = :category_id");
+        $stmt->bindParam(':category_id', $categoryId);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        return (int)$result['count'];
+    }
+
+    /**
      * Get default categories for a new user
      *
      * @return array

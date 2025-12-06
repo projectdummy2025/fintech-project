@@ -134,11 +134,7 @@ class CategoryController extends Controller {
             $allCategories = $categoryModel->getAllByUser($_SESSION['user_id']);
 
             // Check if category has transactions
-            $checkStmt = $categoryModel->db->prepare("SELECT COUNT(*) as count FROM transactions WHERE category_id = :category_id");
-            $checkStmt->bindParam(':category_id', $id);
-            $checkStmt->execute();
-            $result = $checkStmt->fetch();
-            $transactionCount = $result['count'];
+            $transactionCount = $categoryModel->getTransactionCount($id);
 
             // Get the category being deleted to check its type
             $categoryToDelete = $categoryModel->getByIdAndUser($id, $_SESSION['user_id']);
