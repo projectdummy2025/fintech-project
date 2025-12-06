@@ -39,27 +39,48 @@
 
         <!-- Summary Cards -->
         <div class="row mb-4">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card text-white bg-success">
                     <div class="card-body">
                         <h5 class="card-title">Total Income</h5>
                         <h3 class="card-text">Rp <?= number_format($summary['total_income'] ?? 0, 2) ?></h3>
+                        <small class="text-light">Income for <?= $monthName ?> <?= $currentYear ?></small>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card text-white bg-danger">
                     <div class="card-body">
                         <h5 class="card-title">Total Expenses</h5>
                         <h3 class="card-text">Rp <?= number_format($summary['total_expense'] ?? 0, 2) ?></h3>
+                        <small class="text-light">Expenses for <?= $monthName ?> <?= $currentYear ?></small>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card text-white <?= ($summary['net_balance'] ?? 0) >= 0 ? 'bg-primary' : 'bg-warning text-dark' ?>">
                     <div class="card-body">
                         <h5 class="card-title">Net Balance</h5>
                         <h3 class="card-text">Rp <?= number_format($summary['net_balance'] ?? 0, 2) ?></h3>
+                        <small class="text-light">Income minus expenses for <?= $monthName ?> <?= $currentYear ?></small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Wallets Balance</h5>
+                        <h3 class="card-text">Rp <?= number_format($totalWalletBalance ?? 0, 2) ?></h3>
+                        <?php if (isset($balanceChange)): ?>
+                            <small class="text-light">
+                                <?php if ($balanceChange >= 0): ?>
+                                    <span class="text-success">↑ +Rp <?= number_format($balanceChange, 2) ?> (<?= number_format($balanceChangePercent, 1) ?>%)</span>
+                                <?php else: ?>
+                                    <span class="text-danger">↓ Rp <?= number_format($balanceChange, 2) ?> (<?= number_format($balanceChangePercent, 1) ?>%)</span>
+                                <?php endif; ?>
+                            </small>
+                        <?php endif; ?>
+                        <small class="text-light d-block">Cumulative all wallets</small>
                     </div>
                 </div>
             </div>
@@ -130,8 +151,9 @@
             <!-- Wallet Balances -->
             <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">Wallet Balances</h5>
+                        <span class="badge bg-primary">Total: <?= count($walletBalances) ?> wallets</span>
                     </div>
                     <div class="card-body">
                         <?php if (!empty($walletBalances)): ?>
@@ -149,11 +171,15 @@
                                                 <td><?= htmlspecialchars($wallet['wallet_name']) ?></td>
                                                 <td class="text-end">
                                                     <span class="<?= $wallet['net_balance'] >= 0 ? 'text-success' : 'text-danger' ?>">
-                                                        <?= number_format($wallet['net_balance'], 2) ?>
+                                                        Rp <?= number_format($wallet['net_balance'], 2) ?>
                                                     </span>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
+                                        <tr class="table-light fw-bold">
+                                            <td>TOTAL</td>
+                                            <td class="text-end">Rp <?= number_format($totalWalletBalance, 2) ?></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>

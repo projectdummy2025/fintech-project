@@ -350,7 +350,7 @@ class Transaction {
      * @return array
      */
     public function getGroupedByWallet($userId, $startDate = null, $endDate = null) {
-        $sql = "SELECT 
+        $sql = "SELECT
                     w.id as wallet_id,
                     w.name as wallet_name,
                     SUM(CASE WHEN t.type = 'income' THEN t.amount ELSE -t.amount END) as net_balance,
@@ -359,21 +359,52 @@ class Transaction {
                 FROM transactions t
                 LEFT JOIN wallets w ON t.wallet_id = w.id
                 WHERE t.user_id = :user_id";
-        
+
         $params = [':user_id' => $userId];
-        
+
         if ($startDate !== null) {
             $sql .= " AND t.date >= :start_date";
             $params[':start_date'] = $startDate;
         }
-        
+
         if ($endDate !== null) {
             $sql .= " AND t.date <= :end_date";
             $params[':end_date'] = $endDate;
         }
-        
+
         $sql .= " GROUP BY w.id, w.name ORDER BY net_balance DESC";
-        
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Get wallet balances up to a specific date (cumulative from the beginning)
+     *
+     * @param int $userId
+     * @param string $endDate (Y-m-d format)
+     * @return array
+     */
+    public function getWalletBalancesUpToDate($userId, $endDate = null) {
+        $sql = "SELECT
+                    w.id as wallet_id,
+                    w.name as wallet_name,
+                    SUM(CASE WHEN t.type = 'income' THEN t.amount ELSE -t.amount END) as net_balance,
+                    SUM(CASE WHEN t.type = 'income' THEN t.amount ELSE 0 END) as total_income,
+                    SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END) as total_expense
+                FROM wallets w
+                LEFT JOIN transactions t ON w.id = t.wallet_id AND t.user_id = :user_id";
+
+        $params = [':user_id' => $userId];
+
+        if ($endDate !== null) {
+            $sql .= " AND t.date <= :end_date";
+            $params[':end_date'] = $endDate;
+        }
+
+        $sql .= " WHERE w.user_id = :user_id GROUP BY w.id, w.name ORDER BY net_balance DESC";
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();

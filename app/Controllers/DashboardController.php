@@ -64,8 +64,32 @@ class DashboardController extends Controller {
         // Get transactions grouped by category for income
         $incomeByCategory = $transactionModel->getGroupedByCategory($userId, $startDate, $endDate, 'income');
 
-        // Get transactions grouped by wallet
-        $walletBalances = $transactionModel->getGroupedByWallet($userId, $startDate, $endDate);
+        // Get wallet balances for the selected month (for recent transactions display)
+        $walletBalancesForMonth = $transactionModel->getGroupedByWallet($userId, $startDate, $endDate);
+
+        // Get wallet balances up to the end of the selected month (cumulative)
+        $endDateForBalance = date('Y-m-t', mktime(0, 0, 0, $month, 1)); // Last day of current month
+        $walletBalances = $transactionModel->getWalletBalancesUpToDate($userId, $endDateForBalance);
+
+        // Calculate total balance across all wallets (cumulative)
+        $totalWalletBalance = array_sum(array_column($walletBalances, 'net_balance'));
+
+        // Calculate previous month's balance to show trend
+        // We need to calculate the balance up to the end of the previous month
+        $prevMonth = $month - 1;
+        $prevYear = $year;
+        if ($prevMonth < 1) {
+            $prevMonth = 12;
+            $prevYear = $year - 1;
+        }
+
+        $prevEndDate = date('Y-m-t', mktime(0, 0, 0, $prevMonth, 1)); // Last day of previous month
+
+        $prevWalletBalances = $transactionModel->getWalletBalancesUpToDate($userId, $prevEndDate);
+        $prevTotalWalletBalance = array_sum(array_column($prevWalletBalances, 'net_balance'));
+
+        $balanceChange = $totalWalletBalance - $prevTotalWalletBalance;
+        $balanceChangePercent = $prevTotalWalletBalance != 0 ? ($balanceChange / $prevTotalWalletBalance) * 100 : 0;
 
         // Get all wallets for filter dropdown with balances
         $wallets = $walletModel->getBalancesByUser($userId);
@@ -81,6 +105,10 @@ class DashboardController extends Controller {
             'expenseByCategory' => $expenseByCategory,
             'incomeByCategory' => $incomeByCategory,
             'walletBalances' => $walletBalances,
+            'totalWalletBalance' => $totalWalletBalance,
+            'prevTotalWalletBalance' => $prevTotalWalletBalance,
+            'balanceChange' => $balanceChange,
+            'balanceChangePercent' => $balanceChangePercent,
             'wallets' => $wallets,
             'categories' => $categories,
             'currentYear' => $year,
