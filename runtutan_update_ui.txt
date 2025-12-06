@@ -1,0 +1,98 @@
+Runtutan Update UI Proyek Personal Finance
+==========================================
+
+Berikut adalah langkah-langkah sistematis untuk memperbarui UI aplikasi Personal Finance agar lebih modern, konsisten, dan menarik sesuai dengan analisis kebutuhan.
+
+Fase 1: Fondasi Visual & Global Styling
+---------------------------------------
+1.  **Setup Tipografi & Warna**:
+    *   Import Google Fonts (Inter/Poppins untuk UI, Monospace untuk angka).
+    *   Definisikan CSS Variables untuk palet warna baru (Teal/Cyan atau Deep Purple sebagai primary).
+    *   Buat utility classes untuk spacing yang konsisten (4px, 8px, 16px, dst).
+2.  **Global Styles**:
+    *   Update `body` background color (gunakan soft gray atau gradient halus).
+    *   Perbaiki styling dasar untuk headings dan paragraphs.
+    *   Implementasi custom scrollbar.
+
+Fase 2: Komponen UI Reusable
+----------------------------
+3.  **Buttons & Inputs**:
+    *   Update style tombol (border-radius, padding, shadow, hover effects).
+    *   Modernisasi input fields (border, focus states, floating labels jika perlu).
+4.  **Cards & Containers**:
+    *   Buat style card standar dengan shadow yang lebih halus dan border-radius yang konsisten.
+    *   Tambahkan variasi card dengan gradient background.
+5.  **Tables & Badges**:
+    *   Styling tabel data (hover rows, sticky header, padding sel yang lebih lega).
+    *   Update tampilan badges (pill shape, warna soft dengan text kontras).
+6.  **Alerts & Toasts**:
+    *   Ganti alert standar Bootstrap dengan style yang lebih modern (border-left accent, icon).
+
+Fase 3: Layout Utama (Navbar & Footer)
+--------------------------------------
+7.  **Navigation Bar**:
+    *   Update warna background navbar (bisa transparan dengan blur effect atau solid brand color).
+    *   Perbaiki menu items (active states, hover effects).
+    *   Tambahkan user profile dropdown dengan avatar placeholder.
+    *   Pastikan responsivitas di mobile (hamburger menu yang smooth).
+
+Fase 4: Halaman Autentikasi (Login & Register)
+----------------------------------------------
+8.  **Login Page**:
+    *   Ubah layout menjadi split screen atau centered card yang lebih lebar.
+    *   Tambahkan ilustrasi/hero image di sisi samping (untuk desktop).
+    *   Implementasi password visibility toggle.
+9.  **Register Page**:
+    *   Sesuaikan layout dengan halaman Login.
+    *   Tambahkan indikator kekuatan password (opsional tapi disarankan).
+
+Fase 5: Halaman Dashboard
+-------------------------
+10. **Summary Cards**:
+    *   Terapkan gradient background pada kartu Income, Expense, Balance.
+    *   Perbesar ukuran font untuk angka utama.
+    *   Tambahkan ikon yang relevan pada setiap kartu.
+11. **Recent Transactions**:
+    *   Terapkan styling tabel baru.
+    *   Batasi jumlah baris dan tambahkan link "View All" yang jelas.
+12. **Charts (Opsional/Baru)**:
+    *   Tambahkan placeholder atau implementasi chart sederhana (Chart.js) untuk visualisasi pengeluaran vs pemasukan.
+
+Fase 6: Halaman Transaksi (Transactions)
+----------------------------------------
+13. **List View**:
+    *   Implementasi filter yang lebih rapi (mungkin dalam offcanvas atau collapsible card).
+    *   Perbaiki tampilan tabel transaksi (format mata uang yang jelas, warna untuk income/expense).
+14. **Create/Edit Form**:
+    *   Ubah layout form menjadi 2 kolom di desktop.
+    *   Tambahkan prefix "Rp" pada input amount.
+    *   Berikan visual feedback real-time pada validasi form.
+
+Fase 7: Halaman Dompet (Wallets)
+--------------------------------
+15. **List View**:
+    *   Ubah tampilan daftar dompet menjadi Grid Card Layout.
+    *   Tampilkan saldo dengan font besar dan jelas.
+    *   Tambahkan tombol aksi (Edit/Delete) yang rapi (icon buttons).
+16. **Create/Edit/Delete**:
+    *   Sesuaikan style form dengan standar baru.
+    *   Perjelas halaman konfirmasi hapus (Transfer before Delete) dengan peringatan visual yang kuat.
+
+Fase 8: Halaman Kategori (Categories)
+-------------------------------------
+17. **List View**:
+    *   Pisahkan visual antara kategori Income dan Expense dengan lebih jelas (tab atau section terpisah).
+    *   Gunakan ikon atau warna pembeda untuk setiap tipe kategori.
+18. **Create/Edit/Delete**:
+    *   Samakan styling form dengan halaman lain.
+
+Fase 9: Finishing & Polish
+--------------------------
+19. **Micro-interactions**:
+    *   Tambahkan transisi halus pada hover state (tombol, link, card).
+    *   Tambahkan animasi loading saat submit form.
+20. **Responsiveness Check**:
+    *   Pastikan tampilan rapi di berbagai ukuran layar (Mobile, Tablet, Desktop).
+21. **Final Review**:
+    *   Cek konsistensi margin dan padding di seluruh aplikasi.
+    *   Pastikan kontras warna memenuhi standar aksesibilitas.
