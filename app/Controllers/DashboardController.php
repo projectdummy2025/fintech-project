@@ -67,15 +67,11 @@ class DashboardController extends Controller {
         // Get wallet balances for the selected month (for recent transactions display)
         $walletBalancesForMonth = $transactionModel->getGroupedByWallet($userId, $startDate, $endDate);
 
-        // Get wallet balances up to the end of the selected month (cumulative)
-        $endDateForBalance = date('Y-m-t', mktime(0, 0, 0, $month, 1)); // Last day of current month
-        $walletBalances = $transactionModel->getWalletBalancesUpToDate($userId, $endDateForBalance);
-
-        // Calculate total balance across all wallets (cumulative)
+        // Get current wallet balances (not affected by time filter) for both table and summary card
+        $walletBalances = $transactionModel->getWalletBalancesUpToDate($userId, null);
         $totalWalletBalance = array_sum(array_column($walletBalances, 'net_balance'));
 
-        // Calculate previous month's balance to show trend
-        // We need to calculate the balance up to the end of the previous month
+        // Calculate previous month's balance for comparison (this creates the "change" metric)
         $prevMonth = $month - 1;
         $prevYear = $year;
         if ($prevMonth < 1) {
@@ -88,6 +84,7 @@ class DashboardController extends Controller {
         $prevWalletBalances = $transactionModel->getWalletBalancesUpToDate($userId, $prevEndDate);
         $prevTotalWalletBalance = array_sum(array_column($prevWalletBalances, 'net_balance'));
 
+        // Calculate change from previous selected period to current (now)
         $balanceChange = $totalWalletBalance - $prevTotalWalletBalance;
         $balanceChangePercent = $prevTotalWalletBalance != 0 ? ($balanceChange / $prevTotalWalletBalance) * 100 : 0;
 
