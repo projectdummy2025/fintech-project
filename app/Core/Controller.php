@@ -50,7 +50,6 @@ class Controller {
 
     public function extend($layout) {
         $this->viewLayout = $layout;
-        return $this;
     }
 
     public function section($sectionName) {
