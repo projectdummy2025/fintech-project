@@ -94,6 +94,11 @@ $router->post('/categories/edit/(\d+)', ['CategoryController', 'edit']);
 $router->get('/categories/delete/(\d+)', ['CategoryController', 'delete']);
 $router->post('/categories/transfer-and-delete', ['CategoryController', 'transferAndDelete']);
 
+// Category API Routes (AJAX)
+$router->post('/api/categories/create', ['CategoryController', 'apiCreate']);
+$router->get('/api/categories/(\d+)', ['CategoryController', 'apiGet']);
+$router->post('/api/categories/update/(\d+)', ['CategoryController', 'apiUpdate']);
+
 // Transaction Routes
 $router->get('/transactions', ['TransactionController', 'index']);
 $router->get('/transactions/create', ['TransactionController', 'create']);

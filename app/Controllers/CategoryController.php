@@ -202,4 +202,124 @@ class CategoryController extends Controller {
         header('Location: /categories');
         exit;
     }
+
+    // ========== API METHODS FOR AJAX ==========
+
+    /**
+     * API: Create category via AJAX
+     */
+    public function apiCreate() {
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+            return;
+        }
+
+        // Verify CSRF
+        if (!Csrf::verify($_POST['csrf_token'] ?? '')) {
+            echo json_encode(['success' => false, 'message' => 'CSRF Token Mismatch']);
+            return;
+        }
+
+        $name = trim($_POST['name'] ?? '');
+        $type = $_POST['type'] ?? '';
+
+        if (empty($name)) {
+            echo json_encode(['success' => false, 'message' => 'Category name is required.']);
+            return;
+        }
+
+        if (!in_array($type, ['income', 'expense'])) {
+            echo json_encode(['success' => false, 'message' => 'Category type must be income or expense.']);
+            return;
+        }
+
+        $categoryModel = new Category();
+
+        if ($categoryModel->create($_SESSION['user_id'], $name, $type)) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Category created successfully!',
+                'category' => ['name' => $name, 'type' => $type]
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to create category.']);
+        }
+    }
+
+    /**
+     * API: Get category data for editing
+     */
+    public function apiGet($id) {
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+            return;
+        }
+
+        $categoryModel = new Category();
+        $category = $categoryModel->getByIdAndUser($id, $_SESSION['user_id']);
+
+        if (!$category) {
+            echo json_encode(['success' => false, 'message' => 'Category not found.']);
+            return;
+        }
+
+        echo json_encode([
+            'success' => true,
+            'category' => $category
+        ]);
+    }
+
+    /**
+     * API: Update category via AJAX
+     */
+    public function apiUpdate($id) {
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+            return;
+        }
+
+        // Verify CSRF
+        if (!Csrf::verify($_POST['csrf_token'] ?? '')) {
+            echo json_encode(['success' => false, 'message' => 'CSRF Token Mismatch']);
+            return;
+        }
+
+        $categoryModel = new Category();
+
+        // Check if category belongs to user
+        $category = $categoryModel->getByIdAndUser($id, $_SESSION['user_id']);
+        if (!$category) {
+            echo json_encode(['success' => false, 'message' => 'Category not found.']);
+            return;
+        }
+
+        $name = trim($_POST['name'] ?? '');
+        $type = $_POST['type'] ?? '';
+
+        if (empty($name)) {
+            echo json_encode(['success' => false, 'message' => 'Category name is required.']);
+            return;
+        }
+
+        if (!in_array($type, ['income', 'expense'])) {
+            echo json_encode(['success' => false, 'message' => 'Category type must be income or expense.']);
+            return;
+        }
+
+        if ($categoryModel->update($id, $_SESSION['user_id'], $name, $type)) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Category updated successfully!',
+                'category' => ['id' => $id, 'name' => $name, 'type' => $type]
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to update category.']);
+        }
+    }
 }
