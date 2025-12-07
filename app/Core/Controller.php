@@ -17,7 +17,7 @@ class Controller {
         if (file_exists($viewFile)) {
             // Start output buffering to capture the view content
             ob_start();
-            require_once $viewFile;
+            require $viewFile;
             $viewContent = ob_get_clean();
 
             // If layout was set in the view, process with layout
@@ -30,7 +30,7 @@ class Controller {
 
                     // Start output buffering for layout
                     ob_start();
-                    require_once $layoutFile;
+                    require $layoutFile;
                     $layoutContent = ob_get_clean();
 
                     // Replace section placeholders in layout with actual content

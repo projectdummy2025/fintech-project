@@ -31,41 +31,38 @@ class CategoryController extends Controller {
             exit;
         }
 
-        $data = [
-            'title' => 'Create Category',
-            'error' => null,
-            'success' => null
-        ];
+        // Only handle POST (form is now in modal on index page)
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /categories');
+            exit;
+        }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Verify CSRF
-            if (!Csrf::verify($_POST['csrf_token'] ?? '')) {
-                die("CSRF Token Mismatch");
-            }
+        // Verify CSRF
+        if (!Csrf::verify($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'CSRF Token Mismatch';
+            header('Location: /categories');
+            exit;
+        }
 
-            $name = trim($_POST['name'] ?? '');
-            $type = $_POST['type'] ?? '';
+        $name = trim($_POST['name'] ?? '');
+        $type = $_POST['type'] ?? '';
 
-            if (empty($name)) {
-                $data['error'] = 'Category name is required.';
-            } elseif (!in_array($type, ['income', 'expense'])) {
-                $data['error'] = 'Category type must be income or expense.';
+        if (empty($name)) {
+            $_SESSION['error'] = 'Category name is required.';
+        } elseif (!in_array($type, ['income', 'expense'])) {
+            $_SESSION['error'] = 'Category type must be income or expense.';
+        } else {
+            $categoryModel = new Category();
+
+            if ($categoryModel->create($_SESSION['user_id'], $name, $type)) {
+                $_SESSION['message'] = 'Category created successfully!';
             } else {
-                $categoryModel = new Category();
-
-                if ($categoryModel->create($_SESSION['user_id'], $name, $type)) {
-                    $data['success'] = 'Category created successfully!';
-                    header('Location: /categories');
-                    exit;
-                } else {
-                    $data['error'] = 'Failed to create category. Please try again.';
-                }
+                $_SESSION['error'] = 'Failed to create category. Please try again.';
             }
         }
 
-        $data['csrf_field'] = Csrf::field();
-
-        $this->view('categories/create', $data);
+        header('Location: /categories');
+        exit;
     }
 
     public function edit($id) {
@@ -75,48 +72,46 @@ class CategoryController extends Controller {
             exit;
         }
 
+        // Only handle POST (form is now in modal on index page)
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /categories');
+            exit;
+        }
+
         $categoryModel = new Category();
         
         // Check if category belongs to user
         $category = $categoryModel->getByIdAndUser($id, $_SESSION['user_id']);
         if (!$category) {
+            $_SESSION['error'] = 'Category not found.';
             header('Location: /categories');
             exit;
         }
 
-        $data = [
-            'title' => 'Edit Category',
-            'category' => $category,
-            'error' => null,
-            'success' => null
-        ];
+        // Verify CSRF
+        if (!Csrf::verify($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'CSRF Token Mismatch';
+            header('Location: /categories');
+            exit;
+        }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Verify CSRF
-            if (!Csrf::verify($_POST['csrf_token'] ?? '')) {
-                die("CSRF Token Mismatch");
-            }
+        $name = trim($_POST['name'] ?? '');
+        $type = $_POST['type'] ?? '';
 
-            $name = trim($_POST['name'] ?? '');
-            $type = $_POST['type'] ?? '';
-
-            if (empty($name)) {
-                $data['error'] = 'Category name is required.';
-            } elseif (!in_array($type, ['income', 'expense'])) {
-                $data['error'] = 'Category type must be income or expense.';
+        if (empty($name)) {
+            $_SESSION['error'] = 'Category name is required.';
+        } elseif (!in_array($type, ['income', 'expense'])) {
+            $_SESSION['error'] = 'Category type must be income or expense.';
+        } else {
+            if ($categoryModel->update($id, $_SESSION['user_id'], $name, $type)) {
+                $_SESSION['message'] = 'Category updated successfully!';
             } else {
-                if ($categoryModel->update($id, $_SESSION['user_id'], $name, $type)) {
-                    $data['success'] = 'Category updated successfully!';
-                    $data['category'] = $categoryModel->getByIdAndUser($id, $_SESSION['user_id']); // Refresh category data
-                } else {
-                    $data['error'] = 'Failed to update category. Please try again.';
-                }
+                $_SESSION['error'] = 'Failed to update category. Please try again.';
             }
         }
 
-        $data['csrf_field'] = Csrf::field();
-
-        $this->view('categories/edit', $data);
+        header('Location: /categories');
+        exit;
     }
 
     public function delete($id) {
