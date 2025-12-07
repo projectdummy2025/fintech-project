@@ -1,126 +1,130 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?> - Personal Finance</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/public/custom.css">
-</head>
-<body class="bg-gray-50">
-    <nav class="bg-gradient-to-r from-teal-600 to-cyan-600 shadow-lg">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center py-4">
-                <a href="/" class="text-white text-2xl font-bold">💰 Personal Finance</a>
-                <div class="flex space-x-6">
-                    <a href="/dashboard" class="text-teal-100 hover:text-white transition">Dashboard</a>
-                    <a href="/wallets" class="text-teal-100 hover:text-white transition">Wallets</a>
-                    <a href="/categories" class="text-white font-semibold border-b-2 border-white pb-1">Categories</a>
-                    <a href="/transactions" class="text-teal-100 hover:text-white transition">Transactions</a>
-                    <a href="/logout" class="text-teal-100 hover:text-white transition">Logout</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+<?= $this->extend('layout/main') ?>
 
-    <div class="container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-800"><?= $title ?></h1>
-            <a href="/categories/create" class="px-6 py-3 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition shadow-md">+ Add Category</a>
-        </div>
+<?= $this->section('content') ?>
 
-        <?php if (isset($_SESSION['message'])): ?>
-            <div class="alert-custom alert-success mb-6">
-                <p class="font-medium"><?= $_SESSION['message'] ?></p>
-                <?php unset($_SESSION['message']); ?>
-            </div>
-        <?php endif; ?>
+<div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+    <h1 class="text-2xl font-bold text-gray-900"><?= $title ?></h1>
+    <a href="/categories/create" class="btn btn-primary">
+        <i class="ph-bold ph-plus"></i>
+        Add Category
+    </a>
+</div>
 
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert-custom alert-danger mb-6">
-                <p class="font-medium"><?= $_SESSION['error'] ?></p>
-                <?php unset($_SESSION['error']); ?>
-            </div>
-        <?php endif; ?>
-
-        <?php if (!empty($categories)): ?>
-            <?php
-            $incomeCategories = array_filter($categories, function($cat) { return $cat['type'] === 'income'; });
-            $expenseCategories = array_filter($categories, function($cat) { return $cat['type'] === 'expense'; });
-            ?>
-
-            <!-- Income Categories -->
-            <?php if (!empty($incomeCategories)): ?>
-                <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
-                    <div class="bg-gradient-to-r from-green-500 to-emerald-500 px-6 py-4">
-                        <h5 class="text-lg font-bold text-white">💵 Income Categories</h5>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Name</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Type</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Created</th>
-                                    <th class="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                <?php foreach ($incomeCategories as $category): ?>
-                                    <tr class="hover:bg-gray-50 transition">
-                                        <td class="px-6 py-4 text-sm font-medium text-gray-800"><?= htmlspecialchars($category['name']) ?></td>
-                                        <td class="px-6 py-4"><span class="badge-success"><?= ucfirst($category['type']) ?></span></td>
-                                        <td class="px-6 py-4 text-sm text-gray-600"><?= date('M j, Y', strtotime($category['created_at'])) ?></td>
-                                        <td class="px-6 py-4 text-center space-x-2">
-                                            <a href="/categories/edit/<?= $category['id'] ?>" class="inline-block px-4 py-2 text-sm bg-blue-100 text-blue-700 rounded-lgover:bg-blue-200 transition">Edit</a>
-                                            <a href="/categories/delete/<?= $category['id'] ?>" class="inline-block px-4 py-2 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition" onclick="return confirm('Are you sure?')">Delete</a>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            <?php endif; ?>
-
-            <!-- Expense Categories -->
-            <?php if (!empty($expenseCategories)): ?>
-                <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="bg-gradient-to-r from-red-500 to-rose-500 px-6 py-4">
-                        <h5 class="text-lg font-bold text-white">💸 Expense Categories</h5>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Name</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Type</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Created</th>
-                                    <th class="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                <?php foreach ($expenseCategories as $category): ?>
-                                    <tr class="hover:bg-gray-50 transition">
-                                        <td class="px-6 py-4 text-sm font-medium text-gray-800"><?= htmlspecialchars($category['name']) ?></td>
-                                        <td class="px-6 py-4"><span class="badge-danger"><?= ucfirst($category['type']) ?></span></td>
-                                        <td class="px-6 py-4 text-sm text-gray-600"><?= date('M j, Y', strtotime($category['created_at'])) ?></td>
-                                        <td class="px-6 py-4 text-center space-x-2">
-                                            <a href="/categories/edit/<?= $category['id'] ?>" class="inline-block px-4 py-2 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition">Edit</a>
-                                            <a href="/categories/delete/<?= $category['id'] ?>" class="inline-block px-4 py-2 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition" onclick="return confirm('Are you sure?')">Delete</a>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            <?php endif; ?>
-        <?php else: ?>
-            <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-6 rounded-lg">
-                <p>You haven't created any categories yet. <a href="/categories/create" class="font-semibold underline">Create your first category</a>.</p>
-            </div>
-        <?php endif; ?>
+<!-- Alerts -->
+<?php if (isset($_SESSION['message'])): ?>
+    <div class="alert-custom alert-success mb-6">
+        <i class="ph-fill ph-check-circle text-xl"></i>
+        <p class="font-medium text-sm"><?= $_SESSION['message'] ?></p>
+        <?php unset($_SESSION['message']); ?>
     </div>
-</body>
-</html>
+<?php endif; ?>
+
+<?php if (isset($_SESSION['error'])): ?>
+    <div class="alert-custom alert-danger mb-6">
+        <i class="ph-fill ph-warning-circle text-xl"></i>
+        <p class="font-medium text-sm"><?= $_SESSION['error'] ?></p>
+        <?php unset($_SESSION['error']); ?>
+    </div>
+<?php endif; ?>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Income Categories -->
+    <div class="card-custom overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 bg-emerald-50/50 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="ph-fill ph-arrow-circle-down-left text-emerald-600 text-xl"></i>
+                <h5 class="text-base font-bold text-gray-900">Income Categories</h5>
+            </div>
+            <span class="text-xs font-medium text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">
+                <?= count(array_filter($categories, fn($c) => $c['type'] === 'income')) ?> Items
+            </span>
+        </div>
+        <div class="p-0">
+            <?php 
+            $incomeCategories = array_filter($categories, fn($c) => $c['type'] === 'income');
+            if (!empty($incomeCategories)): 
+            ?>
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th class="text-center w-24">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($incomeCategories as $category): ?>
+                            <tr>
+                                <td class="font-medium text-gray-700"><?= htmlspecialchars($category['name']) ?></td>
+                                <td class="text-center">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <a href="/categories/edit/<?= $category['id'] ?>" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition" title="Edit">
+                                            <i class="ph ph-pencil-simple text-lg"></i>
+                                        </a>
+                                        <a href="/categories/delete/<?= $category['id'] ?>" class="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition" onclick="return confirm('Are you sure?')" title="Delete">
+                                            <i class="ph ph-trash text-lg"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <div class="p-8 text-center text-gray-500 text-sm">
+                    No income categories found.
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Expense Categories -->
+    <div class="card-custom overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 bg-red-50/50 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="ph-fill ph-arrow-circle-up-right text-red-600 text-xl"></i>
+                <h5 class="text-base font-bold text-gray-900">Expense Categories</h5>
+            </div>
+            <span class="text-xs font-medium text-red-700 bg-red-100 px-2 py-1 rounded-full">
+                <?= count(array_filter($categories, fn($c) => $c['type'] === 'expense')) ?> Items
+            </span>
+        </div>
+        <div class="p-0">
+            <?php 
+            $expenseCategories = array_filter($categories, fn($c) => $c['type'] === 'expense');
+            if (!empty($expenseCategories)): 
+            ?>
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th class="text-center w-24">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($expenseCategories as $category): ?>
+                            <tr>
+                                <td class="font-medium text-gray-700"><?= htmlspecialchars($category['name']) ?></td>
+                                <td class="text-center">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <a href="/categories/edit/<?= $category['id'] ?>" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition" title="Edit">
+                                            <i class="ph ph-pencil-simple text-lg"></i>
+                                        </a>
+                                        <a href="/categories/delete/<?= $category['id'] ?>" class="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition" onclick="return confirm('Are you sure?')" title="Delete">
+                                            <i class="ph ph-trash text-lg"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <div class="p-8 text-center text-gray-500 text-sm">
+                    No expense categories found.
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<?= $this->endSection() ?>

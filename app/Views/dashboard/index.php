@@ -1,316 +1,330 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?> - Personal Finance</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="/public/custom.css">
-</head>
-<body class="bg-gray-50">
-    <!-- Navbar -->
-    <nav class="bg-gradient-to-r from-teal-600 to-cyan-600 shadow-lg">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center py-4">
-                <a href="/" class="text-white text-2xl font-bold">💰 Personal Finance</a>
-                <div class="flex space-x-6">
-                    <a href="/dashboard" class="text-white font-semibold border-b-2 border-white pb-1">Dashboard</a>
-                    <a href="/wallets" class="text-teal-100 hover:text-white transition">Wallets</a>
-                    <a href="/categories" class="text-teal-100 hover:text-white transition">Categories</a>
-                    <a href="/transactions" class="text-teal-100 hover:text-white transition">Transactions</a>
-                    <a href="/logout" class="text-teal-100 hover:text-white transition">Logout</a>
-                </div>
+<?= $this->extend('layout/main') ?>
+
+<?= $this->section('content') ?>
+
+<!-- Header with Month/Year Filter -->
+<div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900"><?= $title ?></h1>
+        <p class="text-sm text-gray-500 mt-1">Overview for <?= $monthName ?> <?= $currentYear ?></p>
+    </div>
+    <form method="GET" class="flex space-x-3 bg-white p-1 rounded-lg border border-gray-200 shadow-sm">
+        <select name="month" class="px-3 py-1.5 bg-transparent border-none text-sm font-medium text-gray-700 focus:ring-0 cursor-pointer hover:text-teal-700" onchange="this.form.submit()">
+            <?php for ($m = 1; $m <= 12; $m++): ?>
+                <option value="<?= $m ?>" <?= $m == $currentMonth ? 'selected' : '' ?>><?= date('M', mktime(0, 0, 0, $m, 10)) ?></option>
+            <?php endfor; ?>
+        </select>
+        <div class="w-px bg-gray-200 my-1"></div>
+        <select name="year" class="px-3 py-1.5 bg-transparent border-none text-sm font-medium text-gray-700 focus:ring-0 cursor-pointer hover:text-teal-700" onchange="this.form.submit()">
+            <?php for ($y = 2020; $y <= date('Y') + 1; $y++): ?>
+                <option value="<?= $y ?>" <?= $y == $currentYear ? 'selected' : '' ?>><?= $y ?></option>
+            <?php endfor; ?>
+        </select>
+    </form>
+</div>
+
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Total Income Card -->
+    <div class="card-custom p-6">
+        <div class="flex items-center justify-between mb-4">
+            <div class="p-2 bg-emerald-50 rounded-lg">
+                <i class="ph-fill ph-arrow-circle-down-left text-emerald-600 text-xl"></i>
             </div>
+            <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">Income</span>
         </div>
-    </nav>
+        <h2 class="text-2xl font-bold tabular-nums text-gray-900 mb-1">Rp <?= number_format($summary['total_income'] ?? 0, 0, ',', '.') ?></h2>
+        <p class="text-xs text-gray-500">Total received this month</p>
+    </div>
 
-    <div class="container mx-auto px-4 py-8">
-        <!-- Header with Month/Year Filter -->
-        <div class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-800"><?= $title ?> - <?= $monthName ?> <?= $currentYear ?></h1>
-            <form method="GET" class="flex space-x-3">
-                <select name="month" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500" onchange="this.form.submit()">
-                    <?php for ($m = 1; $m <= 12; $m++): ?>
-                        <option value="<?= $m ?>" <?= $m == $currentMonth ? 'selected' : '' ?>><?= date('M', mktime(0, 0, 0, $m, 10)) ?></option>
-                    <?php endfor; ?>
-                </select>
-                <select name="year" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500" onchange="this.form.submit()">
-                    <?php for ($y = 2020; $y <= date('Y') + 1; $y++): ?>
-                        <option value="<?= $y ?>" <?= $y == $currentYear ? 'selected' : '' ?>><?= $y ?></option>
-                    <?php endfor; ?>
-                </select>
-            </form>
+    <!-- Total Expenses Card -->
+    <div class="card-custom p-6">
+        <div class="flex items-center justify-between mb-4">
+            <div class="p-2 bg-red-50 rounded-lg">
+                <i class="ph-fill ph-arrow-circle-up-right text-red-600 text-xl"></i>
+            </div>
+            <span class="text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded-full">Expense</span>
         </div>
+        <h2 class="text-2xl font-bold tabular-nums text-gray-900 mb-1">Rp <?= number_format($summary['total_expense'] ?? 0, 0, ',', '.') ?></h2>
+        <p class="text-xs text-gray-500">Total spent this month</p>
+    </div>
 
-        <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <!-- Total Income Card -->
-            <div class="gradient-success rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition duration-200">
-                <div class="flex items-center justify-between mb-2">
-                    <h5 class="text-sm font-medium opacity-90">Total Income</h5>
-                    <span class="text-3xl">💵</span>
-                </div>
-                <h2 class="text-4xl font-bold tabular-nums mb-1">Rp <?= number_format($summary['total_income'] ?? 0, 0, ',', '.') ?></h2>
-                <p class="text-xs opacity-75">Income for <?= $monthName ?> <?= $currentYear ?></p>
+    <!-- Net Balance Card -->
+    <div class="card-custom p-6">
+        <div class="flex items-center justify-between mb-4">
+            <div class="p-2 bg-blue-50 rounded-lg">
+                <i class="ph-fill ph-scales text-blue-600 text-xl"></i>
             </div>
-
-            <!-- Total Expenses Card -->
-            <div class="gradient-danger rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition duration-200">
-                <div class="flex items-center justify-between mb-2">
-                    <h5 class="text-sm font-medium opacity-90">Total Expenses</h5>
-                    <span class="text-3xl">💸</span>
-                </div>
-                <h2 class="text-4xl font-bold tabular-nums mb-1">Rp <?= number_format($summary['total_expense'] ?? 0, 0, ',', '.') ?></h2>
-                <p class="text-xs opacity-75">Expenses for <?= $monthName ?> <?= $currentYear ?></p>
-            </div>
-
-            <!-- Net Balance Card -->
-            <div class="<?= ($summary['net_balance'] ?? 0) >= 0 ? 'gradient-info' : 'bg-gradient-to-br from-amber-500 to-orange-500' ?> rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition duration-200">
-                <div class="flex items-center justify-between mb-2">
-                    <h5 class="text-sm font-medium opacity-90">Net Balance</h5>
-                    <span class="text-3xl">💼</span>
-                </div>
-                <h2 class="text-4xl font-bold tabular-nums mb-1">Rp <?= number_format($summary['net_balance'] ?? 0, 0, ',', '.') ?></h2>
-                <p class="text-xs opacity-75">Income - Expenses</p>
-            </div>
-
-            <!-- Total Wallets Balance Card -->
-            <div class="gradient-primary rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition duration-200">
-                <div class="flex items-center justify-between mb-2">
-                    <h5 class="text-sm font-medium opacity-90">Total Wallets</h5>
-                    <span class="text-3xl">👛</span>
-                </div>
-                <h2 class="text-4xl font-bold tabular-nums mb-1">Rp <?= number_format($totalWalletBalance ?? 0, 0, ',', '.') ?></h2>
-                <p class="text-xs opacity-75">Cumulative Balance</p>
-            </div>
+            <span class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">Net</span>
         </div>
+        <h2 class="text-2xl font-bold tabular-nums text-gray-900 mb-1">Rp <?= number_format($summary['net_balance'] ?? 0, 0, ',', '.') ?></h2>
+        <p class="text-xs text-gray-500">Income minus Expenses</p>
+    </div>
 
-        <!-- Chart Section -->
-        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">📊 Income vs Expenses</h3>
-            <div class="chart-container">
-                <canvas id="incomeExpenseChart"></canvas>
+    <!-- Total Wallets Balance Card -->
+    <div class="card-custom p-6">
+        <div class="flex items-center justify-between mb-4">
+            <div class="p-2 bg-teal-50 rounded-lg">
+                <i class="ph-fill ph-wallet text-teal-600 text-xl"></i>
             </div>
+            <span class="text-xs font-medium text-teal-600 bg-teal-50 px-2 py-1 rounded-full">Total Assets</span>
         </div>
+        <h2 class="text-2xl font-bold tabular-nums text-gray-900 mb-1">Rp <?= number_format($totalWalletBalance ?? 0, 0, ',', '.') ?></h2>
+        <p class="text-xs text-gray-500">Across all wallets</p>
+    </div>
+</div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <!-- Recent Transactions -->
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                    <h5 class="text-lg font-bold text-gray-800">Recent Transactions</h5>
-                </div>
-                <div class="p-6">
-                    <?php if (!empty($recentTransactions)): ?>
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Date</th>
-                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Category</th>
-                                        <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    <?php foreach ($recentTransactions as $transaction): ?>
-                                        <tr class="hover:bg-gray-50 transition">
-                                            <td class="px-4 py-3 text-sm text-gray-700"><?= date('M j', strtotime($transaction['date'])) ?></td>
-                                            <td class="px-4 py-3">
-                                                <span class="<?= $transaction['category_type'] === 'income' ? 'badge-success' : 'badge-danger' ?>">
-                                                    <?= htmlspecialchars($transaction['category_name']) ?>
-                                                </span>
-                                            </td>
-                                            <td class="px-4 py-3 text-right tabular-nums">
-                                                <?php if ($transaction['type'] === 'income'): ?>
-                                                    <span class="text-green-600 font-semibold">+<?= number_format($transaction['amount'] ?? 0, 0, ',', '.') ?></span>
-                                                <?php else: ?>
-                                                    <span class="text-red-600 font-semibold">-<?= number_format($transaction['amount'] ?? 0, ',', '.') ?></span>
-                                                <?php endif; ?>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="mt-4">
-                            <a href="/transactions" class="inline-block px-4 py-2 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-700 transition">View All Transactions →</a>
-                        </div>
-                    <?php else: ?>
-                        <p class="text-gray-500 text-center py-8">No transactions found. <a href="/transactions/create" class="text-teal-600 hover:underline">Add your first transaction</a>.</p>
-                    <?php endif; ?>
-                </div>
-            </div>
+<!-- Chart Section -->
+<div class="card-custom p-6 mb-8">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="text-lg font-bold text-gray-900">Income vs Expenses</h3>
+        <button class="text-gray-400 hover:text-gray-600">
+            <i class="ph ph-dots-three text-xl"></i>
+        </button>
+    </div>
+    <div class="chart-container">
+        <canvas id="incomeExpenseChart"></canvas>
+    </div>
+</div>
 
-            <!-- Wallet Balances -->
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                    <h5 class="text-lg font-bold text-gray-800">Wallet Balances</h5>
-                    <span class="px-3 py-1 bg-teal-100 text-teal-700 text-xs font-semibold rounded-full">Total: <?= count($walletBalances ?? []) ?> wallets</span>
-                </div>
-                <div class="p-6">
-                    <?php if (!empty($walletBalances)): ?>
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Wallet</th>
-                                        <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Balance</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    <?php foreach ($walletBalances as $wallet): ?>
-                                        <tr class="hover:bg-gray-50 transition">
-                                            <td class="px-4 py-3 text-sm text-gray-700"><?= htmlspecialchars($wallet['wallet_name']) ?></td>
-                                            <td class="px-4 py-3 text-right tabular-nums">
-                                                <span class="<?= ($wallet['net_balance'] ?? 0) >= 0 ? 'text-green-600' : 'text-red-600' ?> font-semibold">
-                                                    Rp <?= number_format($wallet['net_balance'] ?? 0, 0, ',', '.') ?>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                    <tr class="bg-gray-100 font-bold">
-                                        <td class="px-4 py-3 text-sm">TOTAL</td>
-                                        <td class="px-4 py-3 text-right tabular-nums">Rp <?= number_format($totalWalletBalance ?? 0, 0, ',', '.') ?></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php else: ?>
-                        <p class="text-gray-500 text-center py-8">No wallets found. <a href="/wallets/create" class="text-teal-600 hover:underline">Add your first wallet</a>.</p>
-                    <?php endif; ?>
-                </div>
-            </div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Recent Transactions -->
+    <div class="card-custom overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+            <h5 class="text-base font-bold text-gray-900">Recent Transactions</h5>
+            <a href="/transactions" class="text-sm text-teal-600 hover:text-teal-700 font-medium">View All</a>
         </div>
-
-        <!-- Income/Expense by Category -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Expenses by Category -->
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                    <h5 class="text-lg font-bold text-gray-800">Expenses by Category</h5>
+        <div class="p-0">
+            <?php if (!empty($recentTransactions)): ?>
+                <div class="overflow-x-auto">
+                    <table class="table-custom">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th class="text-right">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($recentTransactions as $transaction): ?>
+                                <tr>
+                                    <td class="text-sm text-gray-600"><?= date('M j', strtotime($transaction['date'])) ?></td>
+                                    <td>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-2 h-2 rounded-full <?= $transaction['category_type'] === 'income' ? 'bg-emerald-500' : 'bg-red-500' ?>"></div>
+                                            <span class="text-sm font-medium text-gray-700"><?= htmlspecialchars($transaction['category_name']) ?></span>
+                                        </div>
+                                    </td>
+                                    <td class="text-right tabular-nums">
+                                        <?php if ($transaction['type'] === 'income'): ?>
+                                            <span class="text-emerald-600 font-medium">+<?= number_format($transaction['amount'] ?? 0, 0, ',', '.') ?></span>
+                                        <?php else: ?>
+                                            <span class="text-red-600 font-medium">-<?= number_format($transaction['amount'] ?? 0, ',', '.') ?></span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="p-6">
-                    <?php if (!empty($expenseByCategory)): ?>
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Category</th>
-                                        <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    <?php foreach ($expenseByCategory as $category): ?>
-                                        <tr class="hover:bg-gray-50 transition">
-                                            <td class="px-4 py-3 text-sm text-gray-700"><?= htmlspecialchars($category['category_name']) ?></td>
-                                            <td class="px-4 py-3 text-right text-red-600 font-semibold tabular-nums">-<?= number_format($category['total_amount'] ?? 0, 0, ',', '.') ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php else: ?>
-                        <p class="text-gray-500 text-center py-8">No expenses for this period.</p>
-                    <?php endif; ?>
+            <?php else: ?>
+                <div class="p-8 text-center">
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-3">
+                        <i class="ph ph-receipt text-gray-400 text-xl"></i>
+                    </div>
+                    <p class="text-gray-500 text-sm">No transactions found.</p>
+                    <a href="/transactions/create" class="text-teal-600 text-sm font-medium hover:underline mt-1 block">Add transaction</a>
                 </div>
-            </div>
-
-            <!-- Income by Category -->
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                    <h5 class="text-lg font-bold text-gray-800">Income by Category</h5>
-                </div>
-                <div class="p-6">
-                    <?php if (!empty($incomeByCategory)): ?>
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Category</th>
-                                        <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    <?php foreach ($incomeByCategory as $category): ?>
-                                        <tr class="hover:bg-gray-50 transition">
-                                            <td class="px-4 py-3 text-sm text-gray-700"><?= htmlspecialchars($category['category_name']) ?></td>
-                                            <td class="px-4 py-3 text-right text-green-600 font-semibold tabular-nums">+<?= number_format($category['total_amount'] ?? 0, 0, ',', '.') ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php else: ?>
-                        <p class="text-gray-500 text-center py-8">No income for this period.</p>
-                    <?php endif; ?>
-                </div>
-            </div>
+            <?php endif; ?>
         </div>
     </div>
 
-    <script>
-        // Chart.js configuration for Income vs Expense
-        const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Income', 'Expenses', 'Net Balance'],
-                datasets: [{
-                    label: 'Amount (Rp)',
-                    data: [
-                        <?= $summary['total_income'] ?? 0 ?>,
-                        <?= $summary['total_expense'] ?? 0 ?>,
-                        <?= $summary['net_balance'] ?? 0 ?>
-                    ],
-                    backgroundColor: [
-                        'rgba(16, 185, 129, 0.8)',  // Green for income
-                        'rgba(239, 68, 68, 0.8)',   // Red for expenses
-                        'rgba(59, 130, 246, 0.8)'   // Blue for net balance
-                    ],
-                    borderColor: [
-                        'rgba(16, 185, 129, 1)',
-                        'rgba(239, 68, 68, 1)',
-                        'rgba(59, 130, 246, 1)'
-                    ],
-                    borderWidth: 2,
-                    borderRadius: 8
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    title: {
-                        display: false
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                label += 'Rp ' + context.parsed.y.toLocaleString('id-ID');
-                                return label;
-                            }
-                        }
-                    }
+    <!-- Wallet Balances -->
+    <div class="card-custom overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+            <h5 class="text-base font-bold text-gray-900">Wallet Balances</h5>
+            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md"><?= count($walletBalances ?? []) ?> Wallets</span>
+        </div>
+        <div class="p-0">
+            <?php if (!empty($walletBalances)): ?>
+                <div class="overflow-x-auto">
+                    <table class="table-custom">
+                        <thead>
+                            <tr>
+                                <th>Wallet</th>
+                                <th class="text-right">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($walletBalances as $wallet): ?>
+                                <tr>
+                                    <td class="font-medium text-gray-700"><?= htmlspecialchars($wallet['wallet_name']) ?></td>
+                                    <td class="text-right tabular-nums">
+                                        <span class="<?= ($wallet['net_balance'] ?? 0) >= 0 ? 'text-gray-900' : 'text-red-600' ?> font-medium">
+                                            Rp <?= number_format($wallet['net_balance'] ?? 0, 0, ',', '.') ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php else: ?>
+                <div class="p-8 text-center">
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-3">
+                        <i class="ph ph-wallet text-gray-400 text-xl"></i>
+                    </div>
+                    <p class="text-gray-500 text-sm">No wallets found.</p>
+                    <a href="/wallets/create" class="text-teal-600 text-sm font-medium hover:underline mt-1 block">Add wallet</a>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<!-- Income/Expense by Category -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Expenses by Category -->
+    <div class="card-custom overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h5 class="text-base font-bold text-gray-900">Expenses by Category</h5>
+        </div>
+        <div class="p-0">
+            <?php if (!empty($expenseByCategory)): ?>
+                <div class="overflow-x-auto">
+                    <table class="table-custom">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th class="text-right">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($expenseByCategory as $category): ?>
+                                <tr>
+                                    <td class="text-gray-700"><?= htmlspecialchars($category['category_name']) ?></td>
+                                    <td class="text-right text-red-600 font-medium tabular-nums">-<?= number_format($category['total_amount'] ?? 0, 0, ',', '.') ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php else: ?>
+                <p class="text-gray-500 text-center py-8 text-sm">No expenses for this period.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Income by Category -->
+    <div class="card-custom overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h5 class="text-base font-bold text-gray-900">Income by Category</h5>
+        </div>
+        <div class="p-0">
+            <?php if (!empty($incomeByCategory)): ?>
+                <div class="overflow-x-auto">
+                    <table class="table-custom">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th class="text-right">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($incomeByCategory as $category): ?>
+                                <tr>
+                                    <td class="text-gray-700"><?= htmlspecialchars($category['category_name']) ?></td>
+                                    <td class="text-right text-emerald-600 font-medium tabular-nums">+<?= number_format($category['total_amount'] ?? 0, 0, ',', '.') ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php else: ?>
+                <p class="text-gray-500 text-center py-8 text-sm">No income for this period.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Chart.js configuration for Income vs Expense
+    const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
+    
+    // Minimalist Chart Config
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = '#6B7280';
+    
+    const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Income', 'Expenses', 'Net Balance'],
+            datasets: [{
+                label: 'Amount (Rp)',
+                data: [
+                    <?= $summary['total_income'] ?? 0 ?>,
+                    <?= $summary['total_expense'] ?? 0 ?>,
+                    <?= $summary['net_balance'] ?? 0 ?>
+                ],
+                backgroundColor: [
+                    '#10B981',  // Emerald 500
+                    '#EF4444',  // Red 500
+                    '#3B82F6'   // Blue 500
+                ],
+                borderRadius: 4,
+                barThickness: 40
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return 'Rp ' + value.toLocaleString('id-ID');
-                            }
+                tooltip: {
+                    backgroundColor: '#1F2937',
+                    padding: 12,
+                    titleFont: {
+                        size: 13,
+                        weight: 600
+                    },
+                    bodyFont: {
+                        size: 12
+                    },
+                    cornerRadius: 8,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return 'Rp ' + context.parsed.y.toLocaleString('id-ID');
                         }
                     }
                 }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#F3F4F6',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            if (value >= 1000000) return (value/1000000).toFixed(1) + 'M';
+                            if (value >= 1000) return (value/1000).toFixed(0) + 'k';
+                            return value;
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false,
+                        drawBorder: false
+                    }
+                }
             }
-        });
-    </script>
-</body>
-</html>
+        }
+    });
+</script>
+
+<?= $this->endSection() ?>
