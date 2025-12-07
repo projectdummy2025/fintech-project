@@ -2,31 +2,87 @@ Runtutan Update UI Proyek Personal Finance
 ==========================================
 
 Berikut adalah langkah-langkah sistematis untuk memperbarui UI aplikasi Personal Finance agar lebih modern, konsisten, dan menarik sesuai dengan analisis kebutuhan.
+Proses ini mencakup aspek aksesibilitas, performa, sistem desain, dan pertimbangan pengalaman pengguna yang komprehensif.
 
-Fase 1: Fondasi Visual & Global Styling
----------------------------------------
+Fase 0: Perencanaan & Audit UI
+------------------------------
+1.  **Audit UI Saat Ini**:
+    *   Evaluasi tampilan dan fungsionalitas UI saat ini.
+    *   Identifikasi masalah utama dalam pengalaman pengguna.
+    *   Kumpulkan feedback dari pengguna terkait UI saat ini.
+    *   Analisis kompetitor untuk referensi best practices.
+2.  **Perencanaan Strategis**:
+    *   Tentukan tujuan utama dari update UI.
+    *   Buat user persona dan user journey untuk panduan desain.
+    *   Tetapkan KPI dan metrik keberhasilan untuk update UI.
+    *   Buat timeline dan milestone untuk implementasi.
+
+Fase 1: Fondasi Visual & Global Styling (Minimalist Professional)
+------------------------------------------------------------------
 1.  **Setup Tipografi & Warna**:
-    *   Import Google Fonts (Inter/Poppins untuk UI, Monospace untuk angka).
-    *   Definisikan CSS Variables untuk palet warna baru (Teal/Cyan atau Deep Purple sebagai primary).
+    *   Import Google Fonts: **Inter** untuk UI (primary), **Roboto Mono** untuk angka/data keuangan.
+    *   Definisikan CSS Variables untuk palet warna minimalis profesional:
+        - Primary: Deep Teal (#0F766E) - muted, trustworthy, professional
+        - Background: Soft Gray (#F9FAFB) dan White (#FFFFFF)
+        - Text: Dark Gray (#111827) untuk headings, Medium Gray (#6B7280) untuk body
+        - Semantic: Emerald (#059669), Red (#DC2626), Blue (#2563EB) - muted tones
     *   Buat utility classes untuk spacing yang konsisten (4px, 8px, 16px, dst).
+    *   Tentukan standar kontras warna minimal 4.5:1 untuk teks normal dan 3:1 untuk teks besar sesuai WCAG.
+    *   Rancang skala tipografi yang responsif dan dapat diakses (font scale).
+    *   Terapkan strategi font loading (preload, font-display: swap) untuk menghindari FOUT/FOIT.
+    *   **Prinsip Desain**: Minimalis, bersih, profesional - hindari warna-warna vibrant/colorful, gunakan monochrome icons.
 2.  **Global Styles**:
     *   Update `body` background color (gunakan soft gray atau gradient halus).
     *   Perbaiki styling dasar untuk headings dan paragraphs.
     *   Implementasi custom scrollbar.
+3.  **Aksesibilitas Dasar**:
+    *   Rancang sistem fokus indikator yang jelas dan konsisten di seluruh aplikasi.
+    *   Gunakan elemen HTML yang semantik untuk membantu teknologi assistif.
+    *   Siapkan struktur untuk ARIA labels, roles, dan properties di seluruh aplikasi.
+    *   Pastikan kontras warna memenuhi standar aksesibilitas (sudah ditentukan di no. 1).
+4.  **Pertimbangan Performa**:
+    *   Optimasi gambar (format modern seperti WebP/AVIF, lazy loading, ukuran yang tepat).
+    *   Implementasi critical CSS untuk halaman-halaman utama.
+    *   Gunakan CSS minification dan compression.
+    *   Terapkan strategi pengelolaan bundle size untuk CSS dan JavaScript.
+5.  **Sistem Desain & Arsitektur CSS**:
+    *   Tetapkan metodologi CSS (seperti BEM, OOCSS, atau ITCSS) untuk organisasi kode.
+    *   Buat sistem design tokens untuk manajemen variabel visual secara konsisten.
+    *   Rancang struktur folder dan pengorganisasian file CSS yang skalabel.
+    *   Buat dokumentasi komponen UI yang dapat digunakan berulang kali.
+6.  **Internasionalisasi (i18n) & Lokalisasi (l10n)**:
+    *   Persiapkan sistem untuk mendukung penanganan teks dari berbagai bahasa.
+    *   Tentukan pendekatan untuk format lokal (tanggal, angka, mata uang).
+    *   Rencanakan dukungan untuk bahasa dengan arah teks kanan-ke-kiri (RTL).
+    *   Pertimbangkan ekspansi teks/kontraksi dalam desain UI.
+7.  **Keamanan UI**:
+    *   Implementasi UI patterns yang membantu mencegah phishing dan serangan sosial.
+    *   Gunakan sanitasi input visual untuk memberi indikasi keamanan kepada pengguna.
+    *   Rancang feedback visual untuk keamanan akun dan transaksi.
+    *   Pastikan perlindungan terhadap UI redressing attacks.
 
 Fase 2: Komponen UI Reusable
 ----------------------------
 3.  **Buttons & Inputs**:
     *   Update style tombol (border-radius, padding, shadow, hover effects).
     *   Modernisasi input fields (border, focus states, floating labels jika perlu).
+    *   Rancang loading state untuk tombol (spinner, disabled state).
 4.  **Cards & Containers**:
     *   Buat style card standar dengan shadow yang lebih halus dan border-radius yang konsisten.
     *   Tambahkan variasi card dengan gradient background.
+    *   Siapkan empty state untuk cards yang menampilkan data dinamis.
 5.  **Tables & Badges**:
     *   Styling tabel data (hover rows, sticky header, padding sel yang lebih lega).
     *   Update tampilan badges (pill shape, warna soft dengan text kontras).
+    *   Implementasi loading state untuk tabel (skeleton screens).
+    *   Desain empty state dan error state untuk tabel data.
 6.  **Alerts & Toasts**:
     *   Ganti alert standar Bootstrap dengan style yang lebih modern (border-left accent, icon).
+7.  **UX States**:
+    *   Standarisasi loading states di seluruh komponen (skeleton screens, spinners).
+    *   Desain error states yang konsisten untuk forms dan data fetching.
+    *   Buat empty states yang informatif untuk berbagai komponen UI.
+    *   Implementasi placeholder content untuk area dengan konten dinamis.
 
 Fase 3: Layout Utama (Navbar & Footer)
 --------------------------------------
@@ -63,10 +119,14 @@ Fase 6: Halaman Transaksi (Transactions)
 13. **List View**:
     *   Implementasi filter yang lebih rapi (mungkin dalam offcanvas atau collapsible card).
     *   Perbaiki tampilan tabel transaksi (format mata uang yang jelas, warna untuk income/expense).
+    *   Terapkan strategi pagination untuk menangani volume data yang besar.
+    *   Gunakan virtual scrolling jika diperlukan untuk efisiensi rendering.
 14. **Create/Edit Form**:
     *   Ubah layout form menjadi 2 kolom di desktop.
     *   Tambahkan prefix "Rp" pada input amount.
     *   Berikan visual feedback real-time pada validasi form.
+    *   Terapkan strategi validasi inline dengan pesan error yang jelas dan accessible.
+    *   Tambahkan loading state saat submit untuk memberi feedback bahwa permintaan sedang diproses.
 
 Fase 7: Halaman Dompet (Wallets)
 --------------------------------
@@ -93,6 +153,16 @@ Fase 9: Finishing & Polish
     *   Tambahkan animasi loading saat submit form.
 20. **Responsiveness Check**:
     *   Pastikan tampilan rapi di berbagai ukuran layar (Mobile, Tablet, Desktop).
-21. **Final Review**:
+21. **Testing UI**:
+    *   Lakukan visual regression testing untuk mendeteksi perubahan tampilan yang tidak diinginkan.
+    *   Uji kompatibilitas cross-browser (Chrome, Firefox, Safari, Edge).
+    *   Lakukan accessibility testing menggunakan alat otomatis dan manual.
+    *   Lakukan user testing untuk memastikan UI intuitif dan mudah digunakan.
+22. **Final Review**:
     *   Cek konsistensi margin dan padding di seluruh aplikasi.
     *   Pastikan kontras warna memenuhi standar aksesibilitas.
+23. **Dokumentasi & Maintenance**:
+    *   Dokumentasikan semua keputusan desain dan alasan di baliknya.
+    *   Buat proses handoff antara tim desain dan pengembangan.
+    *   Tetapkan siklus feedback untuk perbaikan UI yang berkelanjutan.
+    *   Rencanakan maintenance dan versioning untuk komponen UI.
