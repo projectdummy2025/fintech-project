@@ -1,60 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?> - Personal Finance</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/public/custom.css">
-</head>
-<body class="bg-gray-50">
-    <nav class="bg-gradient-to-r from-teal-600 to-cyan-600 shadow-lg">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center py-4">
-                <a href="/" class="text-white text-2xl font-bold">💰 Personal Finance</a>
-                <div class="flex space-x-6">
-                    <a href="/dashboard" class="text-teal-100 hover:text-white transition">Dashboard</a>
-                    <a href="/wallets" class="text-white font-semibold border-b-2 border-white pb-1">Wallets</a>
-                    <a href="/categories" class="text-teal-100 hover:text-white transition">Categories</a>
-                    <a href="/transactions" class="text-teal-100 hover:text-white transition">Transactions</a>
-                    <a href="/logout" class="text-teal-100 hover:text-white transition">Logout</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+<?= $this->extend('layout/main') ?>
 
-    <div class="container mx-auto px-4 py-8 max-w-2xl">
-        <h1 class="text-3xl font-bold text-gray-800 mb-8"><?= $title ?></h1>
+<?= $this->section('content') ?>
 
-        <?php if (isset($error)): ?>
-            <div class="alert-custom alert-danger mb-6">
-                <p class="font-medium"><?= $error ?></p>
-            </div>
-        <?php endif; ?>
-
-        <?php if (isset($success)): ?>
-            <div class="alert-custom alert-success mb-6">
-                <p class="font-medium"><?= $success ?></p>
-            </div>
-        <?php endif; ?>
-
-        <div class="bg-white rounded-xl shadow-md p-8">
-            <form method="post" class="space-y-6">
-                <?= $csrf_field ?>
-                <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Wallet Name</label>
-                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500" id="name" name="name" value="<?= htmlspecialchars($_POST['name'] ?? '') ?>" required placeholder="e.g., Cash, Bank Account, Credit Card">
-                </div>
-                <div>
-                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
-                    <textarea class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500" id="description" name="description" rows="3" placeholder="Add a description for this wallet..."><?= htmlspecialchars($_POST['description'] ?? '') ?></textarea>
-                </div>
-                <div class="flex gap-4 pt-4">
-                    <button type="submit" class="px-8 py-3 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition shadow-md">Create Wallet</button>
-                    <a href="/wallets" class="px-8 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition">Cancel</a>
-                </div>
-            </form>
-        </div>
+<div class="max-w-2xl mx-auto">
+    <div class="flex items-center gap-4 mb-8">
+        <a href="/wallets" class="p-2 hover:bg-gray-100 rounded-lg transition">
+            <i class="ph ph-arrow-left text-xl text-gray-600"></i>
+        </a>
+        <h1 class="text-2xl font-bold text-gray-900"><?= $title ?></h1>
     </div>
-</body>
-</html>
+
+    <?php if (isset($error)): ?>
+        <div class="alert-custom alert-danger mb-6">
+            <i class="ph-fill ph-warning-circle text-xl"></i>
+            <p class="font-medium text-sm"><?= $error ?></p>
+        </div>
+    <?php endif; ?>
+
+    <?php if (isset($success)): ?>
+        <div class="alert-custom alert-success mb-6">
+            <i class="ph-fill ph-check-circle text-xl"></i>
+            <p class="font-medium text-sm"><?= $success ?></p>
+        </div>
+    <?php endif; ?>
+
+    <div class="card-custom p-8">
+        <form method="post" class="space-y-6">
+            <?= $csrf_field ?>
+            
+            <div>
+                <label for="name" class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Wallet Name</label>
+                <input type="text" class="input-custom" id="name" name="name" value="<?= htmlspecialchars($_POST['name'] ?? '') ?>" required placeholder="e.g., Cash, Bank Account, Credit Card">
+            </div>
+            
+            <div>
+                <label for="description" class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Description (Optional)</label>
+                <textarea class="input-custom" id="description" name="description" rows="3" placeholder="Add a description for this wallet..."><?= htmlspecialchars($_POST['description'] ?? '') ?></textarea>
+            </div>
+            
+            <div class="flex gap-3 pt-4 border-t border-gray-200">
+                <button type="submit" class="btn btn-primary">
+                    <i class="ph-bold ph-plus-circle"></i>
+                    Create Wallet
+                </button>
+                <a href="/wallets" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<?= $this->endSection() ?>
