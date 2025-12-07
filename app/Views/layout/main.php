@@ -27,12 +27,15 @@
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased">
     
+    <!-- Skip to Main Content - Accessibility -->
+    <a href="#main-content" class="skip-to-main">Skip to main content</a>
+    
     <!-- Navbar -->
-    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50" role="navigation" aria-label="Main navigation">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <a href="/" class="flex-shrink-0 flex items-center gap-2">
+                    <a href="/" class="flex-shrink-0 flex items-center gap-2" aria-label="Personal Finance Home">
                         <i class="ph-fill ph-wallet text-teal-700 text-2xl"></i>
                         <span class="font-bold text-xl tracking-tight text-gray-900">Personal Finance</span>
                     </a>
@@ -41,29 +44,29 @@
                         $uri = service('uri');
                         $currentSegment = $uri->getSegment(1); 
                         ?>
-                        <a href="/dashboard" class="<?= ($currentSegment == 'dashboard' || $currentSegment == '') ? 'border-teal-600 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
+                        <a href="/dashboard" class="<?= ($currentSegment == 'dashboard' || $currentSegment == '') ? 'border-teal-600 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200" <?= ($currentSegment == 'dashboard' || $currentSegment == '') ? 'aria-current="page"' : '' ?>>
                             Dashboard
                         </a>
-                        <a href="/wallets" class="<?= $currentSegment == 'wallets' ? 'border-teal-600 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
+                        <a href="/wallets" class="<?= $currentSegment == 'wallets' ? 'border-teal-600 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200" <?= $currentSegment == 'wallets' ? 'aria-current="page"' : '' ?>>
                             Wallets
                         </a>
-                        <a href="/categories" class="<?= $currentSegment == 'categories' ? 'border-teal-600 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
+                        <a href="/categories" class="<?= $currentSegment == 'categories' ? 'border-teal-600 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200" <?= $currentSegment == 'categories' ? 'aria-current="page"' : '' ?>>
                             Categories
                         </a>
-                        <a href="/transactions" class="<?= $currentSegment == 'transactions' ? 'border-teal-600 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
+                        <a href="/transactions" class="<?= $currentSegment == 'transactions' ? 'border-teal-600 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200" <?= $currentSegment == 'transactions' ? 'aria-current="page"' : '' ?>>
                             Transactions
                         </a>
                     </div>
                 </div>
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <a href="/transactions/create" class="relative inline-flex items-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-teal-700 shadow-sm hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-600 transition-all duration-200">
+                        <a href="/transactions/create" class="relative inline-flex items-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-teal-700 shadow-sm hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-600 transition-all duration-200" aria-label="Create new transaction">
                             <i class="ph ph-plus-circle text-lg"></i>
                             <span>New Transaction</span>
                         </a>
                     </div>
                     <div class="ml-4 flex items-center md:ml-6">
-                        <a href="/logout" class="p-2 text-gray-400 hover:text-gray-600 transition-colors duration-200" title="Logout">
+                        <a href="/logout" class="p-2 text-gray-400 hover:text-gray-600 transition-colors duration-200" title="Logout" aria-label="Logout from application">
                             <i class="ph ph-sign-out text-xl"></i>
                         </a>
                     </div>
@@ -72,7 +75,7 @@
         </div>
         
         <!-- Mobile menu, show/hide based on menu state. -->
-        <div class="sm:hidden border-t border-gray-200" id="mobile-menu">
+        <div class="sm:hidden border-t border-gray-200" id="mobile-menu" role="navigation" aria-label="Mobile navigation">
             <div class="pt-2 pb-3 space-y-1">
                 <a href="/dashboard" class="bg-teal-50 border-teal-500 text-teal-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Dashboard</a>
                 <a href="/wallets" class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Wallets</a>
@@ -83,14 +86,14 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="py-10">
+    <main id="main-content" class="py-10" role="main">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <?= $this->renderSection('content') ?>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-auto">
+    <footer class="bg-white border-t border-gray-200 mt-auto" role="contentinfo">
         <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
             <p class="text-center text-sm text-gray-500">
                 &copy; <?= date('Y') ?> Personal Finance App. Minimalist & Professional.

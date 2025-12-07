@@ -27,21 +27,21 @@
                 <div class="inline-flex items-center justify-center w-16 h-16 bg-teal-700 rounded-2xl mb-4">
                     <i class="ph-fill ph-wallet text-white text-3xl"></i>
                 </div>
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2" id="login-heading">Welcome Back</h1>
                 <p class="text-gray-500">Login to manage your finances</p>
             </div>
 
             <!-- Card -->
-            <div class="card-custom p-8">
+            <div class="card-custom p-8" role="region" aria-labelledby="login-heading">
                 <?php if (!empty($error)): ?>
-                    <div class="alert-custom alert-danger mb-6">
+                    <div class="alert-custom alert-danger mb-6" role="alert" aria-live="polite">
                         <i class="ph-fill ph-warning-circle text-xl"></i>
                         <p class="font-medium text-sm"><?= htmlspecialchars($error) ?></p>
                     </div>
                 <?php endif; ?>
 
                 <?php if (!empty($success)): ?>
-                    <div class="alert-custom alert-success mb-6">
+                    <div class="alert-custom alert-success mb-6" role="alert" aria-live="polite">
                         <i class="ph-fill ph-check-circle text-xl"></i>
                         <p class="font-medium text-sm"><?= htmlspecialchars($success) ?></p>
                     </div>
@@ -63,6 +63,8 @@
                             autofocus
                             class="input-custom"
                             placeholder="Enter your username or email"
+                            aria-label="Username or email address"
+                            aria-required="true"
                         >
                     </div>
 
@@ -79,12 +81,15 @@
                                 required
                                 class="input-custom pr-12"
                                 placeholder="Enter your password"
+                                aria-label="Password"
+                                aria-required="true"
                             >
                             <button 
                                 type="button" 
                                 onclick="togglePassword()"
                                 class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition p-1"
                                 title="Toggle password visibility"
+                                aria-label="Toggle password visibility"
                             >
                                 <i id="eye-icon" class="ph ph-eye text-xl"></i>
                             </button>

@@ -45,7 +45,19 @@
   --color-border: #E5E7EB;
   /* Gray 200 */
 
-  /* Spacing & Radius */
+  /* Spacing Scale - Consistent spacing system */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+
+  /* Border Radius */
   --radius-sm: 0.375rem;
   /* 6px */
   --radius-md: 0.5rem;
@@ -57,6 +69,26 @@
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+
+  /* Typography Scale - Responsive & Accessible */
+  --font-size-xs: 0.75rem;     /* 12px */
+  --font-size-sm: 0.875rem;    /* 14px */
+  --font-size-base: 0.9375rem; /* 15px */
+  --font-size-lg: 1.125rem;    /* 18px */
+  --font-size-xl: 1.25rem;     /* 20px */
+  --font-size-2xl: 1.5rem;     /* 24px */
+  --font-size-3xl: 1.875rem;   /* 30px */
+  --font-size-4xl: 2.25rem;    /* 36px */
+
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Focus Ring - Accessible focus indicator */
+  --focus-ring-color: rgba(15, 118, 110, 0.5);
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
 }
 
 /* Global Styles */
@@ -97,6 +129,66 @@ h6 {
   font-feature-settings: 'tnum';
   letter-spacing: -0.05em;
 }
+
+/* ===================================
+   UTILITY CLASSES
+   =================================== */
+
+/* Spacing Utilities */
+.m-0 { margin: 0; }
+.m-1 { margin: var(--space-1); }
+.m-2 { margin: var(--space-2); }
+.m-3 { margin: var(--space-3); }
+.m-4 { margin: var(--space-4); }
+.m-6 { margin: var(--space-6); }
+.m-8 { margin: var(--space-8); }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: var(--space-1); }
+.mt-2 { margin-top: var(--space-2); }
+.mt-3 { margin-top: var(--space-3); }
+.mt-4 { margin-top: var(--space-4); }
+.mt-6 { margin-top: var(--space-6); }
+.mt-8 { margin-top: var(--space-8); }
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: var(--space-1); }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-3 { margin-bottom: var(--space-3); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-6 { margin-bottom: var(--space-6); }
+.mb-8 { margin-bottom: var(--space-8); }
+
+.p-0 { padding: 0; }
+.p-1 { padding: var(--space-1); }
+.p-2 { padding: var(--space-2); }
+.p-3 { padding: var(--space-3); }
+.p-4 { padding: var(--space-4); }
+.p-6 { padding: var(--space-6); }
+.p-8 { padding: var(--space-8); }
+
+.pt-4 { padding-top: var(--space-4); }
+.pb-4 { padding-bottom: var(--space-4); }
+.px-4 { padding-left: var(--space-4); padding-right: var(--space-4); }
+.py-4 { padding-top: var(--space-4); padding-bottom: var(--space-4); }
+
+/* Typography Utilities */
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+.text-2xl { font-size: var(--font-size-2xl); }
+.text-3xl { font-size: var(--font-size-3xl); }
+
+.font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+
+.leading-tight { line-height: var(--line-height-tight); }
+.leading-normal { line-height: var(--line-height-normal); }
+.leading-relaxed { line-height: var(--line-height-relaxed); }
 
 /* Card Styles - Minimalist */
 .card-custom {
@@ -166,6 +258,44 @@ h6 {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
   /* Teal focus ring */
+}
+
+/* ===================================
+   ACCESSIBILITY - FOCUS STATES
+   =================================== */
+
+/* Global focus-visible for better keyboard navigation */
+*:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Button focus states */
+.btn:focus-visible,
+button:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Link focus states */
+a:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-sm);
+}
+
+/* Input focus states - override default */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
+}
+
+/* Remove focus for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* Table Styling - Clean & Spacious */
@@ -266,6 +396,12 @@ h6 {
   background: #9CA3AF;
 }
 
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #D1D5DB transparent;
+}
+
 /* Chart Container */
 .chart-container {
   position: relative;
@@ -280,4 +416,88 @@ h6 {
 
 .font-mono {
   font-family: 'Roboto Mono', monospace;
+}
+}
+
+/* ===================================
+   SECURITY UI INDICATORS
+   =================================== */
+
+/* Secure connection indicator */
+.secure-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+}
+
+/* Security warning for sensitive actions */
+.security-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: var(--color-warning-bg);
+  border-left: 4px solid var(--color-warning);
+  border-radius: var(--radius-md);
+  margin-bottom: 1rem;
+}
+
+.security-warning-icon {
+  flex-shrink: 0;
+  color: var(--color-warning);
+  font-size: 1.25rem;
+}
+
+.security-warning-content {
+  flex: 1;
+}
+
+.security-warning-title {
+  font-weight: 600;
+  color: var(--color-warning);
+  margin-bottom: 0.25rem;
+  font-size: var(--font-size-sm);
+}
+
+.security-warning-text {
+  color: #92400E;
+  font-size: var(--font-size-sm);
+}
+
+/* Critical action confirmation */
+.critical-action-badge {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Skip to main content link - for accessibility */
+.skip-to-main {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-primary);
+  color: white;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  border-radius: 0 0 var(--radius-md) 0;
+  z-index: 9999;
+  font-weight: 500;
+}
+
+.skip-to-main:focus {
+  top: 0;
 }
