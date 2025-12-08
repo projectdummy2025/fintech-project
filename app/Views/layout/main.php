@@ -60,13 +60,13 @@
                 </div>
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <a href="/transactions/create" class="relative inline-flex items-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-teal-700 shadow-sm hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-600 transition-all duration-200" aria-label="Create new transaction">
+                        <a href="/transactions/create" class="btn btn-primary" aria-label="Create new transaction">
                             <i class="ph ph-plus-circle text-lg"></i>
                             <span>New Transaction</span>
                         </a>
                     </div>
                     <div class="ml-4 flex items-center md:ml-6">
-                        <a href="/logout" class="p-2 text-gray-400 hover:text-gray-600 transition-colors duration-200" title="Logout" aria-label="Logout from application">
+                        <a href="/logout" class="btn btn-ghost p-2" title="Logout" aria-label="Logout from application">
                             <i class="ph ph-sign-out text-xl"></i>
                         </a>
                     </div>

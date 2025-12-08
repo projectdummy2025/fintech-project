@@ -71,7 +71,7 @@
             
             <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                 <h1 class="text-2xl font-bold text-gray-900"><?= $title ?></h1>
-                <button @click="openCreateModal()" class="inline-flex items-center gap-2 px-4 py-2 bg-teal-700 text-white text-sm font-medium rounded-lg hover:bg-teal-800 transition shadow-sm">
+                <button @click="openCreateModal()" class="btn btn-primary">
                     <i class="ph-bold ph-plus"></i>
                     Add Category
                 </button>
@@ -124,10 +124,10 @@
                                             <td class="px-6 py-4 font-medium text-gray-700"><?= htmlspecialchars($category['name']) ?></td>
                                             <td class="px-6 py-4 text-center">
                                                 <div class="flex items-center justify-center gap-2">
-                                                    <button @click="openEditModal(<?= $category['id'] ?>, '<?= htmlspecialchars($category['name'], ENT_QUOTES) ?>', '<?= $category['type'] ?>')" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition" title="Edit">
+                                                    <button @click="openEditModal(<?= $category['id'] ?>, '<?= htmlspecialchars($category['name'], ENT_QUOTES) ?>', '<?= $category['type'] ?>')" class="btn btn-ghost p-1.5 text-blue-600 hover:bg-blue-50" title="Edit">
                                                         <i class="ph ph-pencil-simple text-lg"></i>
                                                     </button>
-                                                    <a href="/categories/delete/<?= $category['id'] ?>" class="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition" onclick="return confirm('Are you sure?')" title="Delete">
+                                                    <a href="/categories/delete/<?= $category['id'] ?>" class="btn btn-ghost p-1.5 text-red-600 hover:bg-red-50" onclick="return confirm('Are you sure?')" title="Delete">
                                                         <i class="ph ph-trash text-lg"></i>
                                                     </a>
                                                 </div>
@@ -173,10 +173,10 @@
                                             <td class="px-6 py-4 font-medium text-gray-700"><?= htmlspecialchars($category['name']) ?></td>
                                             <td class="px-6 py-4 text-center">
                                                 <div class="flex items-center justify-center gap-2">
-                                                    <button @click="openEditModal(<?= $category['id'] ?>, '<?= htmlspecialchars($category['name'], ENT_QUOTES) ?>', '<?= $category['type'] ?>')" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition" title="Edit">
+                                                    <button @click="openEditModal(<?= $category['id'] ?>, '<?= htmlspecialchars($category['name'], ENT_QUOTES) ?>', '<?= $category['type'] ?>')" class="btn btn-ghost p-1.5 text-blue-600 hover:bg-blue-50" title="Edit">
                                                         <i class="ph ph-pencil-simple text-lg"></i>
                                                     </button>
-                                                    <a href="/categories/delete/<?= $category['id'] ?>" class="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition" onclick="return confirm('Are you sure?')" title="Delete">
+                                                    <a href="/categories/delete/<?= $category['id'] ?>" class="btn btn-ghost p-1.5 text-red-600 hover:bg-red-50" onclick="return confirm('Are you sure?')" title="Delete">
                                                         <i class="ph ph-trash text-lg"></i>
                                                     </a>
                                                 </div>
@@ -249,24 +249,24 @@
                     </div>
                     
                     <!-- Category Name -->
-                    <div class="mb-4">
-                        <label for="modal-name" class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Category Name</label>
+                    <div class="form-group">
+                        <label for="modal-name" class="form-label">Category Name</label>
                         <input type="text" 
                                id="modal-name" 
                                name="name" 
                                x-model="formName"
-                               class="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition"
+                               class="input-custom"
                                placeholder="e.g., Salary, Groceries"
                                required>
                     </div>
                     
                     <!-- Category Type -->
-                    <div class="mb-6">
-                        <label for="modal-type" class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Category Type</label>
+                    <div class="form-group mb-6">
+                        <label for="modal-type" class="form-label">Category Type</label>
                         <select id="modal-type" 
                                 name="type" 
                                 x-model="formType"
-                                class="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition"
+                                class="input-custom"
                                 required>
                             <option value="">Select Type</option>
                             <option value="income">Income</option>
@@ -277,13 +277,13 @@
                     <!-- Modal Actions -->
                     <div class="flex gap-3">
                         <button type="submit" 
-                                class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-teal-700 text-white text-sm font-medium rounded-lg hover:bg-teal-800 transition">
+                                class="btn btn-primary flex-1">
                             <i class="ph-bold" :class="isEditMode ? 'ph-check-circle' : 'ph-plus-circle'"></i>
                             <span x-text="isEditMode ? 'Update' : 'Create'"></span>
                         </button>
                         <button type="button" 
                                 @click="closeModal()"
-                                class="px-4 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition">
+                                class="btn btn-secondary">
                             Cancel
                         </button>
                     </div>
