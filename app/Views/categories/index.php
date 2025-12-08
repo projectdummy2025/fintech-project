@@ -96,7 +96,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <!-- Income Categories -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="card-custom overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 bg-emerald-50/50 flex justify-between items-center">
                         <div class="flex items-center gap-2">
                             <i class="ph-fill ph-arrow-circle-down-left text-emerald-600 text-xl"></i>
@@ -137,15 +137,19 @@
                                 </tbody>
                             </table>
                         <?php else: ?>
-                            <div class="p-8 text-center text-gray-500 text-sm">
-                                No income categories found.
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i class="ph ph-folder-open"></i>
+                                </div>
+                                <h4 class="empty-state-title">No Income Categories</h4>
+                                <p class="empty-state-text">You haven't created any income categories yet. Click the button above to add one.</p>
                             </div>
                         <?php endif; ?>
                     </div>
                 </div>
 
                 <!-- Expense Categories -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="card-custom overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 bg-red-50/50 flex justify-between items-center">
                         <div class="flex items-center gap-2">
                             <i class="ph-fill ph-arrow-circle-up-right text-red-600 text-xl"></i>
@@ -186,8 +190,12 @@
                                 </tbody>
                             </table>
                         <?php else: ?>
-                            <div class="p-8 text-center text-gray-500 text-sm">
-                                No expense categories found.
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i class="ph ph-folder-open"></i>
+                                </div>
+                                <h4 class="empty-state-title">No Expense Categories</h4>
+                                <p class="empty-state-text">You haven't created any expense categories yet. Click the button above to add one.</p>
                             </div>
                         <?php endif; ?>
                     </div>

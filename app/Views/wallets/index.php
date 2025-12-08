@@ -37,10 +37,10 @@
                         <i class="ph-fill ph-wallet text-teal-700 text-2xl"></i>
                     </div>
                     <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <a href="/wallets/edit/<?= $wallet['id'] ?>" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition" title="Edit">
+                        <a href="/wallets/edit/<?= $wallet['id'] ?>" class="btn btn-ghost p-1.5 text-blue-600 hover:bg-blue-50" title="Edit">
                             <i class="ph ph-pencil-simple text-lg"></i>
                         </a>
-                        <a href="/wallets/delete/<?= $wallet['id'] ?>" class="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition" title="Delete">
+                        <a href="/wallets/delete/<?= $wallet['id'] ?>" class="btn btn-ghost p-1.5 text-red-600 hover:bg-red-50" title="Delete">
                             <i class="ph ph-trash text-lg"></i>
                         </a>
                     </div>
@@ -65,13 +65,15 @@
         </a>
     </div>
 <?php else: ?>
-    <div class="card-custom p-12 text-center max-w-lg mx-auto">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-teal-50 mb-4">
-            <i class="ph-fill ph-wallet text-teal-600 text-3xl"></i>
+    <div class="card-custom max-w-lg mx-auto">
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="ph-fill ph-wallet"></i>
+            </div>
+            <h4 class="empty-state-title">No Wallets Yet</h4>
+            <p class="empty-state-text">Create your first wallet to start tracking your finances.</p>
+            <a href="/wallets/create" class="btn btn-primary mt-4">Create Wallet</a>
         </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-2">No Wallets Yet</h3>
-        <p class="text-gray-500 mb-6">Create your first wallet to start tracking your finances.</p>
-        <a href="/wallets/create" class="btn btn-primary w-full justify-center">Create Wallet</a>
     </div>
 <?php endif; ?>
 

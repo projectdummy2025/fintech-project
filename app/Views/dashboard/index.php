@@ -128,12 +128,13 @@
                     </table>
                 </div>
             <?php else: ?>
-                <div class="p-8 text-center">
-                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-3">
-                        <i class="ph ph-receipt text-gray-400 text-xl"></i>
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="ph ph-receipt"></i>
                     </div>
-                    <p class="text-gray-500 text-sm">No transactions found.</p>
-                    <a href="/transactions/create" class="text-teal-600 text-sm font-medium hover:underline mt-1 block">Add transaction</a>
+                    <h4 class="empty-state-title">No Transactions Yet</h4>
+                    <p class="empty-state-text">Start tracking your finances by adding your first transaction.</p>
+                    <a href="/transactions/create" class="btn btn-primary btn-sm mt-4">Add Transaction</a>
                 </div>
             <?php endif; ?>
         </div>
@@ -170,12 +171,13 @@
                     </table>
                 </div>
             <?php else: ?>
-                <div class="p-8 text-center">
-                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-3">
-                        <i class="ph ph-wallet text-gray-400 text-xl"></i>
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="ph ph-wallet"></i>
                     </div>
-                    <p class="text-gray-500 text-sm">No wallets found.</p>
-                    <a href="/wallets/create" class="text-teal-600 text-sm font-medium hover:underline mt-1 block">Add wallet</a>
+                    <h4 class="empty-state-title">No Wallets Yet</h4>
+                    <p class="empty-state-text">Create your first wallet to start managing your finances.</p>
+                    <a href="/wallets/create" class="btn btn-primary btn-sm mt-4">Add Wallet</a>
                 </div>
             <?php endif; ?>
         </div>
@@ -210,7 +212,12 @@
                     </table>
                 </div>
             <?php else: ?>
-                <p class="text-gray-500 text-center py-8 text-sm">No expenses for this period.</p>
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="ph ph-chart-bar"></i>
+                    </div>
+                    <p class="empty-state-text">No expenses for this period.</p>
+                </div>
             <?php endif; ?>
         </div>
     </div>
@@ -241,7 +248,12 @@
                     </table>
                 </div>
             <?php else: ?>
-                <p class="text-gray-500 text-center py-8 text-sm">No income for this period.</p>
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="ph ph-chart-bar"></i>
+                    </div>
+                    <p class="empty-state-text">No income for this period.</p>
+                </div>
             <?php endif; ?>
         </div>
     </div>
