@@ -102,7 +102,7 @@
                             <i class="ph-fill ph-arrow-circle-down-left text-emerald-600 text-xl"></i>
                             <h5 class="text-base font-bold text-gray-900">Income Categories</h5>
                         </div>
-                        <span class="text-xs font-medium text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">
+                        <span class="badge badge-success">
                             <?= count(array_filter($categories, fn($c) => $c['type'] === 'income')) ?> Items
                         </span>
                     </div>
@@ -111,18 +111,18 @@
                         $incomeCategories = array_filter($categories, fn($c) => $c['type'] === 'income');
                         if (!empty($incomeCategories)): 
                         ?>
-                            <table class="w-full">
-                                <thead class="bg-gray-50 border-b border-gray-200">
+                            <table class="table-custom">
+                                <thead>
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
-                                        <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">Actions</th>
+                                        <th>Name</th>
+                                        <th class="text-center w-24">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-100">
                                     <?php foreach ($incomeCategories as $category): ?>
-                                        <tr class="hover:bg-gray-50 transition">
-                                            <td class="px-6 py-4 font-medium text-gray-700"><?= htmlspecialchars($category['name']) ?></td>
-                                            <td class="px-6 py-4 text-center">
+                                        <tr>
+                                            <td class="font-medium text-gray-700"><?= htmlspecialchars($category['name']) ?></td>
+                                            <td class="text-center">
                                                 <div class="flex items-center justify-center gap-2">
                                                     <button @click="openEditModal(<?= $category['id'] ?>, '<?= htmlspecialchars($category['name'], ENT_QUOTES) ?>', '<?= $category['type'] ?>')" class="btn btn-ghost p-1.5 text-blue-600 hover:bg-blue-50" title="Edit">
                                                         <i class="ph ph-pencil-simple text-lg"></i>
@@ -155,7 +155,7 @@
                             <i class="ph-fill ph-arrow-circle-up-right text-red-600 text-xl"></i>
                             <h5 class="text-base font-bold text-gray-900">Expense Categories</h5>
                         </div>
-                        <span class="text-xs font-medium text-red-700 bg-red-100 px-2 py-1 rounded-full">
+                        <span class="badge badge-danger">
                             <?= count(array_filter($categories, fn($c) => $c['type'] === 'expense')) ?> Items
                         </span>
                     </div>
@@ -164,18 +164,18 @@
                         $expenseCategories = array_filter($categories, fn($c) => $c['type'] === 'expense');
                         if (!empty($expenseCategories)): 
                         ?>
-                            <table class="w-full">
-                                <thead class="bg-gray-50 border-b border-gray-200">
+                            <table class="table-custom">
+                                <thead>
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
-                                        <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">Actions</th>
+                                        <th>Name</th>
+                                        <th class="text-center w-24">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-100">
                                     <?php foreach ($expenseCategories as $category): ?>
-                                        <tr class="hover:bg-gray-50 transition">
-                                            <td class="px-6 py-4 font-medium text-gray-700"><?= htmlspecialchars($category['name']) ?></td>
-                                            <td class="px-6 py-4 text-center">
+                                        <tr>
+                                            <td class="font-medium text-gray-700"><?= htmlspecialchars($category['name']) ?></td>
+                                            <td class="text-center">
                                                 <div class="flex items-center justify-center gap-2">
                                                     <button @click="openEditModal(<?= $category['id'] ?>, '<?= htmlspecialchars($category['name'], ENT_QUOTES) ?>', '<?= $category['type'] ?>')" class="btn btn-ghost p-1.5 text-blue-600 hover:bg-blue-50" title="Edit">
                                                         <i class="ph ph-pencil-simple text-lg"></i>

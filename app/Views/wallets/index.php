@@ -53,7 +53,7 @@
                 
                 <div class="mt-auto pt-4 border-t border-gray-100 flex justify-between items-center text-sm text-gray-500">
                     <span>Created <?= date('M Y', strtotime($wallet['created_at'])) ?></span>
-                    <span class="px-2 py-1 bg-gray-100 rounded text-xs font-medium text-gray-600">ID: <?= $wallet['id'] ?></span>
+                    <span class="badge badge-secondary">ID: <?= $wallet['id'] ?></span>
                 </div>
             </div>
         <?php endforeach; ?>

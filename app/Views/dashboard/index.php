@@ -31,7 +31,7 @@
             <div class="p-2 bg-emerald-50 rounded-lg">
                 <i class="ph-fill ph-arrow-circle-down-left text-emerald-600 text-xl"></i>
             </div>
-            <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">Income</span>
+            <span class="badge badge-success">Income</span>
         </div>
         <h2 class="text-2xl font-bold tabular-nums text-gray-900 mb-1">Rp <?= number_format($summary['total_income'] ?? 0, 0, ',', '.') ?></h2>
         <p class="text-xs text-gray-500">Total received this month</p>
@@ -43,7 +43,7 @@
             <div class="p-2 bg-red-50 rounded-lg">
                 <i class="ph-fill ph-arrow-circle-up-right text-red-600 text-xl"></i>
             </div>
-            <span class="text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded-full">Expense</span>
+            <span class="badge badge-danger">Expense</span>
         </div>
         <h2 class="text-2xl font-bold tabular-nums text-gray-900 mb-1">Rp <?= number_format($summary['total_expense'] ?? 0, 0, ',', '.') ?></h2>
         <p class="text-xs text-gray-500">Total spent this month</p>
@@ -55,7 +55,7 @@
             <div class="p-2 bg-blue-50 rounded-lg">
                 <i class="ph-fill ph-scales text-blue-600 text-xl"></i>
             </div>
-            <span class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">Net</span>
+            <span class="badge badge-info">Net</span>
         </div>
         <h2 class="text-2xl font-bold tabular-nums text-gray-900 mb-1">Rp <?= number_format($summary['net_balance'] ?? 0, 0, ',', '.') ?></h2>
         <p class="text-xs text-gray-500">Income minus Expenses</p>
@@ -67,7 +67,7 @@
             <div class="p-2 bg-teal-50 rounded-lg">
                 <i class="ph-fill ph-wallet text-teal-600 text-xl"></i>
             </div>
-            <span class="text-xs font-medium text-teal-600 bg-teal-50 px-2 py-1 rounded-full">Total Assets</span>
+            <span class="badge badge-primary">Total Assets</span>
         </div>
         <h2 class="text-2xl font-bold tabular-nums text-gray-900 mb-1">Rp <?= number_format($totalWalletBalance ?? 0, 0, ',', '.') ?></h2>
         <p class="text-xs text-gray-500">Across all wallets</p>

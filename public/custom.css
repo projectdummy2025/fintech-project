@@ -524,6 +524,26 @@ textarea:focus-visible {
   border: 1px solid rgba(220, 38, 38, 0.1);
 }
 
+.badge-info {
+  background-color: var(--color-info-bg);
+  color: var(--color-info);
+  border: 1px solid rgba(37, 99, 235, 0.1);
+}
+
+.badge-primary {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border: 1px solid rgba(15, 118, 110, 0.1);
+}
+
+.badge-secondary {
+  background-color: #F3F4F6;
+  /* Gray 100 */
+  color: #4B5563;
+  /* Gray 600 */
+  border: 1px solid rgba(75, 85, 99, 0.1);
+}
+
 /* Alert Styles - Minimalist */
 .alert-custom {
   padding: 1rem;
