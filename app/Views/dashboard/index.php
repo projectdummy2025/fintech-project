@@ -119,7 +119,7 @@
                                         <?php if ($transaction['type'] === 'income'): ?>
                                             <span class="text-emerald-600 font-medium">+<?= number_format($transaction['amount'] ?? 0, 0, ',', '.') ?></span>
                                         <?php else: ?>
-                                            <span class="text-red-600 font-medium">-<?= number_format($transaction['amount'] ?? 0, ',', '.') ?></span>
+                                            <span class="text-red-600 font-medium">-<?= number_format($transaction['amount'] ?? 0, 0, ',', '.') ?></span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

@@ -544,27 +544,167 @@ textarea:focus-visible {
   border: 1px solid rgba(75, 85, 99, 0.1);
 }
 
-/* Alert Styles - Minimalist */
+/* Alert Styles - Minimalist with Border-Left Accent */
 .alert-custom {
   padding: 1rem;
   border-radius: var(--radius-md);
   border: 1px solid transparent;
+  border-left: 4px solid;
   margin-bottom: 1rem;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
+}
+
+.alert-custom i {
+  flex-shrink: 0;
+  font-size: 1.25rem;
 }
 
 .alert-success {
   background-color: var(--color-success-bg);
-  border-color: rgba(5, 150, 105, 0.2);
+  border-color: var(--color-success);
   color: var(--color-success);
 }
 
 .alert-danger {
   background-color: var(--color-danger-bg);
-  border-color: rgba(220, 38, 38, 0.2);
+  border-color: var(--color-danger);
   color: var(--color-danger);
+}
+
+.alert-info {
+  background-color: var(--color-info-bg);
+  border-color: var(--color-info);
+  color: var(--color-info);
+}
+
+.alert-warning {
+  background-color: var(--color-warning-bg);
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+/* ===================================
+   LOADING STATES & SKELETONS
+   =================================== */
+
+/* Loading Spinner */
+.spinner {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spinner-rotate 0.6s linear infinite;
+}
+
+.spinner-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 2px;
+}
+
+.spinner-lg {
+  width: 2rem;
+  height: 2rem;
+  border-width: 4px;
+}
+
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Skeleton Screen */
+.skeleton {
+  background: linear-gradient(90deg, #F3F4F6 25%, #E5E7EB 50%, #F3F4F6 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-text {
+  height: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-title {
+  height: 1.5rem;
+  width: 60%;
+  margin-bottom: 0.75rem;
+}
+
+.skeleton-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+}
+
+.skeleton-card {
+  height: 8rem;
+  width: 100%;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  backdrop-filter: blur(2px);
+}
+
+/* Error State */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.error-state-icon {
+  width: 4rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-danger-bg);
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  color: var(--color-danger);
+  font-size: 1.5rem;
+}
+
+.error-state-title {
+  font-weight: 600;
+  color: var(--color-text-main);
+  margin-bottom: 0.5rem;
+  font-size: var(--font-size-lg);
+}
+
+.error-state-text {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  max-width: 20rem;
+  margin-bottom: 1.5rem;
 }
 
 /* Custom Scrollbar - Thin & Subtle */
