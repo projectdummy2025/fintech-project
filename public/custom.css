@@ -707,6 +707,257 @@ textarea:focus-visible {
   margin-bottom: 1.5rem;
 }
 
+/* ===================================
+   AUTHENTICATION PAGES
+   =================================== */
+
+/* Auth Split Screen Container */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  background-color: var(--color-bg-body);
+}
+
+/* Hero Section (Left Side) */
+.auth-hero {
+  flex: 1;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #14B8A6 100%);
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 20px, 20px -20px, -20px 0;
+  opacity: 0.3;
+}
+
+.auth-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 500px;
+  text-align: center;
+}
+
+.auth-hero-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem;
+  font-size: 2.5rem;
+}
+
+.auth-hero-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.auth-hero-text {
+  font-size: 1.125rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.auth-hero-features {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: left;
+}
+
+.auth-hero-feature {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.auth-hero-feature i {
+  font-size: 1.5rem;
+  opacity: 0.9;
+}
+
+/* Form Section (Right Side) */
+.auth-form-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: white;
+}
+
+.auth-form-container {
+  width: 100%;
+  max-width: 480px;
+}
+
+.auth-form-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-form-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 0.5rem;
+}
+
+.auth-form-subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+/* Password Strength Indicator */
+.password-strength-container {
+  margin-top: 0.75rem;
+}
+
+.password-strength-meter {
+  height: 4px;
+  background-color: #E5E7EB;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.password-strength-bar {
+  height: 100%;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.password-strength-weak .password-strength-bar {
+  width: 33%;
+  background-color: #EF4444;
+}
+
+.password-strength-medium .password-strength-bar {
+  width: 66%;
+  background-color: #F59E0B;
+}
+
+.password-strength-strong .password-strength-bar {
+  width: 100%;
+  background-color: #10B981;
+}
+
+.password-strength-text {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.password-strength-weak .password-strength-text {
+  color: #EF4444;
+}
+
+.password-strength-medium .password-strength-text {
+  color: #F59E0B;
+}
+
+.password-strength-strong .password-strength-text {
+  color: #10B981;
+}
+
+.password-criteria {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+}
+
+.password-criterion {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
+
+.password-criterion.met {
+  color: var(--color-success);
+}
+
+.password-criterion i {
+  font-size: 1rem;
+}
+
+/* Auth Responsive */
+@media (max-width: 1023px) {
+  .auth-container {
+    flex-direction: column;
+  }
+
+  .auth-hero {
+    padding: 2rem;
+    min-height: 40vh;
+  }
+
+  .auth-hero-title {
+    font-size: 2rem;
+  }
+
+  .auth-hero-text {
+    font-size: 1rem;
+  }
+
+  .auth-hero-features {
+    display: none;
+    /* Hide features on mobile */
+  }
+
+  .auth-form-section {
+    flex: 1;
+    padding: 2rem 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .auth-hero {
+    min-height: 30vh;
+    padding: 1.5rem;
+  }
+
+  .auth-hero-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+  }
+
+  .auth-hero-title {
+    font-size: 1.75rem;
+  }
+
+  .auth-form-title {
+    font-size: 1.5rem;
+  }
+}
+
+
 /* Custom Scrollbar - Thin & Subtle */
 ::-webkit-scrollbar {
   width: 6px;

@@ -19,40 +19,70 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/public/custom.css">
 </head>
-<body class="min-h-screen flex items-center justify-center bg-gray-50">
-    <div class="container mx-auto px-4 py-8">
-        <div class="max-w-md mx-auto">
-            <!-- Logo/Brand -->
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-teal-700 rounded-2xl mb-4">
-                    <i class="ph-fill ph-wallet text-white text-3xl"></i>
+<body>
+    <div class="auth-container">
+        <!-- Hero Section (Left) -->
+        <div class="auth-hero">
+            <div class="auth-hero-content">
+                <div class="auth-hero-icon">
+                    <i class="ph-fill ph-wallet"></i>
                 </div>
-                <h1 class="text-3xl font-bold text-gray-900 mb-2" id="login-heading">Welcome Back</h1>
-                <p class="text-gray-500">Login to manage your finances</p>
+                <h1 class="auth-hero-title">Personal Finance</h1>
+                <p class="auth-hero-text">Take control of your financial future with simple, powerful tracking tools.</p>
+                
+                <div class="auth-hero-features">
+                    <div class="auth-hero-feature">
+                        <i class="ph-fill ph-check-circle"></i>
+                        <span>Track income and expenses effortlessly</span>
+                    </div>
+                    <div class="auth-hero-feature">
+                        <i class="ph-fill ph-check-circle"></i>
+                        <span>Manage multiple wallets and categories</span>
+                    </div>
+                    <div class="auth-hero-feature">
+                        <i class="ph-fill ph-check-circle"></i>
+                        <span>Visualize your financial health</span>
+                    </div>
+                </div>
             </div>
-
-            <!-- Card -->
-            <div class="card-custom p-8" role="region" aria-labelledby="login-heading">
+        </div>
+        
+        <!-- Form Section (Right) -->
+        <div class="auth-form-section">
+            <div class="auth-form-container">
+                <div class="auth-form-header">
+                    <h2 class="auth-form-title">Welcome Back</h2>
+                    <p class="auth-form-subtitle">Login to access your financial dashboard</p>
+                </div>
+                
+                <!-- Alerts -->
                 <?php if (!empty($error)): ?>
                     <div class="alert-custom alert-danger mb-6" role="alert" aria-live="polite">
-                        <i class="ph-fill ph-warning-circle text-xl"></i>
-                        <p class="font-medium text-sm"><?= htmlspecialchars($error) ?></p>
+                        <i class="ph-fill ph-warning-circle"></i>
+                        <div>
+                            <p class="font-medium">Error</p>
+                            <p class="text-sm"><?= htmlspecialchars($error) ?></p>
+                        </div>
                     </div>
                 <?php endif; ?>
 
                 <?php if (!empty($success)): ?>
                     <div class="alert-custom alert-success mb-6" role="alert" aria-live="polite">
-                        <i class="ph-fill ph-check-circle text-xl"></i>
-                        <p class="font-medium text-sm"><?= htmlspecialchars($success) ?></p>
+                        <i class="ph-fill ph-check-circle"></i>
+                        <div>
+                            <p class="font-medium">Success</p>
+                            <p class="text-sm"><?= htmlspecialchars($success) ?></p>
+                        </div>
                     </div>
                 <?php endif; ?>
 
+                <!-- Login Form -->
                 <form method="POST" action="/login" class="space-y-5">
                     <?= Csrf::field() ?>
 
                     <!-- Username Field -->
-                    <div>
-                        <label for="username" class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+                    <div class="form-group">
+                        <label for="username" class="form-label">
                             Username or Email
                         </label>
                         <input 
@@ -62,15 +92,15 @@
                             required 
                             autofocus
                             class="input-custom"
-                            placeholder="Enter your username or email"
+                            placeholder="Enter your username"
                             aria-label="Username or email address"
                             aria-required="true"
                         >
                     </div>
 
                     <!-- Password Field -->
-                    <div>
-                        <label for="password" class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+                    <div class="form-group">
+                        <label for="password" class="form-label">
                             Password
                         </label>
                         <div class="relative">
@@ -87,7 +117,7 @@
                             <button 
                                 type="button" 
                                 onclick="togglePassword()"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition p-1"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition p-1 rounded"
                                 title="Toggle password visibility"
                                 aria-label="Toggle password visibility"
                             >
@@ -102,7 +132,7 @@
                         class="btn btn-primary w-full justify-center mt-6"
                     >
                         <i class="ph-bold ph-sign-in"></i>
-                        Login
+                        Login to Dashboard
                     </button>
                 </form>
 
@@ -110,17 +140,17 @@
                 <div class="mt-6 pt-6 border-t border-gray-200 text-center">
                     <p class="text-sm text-gray-600">
                         Don't have an account? 
-                        <a href="/register" class="text-teal-700 hover:text-teal-800 font-semibold hover:underline">
-                            Register
+                        <a href="/register" class="text-teal-700 hover:text-teal-800 font-semibold hover:underline transition">
+                            Create Account
                         </a>
                     </p>
                 </div>
+                
+                <!-- Footer -->
+                <p class="text-center text-gray-400 text-xs mt-8">
+                    © <?= date('Y') ?> Personal Finance. Minimalist & Professional.
+                </p>
             </div>
-
-            <!-- Footer Text -->
-            <p class="text-center text-gray-400 text-xs mt-8">
-                © <?= date('Y') ?> Personal Finance. Minimalist & Professional.
-            </p>
         </div>
     </div>
 
