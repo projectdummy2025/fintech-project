@@ -315,11 +315,4 @@ Developed as a portfolio project to demonstrate full-stack development capabilit
 
 Untuk pertanyaan atau issue, silakan buka issue di repository ini.
 
----
-
-## UI Documentation
-For detailed information about the design system, components, and maintenance, please refer to [UI_DOCUMENTATION.md](UI_DOCUMENTATION.md).
-
----
-
 Last Updated: 2025-12-08
