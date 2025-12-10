@@ -19,6 +19,10 @@
                       class="absolute -top-2 -right-2 w-5 h-5 bg-teal-600 text-white text-xs rounded-full flex items-center justify-center font-medium"
                       x-text="activeFiltersCount"></span>
             </button>
+            <a href="/export/transactions?<?= http_build_query($_GET) ?>" class="btn btn-ghost">
+                <i class="ph ph-download-simple"></i>
+                Export CSV
+            </a>
             <a href="/transactions/create" class="btn btn-primary">
                 <i class="ph-bold ph-plus"></i>
                 Add Transaction

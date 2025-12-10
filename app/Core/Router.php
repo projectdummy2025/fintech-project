@@ -57,7 +57,7 @@ class Router {
 
         // 404 Not Found
         http_response_code(404);
-        echo "404 Not Found";
+        ErrorHandler::showErrorPage(404, 'Page Not Found', 'The page you are looking for could not be found.');
     }
 
     /**

@@ -235,7 +235,7 @@
   - [x] Implement filter controls (month, category, wallet)
   - [x] Add pagination controls
   - [x] Implement edit/delete actions
-  - [ ] Add export button (untuk CSV)
+  - [x] Add export button (untuk CSV)
   - [ ] Show running balance (optional)
 
 ### Deliverables
@@ -263,26 +263,26 @@
   - [x] Add interactive tooltips
   - [x] Implement responsive charts
 
-- [ ] **5.2 Export CSV**
-  - [ ] Implement CSV export untuk transactions
-  - [ ] Add filters untuk export (date range, category)
-  - [ ] Format CSV dengan proper headers
-  - [ ] Handle large datasets (memory limit)
-  - [ ] Add download functionality
+- [x] **5.2 Export CSV**
+  - [x] Implement CSV export untuk transactions
+  - [x] Add filters untuk export (date range, category)
+  - [x] Format CSV dengan proper headers
+  - [x] Handle large datasets (memory limit)
+  - [x] Add download functionality
 
-- [ ] **5.3 Validation Improvements**
-  - [ ] Strengthen server-side validation
+- [x] **5.3 Validation Improvements**
+  - [x] Strengthen server-side validation
   - [x] Add client-side validation dengan JavaScript
   - [x] Implement real-time validation feedback
-  - [ ] Add custom validation rules
-  - [ ] Improve error messages (user-friendly)
+  - [x] Add custom validation rules
+  - [x] Improve error messages (user-friendly)
 
-- [ ] **5.4 Error Handling and Logging**
-  - [ ] Implement centralized error handler
-  - [ ] Log errors ke file (`storage/logs/`)
-  - [ ] Create user-friendly error pages (404, 500)
-  - [ ] Add debug mode untuk development
-  - [ ] Implement try-catch blocks di critical sections
+- [x] **5.4 Error Handling and Logging**
+  - [x] Implement centralized error handler
+  - [x] Log errors ke file (`storage/logs/`)
+  - [x] Create user-friendly error pages (404, 500)
+  - [x] Add debug mode untuk development
+  - [x] Implement try-catch blocks di critical sections
 
 - [ ] **5.5 Additional Features**
   - [ ] Add budget per category functionality
@@ -293,9 +293,9 @@
 
 ### Deliverables
 - ✅ Charts working dan informative
-- ⏳ CSV export functional
+- ✅ CSV export functional
 - ✅ Robust validation system
-- ⏳ Proper error handling
+- ✅ Proper error handling
 - ✅ Enhanced user experience
 
 ---

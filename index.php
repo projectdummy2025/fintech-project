@@ -18,32 +18,16 @@ session_start();
 $appConfig = require_once __DIR__ . '/config/app.php';
 require_once __DIR__ . '/config/database.php';
 
-// Error Handling
-if ($appConfig['debug']) {
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
-} else {
-    ini_set('display_errors', 0);
-    ini_set('display_startup_errors', 0);
-    error_reporting(0);
-}
-
-// Custom Error Handler for Logging
-set_error_handler(function($errno, $errstr, $errfile, $errline) {
-    $logFile = __DIR__ . '/storage/logs/app.log';
-    $message = "[" . date('Y-m-d H:i:s') . "] Error: $errstr in $errfile on line $errline" . PHP_EOL;
-    error_log($message, 3, $logFile);
-    
-    // Don't prevent default handling if debug is on
-    return false; 
-});
-
 // Load Core Classes
+require_once __DIR__ . '/app/Core/ErrorHandler.php';
+
+// Initialize Error Handler
+ErrorHandler::init($appConfig['debug']);
 require_once __DIR__ . '/app/Core/Router.php';
 require_once __DIR__ . '/app/Core/Controller.php';
 require_once __DIR__ . '/app/Core/Database.php';
 require_once __DIR__ . '/app/Core/Csrf.php';
+require_once __DIR__ . '/app/Core/Validator.php';
 
 // Load Models
 require_once __DIR__ . '/app/Models/User.php';
@@ -58,6 +42,7 @@ require_once __DIR__ . '/app/Controllers/DashboardController.php';
 require_once __DIR__ . '/app/Controllers/WalletController.php';
 require_once __DIR__ . '/app/Controllers/CategoryController.php';
 require_once __DIR__ . '/app/Controllers/TransactionController.php';
+require_once __DIR__ . '/app/Controllers/ExportController.php';
 
 // Initialize Router
 $router = new Router();
@@ -106,6 +91,9 @@ $router->post('/transactions/create', ['TransactionController', 'create']);
 $router->get('/transactions/edit/(\d+)', ['TransactionController', 'edit']);
 $router->post('/transactions/edit/(\d+)', ['TransactionController', 'edit']);
 $router->get('/transactions/delete/(\d+)', ['TransactionController', 'delete']);
+
+// Export Routes
+$router->get('/export/transactions', ['ExportController', 'transactions']);
 
 // Dispatch
 $router->dispatch();
