@@ -205,5 +205,42 @@
         </div>
     </footer>
 
+    <!-- Custom Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form Submission Loading State
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    // Don't show loading if the form has the 'no-loading' class
+                    if (this.classList.contains('no-loading')) return;
+
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    if (submitBtn && !submitBtn.disabled) {
+                        // Add loading state
+                        submitBtn.classList.add('btn-loading');
+                        submitBtn.disabled = true;
+                        
+                        // Optional: Restore button state after a timeout (in case of validation error or no navigation)
+                        // setTimeout(() => {
+                        //     submitBtn.classList.remove('btn-loading');
+                        //     submitBtn.disabled = false;
+                        // }, 5000);
+                    }
+                });
+            });
+
+            // Toast Notification Auto-dismiss
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(toast => {
+                setTimeout(() => {
+                    toast.classList.add('toast-leaving');
+                    toast.addEventListener('animationend', () => {
+                        toast.remove();
+                    });
+                }, 5000);
+            });
+        });
+    </script>
 </body>
 </html>
