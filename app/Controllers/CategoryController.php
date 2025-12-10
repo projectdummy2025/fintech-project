@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../Core/Controller.php';
 require_once __DIR__ . '/../Core/Csrf.php';
 require_once __DIR__ . '/../Models/Category.php';
+require_once __DIR__ . '/../Models/Transaction.php';
 
 class CategoryController extends Controller {
 
@@ -14,7 +15,14 @@ class CategoryController extends Controller {
         }
 
         $categoryModel = new Category();
+        $transactionModel = new Transaction();
+        
         $categories = $categoryModel->getAllByUser($_SESSION['user_id']);
+
+        // Calculate usage count for each category
+        foreach ($categories as &$category) {
+            $category['usage_count'] = $transactionModel->countByCategory($category['id']);
+        }
 
         $data = [
             'title' => 'Categories',
