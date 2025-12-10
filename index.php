@@ -106,6 +106,7 @@ $router->post('/api/categories/create', ['ApiController', 'categoryCreate']);
 $router->post('/api/categories/update/(\d+)', ['ApiController', 'categoryUpdate']);
 $router->post('/api/categories/delete/(\d+)', ['ApiController', 'categoryDelete']);
 $router->get('/api/form-data', ['ApiController', 'formData']);
+$router->get('/api/sync', ['ApiController', 'sync']);
 
 // Dispatch
 $router->dispatch();

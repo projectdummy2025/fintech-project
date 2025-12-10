@@ -21,8 +21,14 @@ const FinanceAPI = {
 
         const config = { ...defaultOptions, ...options };
 
+        // Add timeout (10 seconds)
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), 10000);
+        config.signal = controller.signal;
+
         try {
             const response = await fetch(url, config);
+            clearTimeout(id);
             const data = await response.json();
 
             if (!response.ok) {
@@ -31,7 +37,11 @@ const FinanceAPI = {
 
             return data;
         } catch (error) {
+            clearTimeout(id);
             console.error('API Error:', error);
+            if (error.name === 'AbortError') {
+                throw new Error('Request timed out');
+            }
             throw error;
         }
     },
@@ -119,6 +129,10 @@ const FinanceAPI = {
 
     async getFormData() {
         return this.get('/api/form-data');
+    },
+
+    async getSync() {
+        return this.get('/api/sync');
     }
 };
 
@@ -234,12 +248,7 @@ const FinanceUI = {
         }
     },
 
-    /**
-     * Get sync checksums
-     */
-    async getSync() {
-        return this.get('/api/sync');
-    },
+
 
     /**
      * Confirm dialog
@@ -278,8 +287,11 @@ const FinanceStore = {
 
     async init() {
         if (this.data.initialized) return;
+        console.log('FinanceStore: Initializing...');
         await this.loadAll();
+        console.log('FinanceStore: Initialized');
         this.data.initialized = true;
+        this.notify(); // Notify listeners that initialization is complete
         this.startPolling();
     },
 
@@ -306,6 +318,7 @@ const FinanceStore = {
             this.notify();
         } catch (error) {
             console.error('Failed to load initial data:', error);
+            FinanceUI.showToast('Failed to load data: ' + error.message, 'error');
         }
     },
 
@@ -1464,31 +1477,26 @@ function categoryApp(initialCategories = []) {
             }
 
             this.submitting = true;
-            const url = this.isEditMode
-                ? `/api/categories/edit/${this.editId}`
-                : '/api/categories/create';
-
             try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify({
+                let response;
+                if (this.isEditMode) {
+                    response = await FinanceAPI.updateCategory(this.editId, {
                         name: this.formName,
-                        type: this.formType,
-                        csrf_token: document.querySelector('meta[name="csrf-token"]')?.content || ''
-                    })
-                });
-                const data = await response.json();
+                        type: this.formType
+                    });
+                } else {
+                    response = await FinanceAPI.createCategory({
+                        name: this.formName,
+                        type: this.formType
+                    });
+                }
 
-                if (data.success) {
+                if (response.success) {
                     FinanceUI.showToast(this.isEditMode ? 'Category updated' : 'Category created', 'success');
                     this.closeModal();
-                    await this.loadCategories();
+                    await FinanceStore.sync();
                 } else {
-                    throw new Error(data.message || 'Operation failed');
+                    throw new Error(response.message || 'Operation failed');
                 }
             } catch (error) {
                 FinanceUI.showToast(error.message || 'Operation failed', 'error');
@@ -1499,53 +1507,34 @@ function categoryApp(initialCategories = []) {
 
         async deleteCategory(id, usageCount) {
             if (usageCount > 0) {
-                const result = await Swal.fire({
-                    title: 'Cannot Delete',
-                    text: `This category has ${usageCount} transaction(s). Transfer them first or delete them manually.`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#0d9488',
-                    cancelButtonColor: '#6b7280',
-                    confirmButtonText: 'Transfer Transactions',
-                    cancelButtonText: 'Cancel'
-                });
+                const result = await FinanceUI.confirm(
+                    'Cannot Delete',
+                    `This category has ${usageCount} transaction(s). Transfer them first or delete them manually.`,
+                    'Transfer Transactions',
+                    'Cancel'
+                );
 
-                if (result.isConfirmed) {
+                if (result) {
                     window.location.href = `/categories/delete/${id}`;
                 }
                 return;
             }
 
-            const confirmed = await Swal.fire({
-                title: 'Delete Category?',
-                text: 'This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Delete',
-                cancelButtonText: 'Cancel'
-            });
+            const confirmed = await FinanceUI.confirm(
+                'Delete Category?',
+                'This action cannot be undone.',
+                'Delete',
+                'Cancel'
+            );
 
-            if (confirmed.isConfirmed) {
+            if (confirmed) {
                 try {
-                    const response = await fetch(`/api/categories/delete/${id}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: JSON.stringify({
-                            csrf_token: document.querySelector('meta[name="csrf-token"]')?.content || ''
-                        })
-                    });
-                    const data = await response.json();
-
-                    if (data.success) {
+                    const response = await FinanceAPI.deleteCategory(id);
+                    if (response.success) {
                         FinanceUI.showToast('Category deleted', 'success');
-                        await this.loadCategories();
+                        await FinanceStore.sync();
                     } else {
-                        throw new Error(data.message || 'Failed to delete');
+                        throw new Error(response.message || 'Failed to delete');
                     }
                 } catch (error) {
                     FinanceUI.showToast(error.message || 'Failed to delete', 'error');
