@@ -165,14 +165,15 @@ const FinanceUI = {
     /**
      * Show loading state
      */
-    showLoading(container) {
+    showLoading(container, message = 'Loading...') {
         if (typeof container === 'string') {
             container = document.querySelector(container);
         }
         if (container) {
             container.innerHTML = `
-                <div class="flex items-center justify-center py-12">
-                    <div class="spinner spinner-lg"></div>
+                <div class="flex flex-col items-center justify-center py-12">
+                    <div class="spinner spinner-lg mb-4"></div>
+                    <p class="text-gray-500 text-sm">${message}</p>
                 </div>
             `;
         }
@@ -1130,7 +1131,7 @@ const TransactionsPage = {
         // Filter form submission
         const filterForm = document.getElementById('filter-form');
         if (filterForm) {
-            // Remove existing listener if any (to prevent duplicates)
+            // Remove existing listener if any
             if (this.filterSubmitHandler) {
                 filterForm.removeEventListener('submit', this.filterSubmitHandler);
             }
@@ -1143,6 +1144,100 @@ const TransactionsPage = {
 
             filterForm.addEventListener('submit', this.filterSubmitHandler);
         }
+
+        // Reset button
+        const resetButton = document.getElementById('reset-filters');
+        if (resetButton) {
+            resetButton.onclick = () => this.resetFilters();
+        }
+    },
+
+    // Global Error Handler
+    window.onerror = function (msg, url, line, col, error) {
+        const message = `JS Error: ${msg}\nLine: ${line}`;
+        console.error(message);
+        if (typeof FinanceUI !== 'undefined') {
+            FinanceUI.showToast(message, 'error');
+        } else {
+            alert(message);
+        }
+        return false;
+    };
+
+    // ... existing code ...
+
+    loadData() {
+        const container = document.getElementById('transactions-container');
+        if (!container) return;
+
+        try {
+            // Get all transactions from store
+            const allTransactions = FinanceStore.getTransactions();
+
+            // Only show loading if NOT initialized
+            if (!FinanceStore.data.initialized) {
+                FinanceUI.showLoading(container, 'Initializing data...');
+                // Safety check: if stuck for > 5s, force init
+                setTimeout(() => {
+                    if (!FinanceStore.data.initialized) {
+                        console.warn('Force initializing due to timeout');
+                        FinanceStore.init();
+                    }
+                }, 5000);
+                return;
+            }
+
+            // Filter locally
+            const filtered = this.filterTransactions(allTransactions, this.filters);
+
+            // Calculate totals locally
+            const totals = this.calculateTotals(filtered);
+
+            this.renderTransactions(filtered);
+            this.renderTotals(totals);
+            this.renderActiveFilters();
+        } catch (error) {
+            console.error('loadData error:', error);
+            FinanceUI.showError(container, error.message || 'Failed to load transactions');
+        }
+    },
+
+    renderActiveFilters() {
+        const container = document.getElementById('active-filters-container');
+        if (!container) return;
+
+        const activeFilters = [];
+        if (this.filters.start_date && this.filters.end_date) activeFilters.push({ icon: 'ph-calendar', text: `${FinanceUI.formatDate(this.filters.start_date)} - ${FinanceUI.formatDate(this.filters.end_date)}` });
+        if (this.filters.wallet_id) {
+            const wallet = FinanceStore.getWallets().find(w => w.id == this.filters.wallet_id);
+            if (wallet) activeFilters.push({ icon: 'ph-wallet', text: 'Wallet: ' + wallet.name });
+        }
+        if (this.filters.category_id) {
+            const category = FinanceStore.getCategories().find(c => c.id == this.filters.category_id);
+            if (category) activeFilters.push({ icon: 'ph-tag', text: 'Category: ' + category.name });
+        }
+        if (this.filters.type) activeFilters.push({ icon: 'ph-arrows-left-right', text: this.filters.type.charAt(0).toUpperCase() + this.filters.type.slice(1) });
+        if (this.filters.search) activeFilters.push({ icon: 'ph-magnifying-glass', text: `"${this.filters.search}"` });
+
+        if (activeFilters.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+
+        const badges = activeFilters.map(f => `
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full">
+                <i class="ph ${f.icon}"></i>
+                ${f.text}
+            </span>
+        `).join('');
+
+        container.innerHTML = `
+            <div class="flex items-center gap-2 mb-6 flex-wrap">
+                <span class="text-sm text-gray-500">Active filters:</span>
+                ${badges}
+                <button type="button" onclick="TransactionsPage.resetFilters()" class="text-sm text-gray-400 hover:text-gray-600 underline">Clear all</button>
+            </div>
+        `;
     },
 
     applyFilters() {
@@ -1155,6 +1250,18 @@ const TransactionsPage = {
         // Update URL
         const params = new URLSearchParams(this.filters);
         window.history.pushState({}, '', '/transactions?' + params.toString());
+
+        this.loadData();
+    },
+
+    resetFilters() {
+        const form = document.getElementById('filter-form');
+        if (form) form.reset();
+
+        this.filters = {};
+
+        // Reset URL
+        window.history.pushState({}, '', '/transactions');
 
         this.loadData();
     },

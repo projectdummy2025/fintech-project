@@ -99,54 +99,56 @@
                     <i class="ph ph-funnel"></i>
                     Apply Filters
                 </button>
-                <a href="/transactions" class="btn btn-secondary">
+                <button type="button" id="reset-filters" class="btn btn-secondary">
                     <i class="ph ph-arrow-counter-clockwise"></i>
                     Reset
-                </a>
+                </button>
             </div>
         </form>
     </div>
 
     <!-- Active Filters Summary -->
-    <?php 
-    $activeFilters = array_filter($filters ?? []);
-    if (!empty($activeFilters) && count($activeFilters) > 0): 
-    ?>
-        <div class="flex items-center gap-2 mb-6 flex-wrap" x-show="!showFilters">
-            <span class="text-sm text-gray-500">Active filters:</span>
-            <?php if (!empty($filters['start_date']) && !empty($filters['end_date'])): ?>
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full">
-                    <i class="ph ph-calendar"></i>
-                    <?= date('d M Y', strtotime($filters['start_date'])) ?> - <?= date('d M Y', strtotime($filters['end_date'])) ?>
-                </span>
-            <?php endif; ?>
-            <?php if (!empty($filters['wallet_id'])): ?>
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full">
-                    <i class="ph ph-wallet"></i>
-                    Wallet
-                </span>
-            <?php endif; ?>
-            <?php if (!empty($filters['category_id'])): ?>
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full">
-                    <i class="ph ph-tag"></i>
-                    Category
-                </span>
-            <?php endif; ?>
-            <?php if (!empty($filters['type'])): ?>
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full">
-                    <i class="ph ph-arrows-left-right"></i>
-                    <?= ucfirst($filters['type']) ?>
-                </span>
-            <?php endif; ?>
-            <?php if (!empty($filters['search'])): ?>
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full">
-                    <i class="ph ph-magnifying-glass"></i>
-                    "<?= htmlspecialchars($filters['search']) ?>"
-                </span>
-            <?php endif; ?>
-            <a href="/transactions" class="text-sm text-gray-400 hover:text-gray-600 underline">Clear all</a>
-        </div>
-    <?php endif; ?>
+    <div id="active-filters-container">
+        <?php 
+        $activeFilters = array_filter($filters ?? []);
+        if (!empty($activeFilters) && count($activeFilters) > 0): 
+        ?>
+            <div class="flex items-center gap-2 mb-6 flex-wrap">
+                <span class="text-sm text-gray-500">Active filters:</span>
+                <?php if (!empty($filters['start_date']) && !empty($filters['end_date'])): ?>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full">
+                        <i class="ph ph-calendar"></i>
+                        <?= date('d M Y', strtotime($filters['start_date'])) ?> - <?= date('d M Y', strtotime($filters['end_date'])) ?>
+                    </span>
+                <?php endif; ?>
+                <?php if (!empty($filters['wallet_id'])): ?>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full">
+                        <i class="ph ph-wallet"></i>
+                        Wallet
+                    </span>
+                <?php endif; ?>
+                <?php if (!empty($filters['category_id'])): ?>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full">
+                        <i class="ph ph-tag"></i>
+                        Category
+                    </span>
+                <?php endif; ?>
+                <?php if (!empty($filters['type'])): ?>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full">
+                        <i class="ph ph-arrows-left-right"></i>
+                        <?= ucfirst($filters['type']) ?>
+                    </span>
+                <?php endif; ?>
+                <?php if (!empty($filters['search'])): ?>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full">
+                        <i class="ph ph-magnifying-glass"></i>
+                        "<?= htmlspecialchars($filters['search']) ?>"
+                    </span>
+                <?php endif; ?>
+                <button type="button" id="clear-all-filters" class="text-sm text-gray-400 hover:text-gray-600 underline">Clear all</button>
+            </div>
+        <?php endif; ?>
+    </div>
 
     <!-- Alerts -->
     <?php if (isset($_SESSION['message'])): ?>
