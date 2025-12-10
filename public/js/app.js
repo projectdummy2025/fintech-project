@@ -20,15 +20,15 @@ const FinanceAPI = {
         };
 
         const config = { ...defaultOptions, ...options };
-        
+
         try {
             const response = await fetch(url, config);
             const data = await response.json();
-            
+
             if (!response.ok) {
                 throw new Error(data.error || 'Request failed');
             }
-            
+
             return data;
         } catch (error) {
             console.error('API Error:', error);
@@ -56,13 +56,13 @@ const FinanceAPI = {
     },
 
     // ==================== DASHBOARD ====================
-    
+
     async getDashboard(year, month) {
         return this.get('/api/dashboard', { year, month });
     },
 
     // ==================== TRANSACTIONS ====================
-    
+
     async getTransactions(filters = {}) {
         return this.get('/api/transactions', filters);
     },
@@ -80,7 +80,7 @@ const FinanceAPI = {
     },
 
     // ==================== WALLETS ====================
-    
+
     async getWallets() {
         return this.get('/api/wallets');
     },
@@ -98,7 +98,7 @@ const FinanceAPI = {
     },
 
     // ==================== CATEGORIES ====================
-    
+
     async getCategories() {
         return this.get('/api/categories');
     },
@@ -116,7 +116,7 @@ const FinanceAPI = {
     },
 
     // ==================== FORM DATA ====================
-    
+
     async getFormData() {
         return this.get('/api/form-data');
     }
@@ -130,10 +130,11 @@ const FinanceUI = {
      * Format currency (Indonesian Rupiah)
      */
     formatCurrency(amount) {
+        const value = parseFloat(amount) || 0;
         return new Intl.NumberFormat('id-ID', {
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
-        }).format(amount || 0);
+        }).format(value);
     },
 
     /**
@@ -277,7 +278,7 @@ const DashboardPage = {
             this.showLoadingStates();
 
             const response = await FinanceAPI.getDashboard(this.currentYear, this.currentMonth);
-            
+
             if (response.success) {
                 this.renderSummary(response.data.summary);
                 this.renderRecentTransactions(response.data.recent_transactions);
@@ -290,7 +291,7 @@ const DashboardPage = {
             }
         } catch (error) {
             console.error('Dashboard load error:', error);
-            FinanceUI.showToast('Failed to load dashboard data', 'error');
+            FinanceUI.showToast('Failed to load dashboard data: ' + (error.message || 'Unknown error'), 'error');
         }
     },
 
@@ -326,7 +327,7 @@ const DashboardPage = {
         if (!container) return;
 
         if (!transactions || transactions.length === 0) {
-            FinanceUI.showEmpty(container, 'ph-receipt', 'No Transactions Yet', 
+            FinanceUI.showEmpty(container, 'ph-receipt', 'No Transactions Yet',
                 'Start tracking your finances by adding your first transaction.',
                 { url: '/transactions/create', label: 'Add Transaction' });
             return;
@@ -342,10 +343,10 @@ const DashboardPage = {
                     </div>
                 </td>
                 <td class="text-right tabular-nums">
-                    ${t.type === 'income' 
-                        ? `<span class="text-emerald-600 font-semibold">+${FinanceUI.formatCurrency(t.amount)}</span>`
-                        : `<span class="text-red-600 font-semibold">-${FinanceUI.formatCurrency(t.amount)}</span>`
-                    }
+                    ${t.type === 'income'
+                ? `<span class="text-emerald-600 font-semibold">+${FinanceUI.formatCurrency(t.amount)}</span>`
+                : `<span class="text-red-600 font-semibold">-${FinanceUI.formatCurrency(t.amount)}</span>`
+            }
                 </td>
             </tr>
         `).join('');
@@ -492,6 +493,11 @@ const DashboardPage = {
         if (!canvas || !trends || trends.length === 0) return;
 
         // Destroy existing chart
+        // Destroy existing chart
+        const existingChart = Chart.getChart(canvas);
+        if (existingChart) {
+            existingChart.destroy();
+        }
         if (this.charts.trend) {
             this.charts.trend.destroy();
         }
@@ -550,7 +556,7 @@ const DashboardPage = {
                         padding: 12,
                         cornerRadius: 8,
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 return context.dataset.label + ': Rp ' + context.parsed.y.toLocaleString('id-ID');
                             }
                         }
@@ -561,9 +567,9 @@ const DashboardPage = {
                         beginAtZero: true,
                         grid: { color: '#F3F4F6', drawBorder: false },
                         ticks: {
-                            callback: function(value) {
-                                if (value >= 1000000) return (value/1000000).toFixed(1) + 'M';
-                                if (value >= 1000) return (value/1000).toFixed(0) + 'k';
+                            callback: function (value) {
+                                if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+                                if (value >= 1000) return (value / 1000).toFixed(0) + 'k';
                                 return value;
                             },
                             font: { family: "'Inter', sans-serif", size: 10 }
@@ -583,6 +589,11 @@ const DashboardPage = {
         if (!canvas) return;
 
         // Destroy existing chart
+        // Destroy existing chart
+        const existingChart = Chart.getChart(canvas);
+        if (existingChart) {
+            existingChart.destroy();
+        }
         if (this.charts.expenseBreakdown) {
             this.charts.expenseBreakdown.destroy();
         }
@@ -625,7 +636,7 @@ const DashboardPage = {
                         padding: 12,
                         cornerRadius: 8,
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 return context.label + ': Rp ' + context.parsed.toLocaleString('id-ID');
                             }
                         }
@@ -640,6 +651,11 @@ const DashboardPage = {
         if (!canvas) return;
 
         // Destroy existing chart
+        // Destroy existing chart
+        const existingChart = Chart.getChart(canvas);
+        if (existingChart) {
+            existingChart.destroy();
+        }
         if (this.charts.incomeBreakdown) {
             this.charts.incomeBreakdown.destroy();
         }
@@ -682,7 +698,7 @@ const DashboardPage = {
                         padding: 12,
                         cornerRadius: 8,
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 return context.label + ': Rp ' + context.parsed.toLocaleString('id-ID');
                             }
                         }
@@ -721,7 +737,7 @@ const TransactionsPage = {
         try {
             FinanceUI.showLoading(container);
             const response = await FinanceAPI.getTransactions(this.filters);
-            
+
             if (response.success) {
                 this.renderTransactions(response.data.transactions);
                 this.renderTotals(response.data.totals);
@@ -838,11 +854,11 @@ const TransactionsPage = {
 
         const formData = new FormData(form);
         this.filters = Object.fromEntries(formData.entries());
-        
+
         // Update URL
         const params = new URLSearchParams(this.filters);
         window.history.pushState({}, '', '/transactions?' + params.toString());
-        
+
         this.loadData();
     },
 
@@ -883,7 +899,7 @@ const WalletsPage = {
         try {
             FinanceUI.showLoading(container);
             const response = await FinanceAPI.getWallets();
-            
+
             if (response.success) {
                 this.renderWallets(response.data.wallets);
                 this.renderTotalBalance(response.data.total_balance);
@@ -975,7 +991,7 @@ const CategoriesPage = {
         try {
             FinanceUI.showLoading(container);
             const response = await FinanceAPI.getCategories();
-            
+
             if (response.success) {
                 this.renderCategories(response.data);
             }
@@ -997,7 +1013,7 @@ const CategoriesPage = {
 
         const renderTable = (categories, type) => {
             if (categories.length === 0) return '<p class="text-gray-500 text-sm p-4">No categories</p>';
-            
+
             const rows = categories.map(c => `
                 <tr class="hover:bg-gray-50 transition-colors" data-id="${c.id}">
                     <td class="px-4 py-3">
@@ -1091,7 +1107,7 @@ const CategoriesPage = {
 const PageRouter = {
     init() {
         const path = window.location.pathname;
-        
+
         if (path === '/dashboard' || path === '/') {
             if (document.getElementById('dashboard-page')) {
                 DashboardPage.init();
