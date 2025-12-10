@@ -424,29 +424,34 @@ class ApiController extends Controller {
      * GET /api/categories
      */
     public function categories() {
-        $userId = $this->requireAuth();
+        try {
+            $userId = $this->requireAuth();
 
-        $categoryModel = new Category();
-        $categories = $categoryModel->getAllByUser($userId);
+            $categoryModel = new Category();
+            $categories = $categoryModel->getAllByUser($userId);
 
-        // Get usage count for each category
-        $transactionModel = new Transaction();
-        foreach ($categories as &$category) {
-            $category['usage_count'] = $transactionModel->countByCategory($category['id']);
+            // Get usage count for each category
+            $transactionModel = new Transaction();
+            foreach ($categories as &$category) {
+                $category['usage_count'] = $transactionModel->countByCategory($category['id']);
+            }
+
+            $incomeCategories = array_filter($categories, fn($c) => $c['type'] === 'income');
+            $expenseCategories = array_filter($categories, fn($c) => $c['type'] === 'expense');
+
+            $this->json([
+                'success' => true,
+                'data' => [
+                    'categories' => array_values($categories),
+                    'income_categories' => array_values($incomeCategories),
+                    'expense_categories' => array_values($expenseCategories),
+                    'count' => count($categories)
+                ]
+            ]);
+        } catch (Exception $e) {
+            error_log("API Categories Error: " . $e->getMessage());
+            $this->json(['error' => $e->getMessage()], 500);
         }
-
-        $incomeCategories = array_filter($categories, fn($c) => $c['type'] === 'income');
-        $expenseCategories = array_filter($categories, fn($c) => $c['type'] === 'expense');
-
-        $this->json([
-            'success' => true,
-            'data' => [
-                'categories' => array_values($categories),
-                'income_categories' => array_values($incomeCategories),
-                'expense_categories' => array_values($expenseCategories),
-                'count' => count($categories)
-            ]
-        ]);
     }
 
     /**
@@ -500,7 +505,17 @@ class ApiController extends Controller {
             $this->json(['error' => 'Name is required'], 400);
         }
 
-        $result = $categoryModel->update($id, $userId, $name);
+        $type = $input['type'] ?? '';
+
+        if (empty($name)) {
+            $this->json(['error' => 'Name is required'], 400);
+        }
+
+        if (!in_array($type, ['income', 'expense'])) {
+            $this->json(['error' => 'Category type must be income or expense.'], 400);
+        }
+
+        $result = $categoryModel->update($id, $userId, $name, $type);
 
         if ($result) {
             $this->json(['success' => true, 'message' => 'Category updated']);

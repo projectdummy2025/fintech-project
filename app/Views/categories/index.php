@@ -43,93 +43,90 @@
         </div>
     </div>
 
-    <!-- Categories Container -->
-    <div x-show="!loading" id="categories-container" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <!-- Income Categories -->
-        <div class="card-custom overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 bg-emerald-50/50 flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <i class="ph-fill ph-arrow-circle-down-left text-emerald-600 text-xl"></i>
-                    <h5 class="text-base font-bold text-gray-900">Income Categories</h5>
+    <div x-show="!loading">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Total -->
+            <div class="card-custom p-4 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
+                    <i class="ph-fill ph-squares-four text-xl"></i>
                 </div>
-                <span class="badge badge-success" x-text="incomeCategories.length + ' Items'"></span>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Total Categories</p>
+                    <h3 class="text-2xl font-bold text-gray-900" x-text="categories.length"></h3>
+                </div>
             </div>
-            <div class="p-0">
-                <!-- Table -->
-                <template x-if="incomeCategories.length > 0">
-                    <table class="table-custom">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th class="text-center w-28">Used</th>
-                                <th class="text-center w-24">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            <template x-for="category in incomeCategories" :key="category.id">
-                                <tr class="group" :data-id="category.id">
-                                    <td class="font-medium text-gray-700" x-text="category.name"></td>
-                                    <td class="text-center">
-                                        <span class="text-xs text-gray-500" x-text="category.usage_count + ' transactions'"></span>
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button @click="openEditModal(category)" 
-                                                    class="btn btn-ghost p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors" title="Edit">
-                                                <i class="ph ph-pencil-simple text-lg"></i>
-                                            </button>
-                                            <button @click="deleteCategory(category.id, category.usage_count)" 
-                                                    class="btn btn-ghost p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete">
-                                                <i class="ph ph-trash text-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
-                </template>
-                <!-- Empty State -->
-                <template x-if="incomeCategories.length === 0">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">
-                            <i class="ph ph-folder-open"></i>
-                        </div>
-                        <h4 class="empty-state-title">No Income Categories</h4>
-                        <p class="empty-state-text">You haven't created any income categories yet. Click the button above to add one.</p>
-                    </div>
-                </template>
+            <!-- Income -->
+            <div class="card-custom p-4 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+                    <i class="ph-fill ph-arrow-circle-down-left text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Income</p>
+                    <h3 class="text-2xl font-bold text-gray-900" x-text="categories.filter(c => c.type === 'income').length"></h3>
+                </div>
+            </div>
+            <!-- Expense -->
+            <div class="card-custom p-4 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-red-600">
+                    <i class="ph-fill ph-arrow-circle-up-right text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Expense</p>
+                    <h3 class="text-2xl font-bold text-gray-900" x-text="categories.filter(c => c.type === 'expense').length"></h3>
+                </div>
             </div>
         </div>
 
-        <!-- Expense Categories -->
+        <!-- Main Content Card -->
         <div class="card-custom overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 bg-red-50/50 flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <i class="ph-fill ph-arrow-circle-up-right text-red-600 text-xl"></i>
-                    <h5 class="text-base font-bold text-gray-900">Expense Categories</h5>
-                </div>
-                <span class="badge badge-danger" x-text="expenseCategories.length + ' Items'"></span>
+            <!-- Tabs -->
+            <div class="border-b border-gray-200 px-6">
+                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                    <button @click="activeTab = 'all'"
+                        :class="activeTab === 'all' ? 'border-teal-500 text-teal-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                        class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                        All Categories
+                    </button>
+                    <button @click="activeTab = 'income'"
+                        :class="activeTab === 'income' ? 'border-teal-500 text-teal-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                        class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                        Income
+                    </button>
+                    <button @click="activeTab = 'expense'"
+                        :class="activeTab === 'expense' ? 'border-teal-500 text-teal-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                        class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                        Expense
+                    </button>
+                </nav>
             </div>
+
+            <!-- Table Container -->
             <div class="p-0">
-                <!-- Table -->
-                <template x-if="expenseCategories.length > 0">
-                    <table class="table-custom">
-                        <thead>
+                <template x-if="filteredCategories.length > 0">
+                    <table class="table-custom w-full">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th>Name</th>
-                                <th class="text-center w-28">Used</th>
-                                <th class="text-center w-24">Actions</th>
+                                <th class="pl-6">Name</th>
+                                <th>Type</th>
+                                <th class="text-center">Usage</th>
+                                <th class="text-center pr-6">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            <template x-for="category in expenseCategories" :key="category.id">
-                                <tr class="group" :data-id="category.id">
-                                    <td class="font-medium text-gray-700" x-text="category.name"></td>
-                                    <td class="text-center">
-                                        <span class="text-xs text-gray-500" x-text="category.usage_count + ' transactions'"></span>
+                            <template x-for="category in filteredCategories" :key="category.id">
+                                <tr class="group hover:bg-gray-50 transition-colors">
+                                    <td class="pl-6 font-medium text-gray-900" x-text="category.name"></td>
+                                    <td>
+                                        <span :class="category.type === 'income' ? 'badge badge-success' : 'badge badge-danger'"
+                                              class="capitalize">
+                                            <span x-text="category.type"></span>
+                                        </span>
                                     </td>
                                     <td class="text-center">
+                                        <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full" x-text="category.usage_count + ' transactions'"></span>
+                                    </td>
+                                    <td class="text-center pr-6">
                                         <div class="flex items-center justify-center gap-2">
                                             <button @click="openEditModal(category)" 
                                                     class="btn btn-ghost p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors" title="Edit">
@@ -146,14 +143,17 @@
                         </tbody>
                     </table>
                 </template>
+
                 <!-- Empty State -->
-                <template x-if="expenseCategories.length === 0">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">
-                            <i class="ph ph-folder-open"></i>
+                <template x-if="filteredCategories.length === 0">
+                    <div class="py-16 flex flex-col items-center justify-center text-center">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400">
+                            <i class="ph ph-magnifying-glass text-2xl"></i>
                         </div>
-                        <h4 class="empty-state-title">No Expense Categories</h4>
-                        <p class="empty-state-text">You haven't created any expense categories yet. Click the button above to add one.</p>
+                        <h4 class="text-lg font-bold text-gray-900 mb-1">No Categories Found</h4>
+                        <p class="text-gray-500 max-w-sm">
+                            There are no categories in this view. Try switching tabs or add a new category.
+                        </p>
                     </div>
                 </template>
             </div>
@@ -248,14 +248,20 @@ function categoryApp() {
         loading: true,
         submitting: false,
         categories: [],
-        incomeCategories: [],
-        expenseCategories: [],
+        activeTab: 'all', // 'all', 'income', 'expense'
         showModal: false,
         modalTitle: 'Add Category',
         isEditMode: false,
         editId: null,
         formName: '',
         formType: '',
+
+        get filteredCategories() {
+            if (this.activeTab === 'all') {
+                return this.categories;
+            }
+            return this.categories.filter(c => c.type === this.activeTab);
+        },
 
         async loadCategories() {
             this.loading = true;
@@ -267,8 +273,12 @@ function categoryApp() {
                 
                 if (data.success) {
                     this.categories = data.data.categories || [];
-                    this.incomeCategories = data.data.income_categories || [];
-                    this.expenseCategories = data.data.expense_categories || [];
+                } else {
+                    if (response.status === 401) {
+                        window.location.href = '/login';
+                        return;
+                    }
+                    throw new Error(data.error || 'Failed to load categories');
                 }
             } catch (error) {
                 console.error('Failed to load categories:', error);
@@ -381,7 +391,7 @@ function categoryApp() {
                 });
 
                 if (result.isConfirmed) {
-                    window.location.href = `/categories/transfer/${id}`;
+                    window.location.href = `/categories/delete/${id}`;
                 }
                 return;
             }

@@ -161,7 +161,7 @@ class Transaction {
             $this->db->beginTransaction();
 
             $stmt = $this->db->prepare("
-                INSERT INTO transactions (user_id, wallet_id, category_id, amount, type, notes, date) 
+                INSERT INTO transactions (user_id, wallet_id, category_id, amount, type, notes, `date`) 
                 VALUES (:user_id, :wallet_id, :category_id, :amount, :type, :notes, :date)
             ");
             $stmt->bindParam(':user_id', $userId);
@@ -212,7 +212,7 @@ class Transaction {
                 UPDATE transactions 
                 SET wallet_id = :wallet_id, category_id = :category_id, 
                     amount = :amount, type = :type, notes = :notes, 
-                    date = :date 
+                    `date` = :date 
                 WHERE id = :id AND user_id = :user_id
             ");
             $stmt->bindParam(':id', $id);
@@ -283,12 +283,12 @@ class Transaction {
         $params = [':user_id' => $userId];
         
         if ($startDate !== null) {
-            $sql .= " AND date >= :start_date";
+            $sql .= " AND `date` >= :start_date";
             $params[':start_date'] = $startDate;
         }
         
         if ($endDate !== null) {
-            $sql .= " AND date <= :end_date";
+            $sql .= " AND `date` <= :end_date";
             $params[':end_date'] = $endDate;
         }
         
@@ -422,15 +422,15 @@ class Transaction {
         $startDate = date('Y-m-01', strtotime("-$months months"));
         
         $sql = "SELECT 
-                    YEAR(date) as year, 
-                    MONTH(date) as month, 
+                    YEAR(`date`) as year, 
+                    MONTH(`date`) as month, 
                     SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as total_income,
                     SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as total_expense
                 FROM transactions 
                 WHERE user_id = :user_id 
-                AND date >= :start_date
-                GROUP BY YEAR(date), MONTH(date)
-                ORDER BY YEAR(date) ASC, MONTH(date) ASC";
+                AND `date` >= :start_date
+                GROUP BY YEAR(`date`), MONTH(`date`)
+                ORDER BY YEAR(`date`) ASC, MONTH(`date`) ASC";
                 
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':user_id', $userId);
