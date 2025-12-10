@@ -43,6 +43,7 @@ require_once __DIR__ . '/app/Controllers/WalletController.php';
 require_once __DIR__ . '/app/Controllers/CategoryController.php';
 require_once __DIR__ . '/app/Controllers/TransactionController.php';
 require_once __DIR__ . '/app/Controllers/ExportController.php';
+require_once __DIR__ . '/app/Controllers/ApiController.php';
 
 // Initialize Router
 $router = new Router();
@@ -79,11 +80,6 @@ $router->post('/categories/edit/(\d+)', ['CategoryController', 'edit']);
 $router->get('/categories/delete/(\d+)', ['CategoryController', 'delete']);
 $router->post('/categories/transfer-and-delete', ['CategoryController', 'transferAndDelete']);
 
-// Category API Routes (AJAX)
-$router->post('/api/categories/create', ['CategoryController', 'apiCreate']);
-$router->get('/api/categories/(\d+)', ['CategoryController', 'apiGet']);
-$router->post('/api/categories/update/(\d+)', ['CategoryController', 'apiUpdate']);
-
 // Transaction Routes
 $router->get('/transactions', ['TransactionController', 'index']);
 $router->get('/transactions/create', ['TransactionController', 'create']);
@@ -94,6 +90,22 @@ $router->get('/transactions/delete/(\d+)', ['TransactionController', 'delete']);
 
 // Export Routes
 $router->get('/export/transactions', ['ExportController', 'transactions']);
+
+// ===== API Routes (JSON) =====
+$router->get('/api/dashboard', ['ApiController', 'dashboard']);
+$router->get('/api/transactions', ['ApiController', 'transactions']);
+$router->post('/api/transactions/create', ['ApiController', 'transactionCreate']);
+$router->post('/api/transactions/update/(\d+)', ['ApiController', 'transactionUpdate']);
+$router->post('/api/transactions/delete/(\d+)', ['ApiController', 'transactionDelete']);
+$router->get('/api/wallets', ['ApiController', 'wallets']);
+$router->post('/api/wallets/create', ['ApiController', 'walletCreate']);
+$router->post('/api/wallets/update/(\d+)', ['ApiController', 'walletUpdate']);
+$router->post('/api/wallets/delete/(\d+)', ['ApiController', 'walletDelete']);
+$router->get('/api/categories', ['ApiController', 'categories']);
+$router->post('/api/categories/create', ['ApiController', 'categoryCreate']);
+$router->post('/api/categories/update/(\d+)', ['ApiController', 'categoryUpdate']);
+$router->post('/api/categories/delete/(\d+)', ['ApiController', 'categoryDelete']);
+$router->get('/api/form-data', ['ApiController', 'formData']);
 
 // Dispatch
 $router->dispatch();

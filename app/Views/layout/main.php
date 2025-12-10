@@ -16,8 +16,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     
-    <!-- Phosphor Icons (Monochrome/Minimalist) -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Phosphor Icons - CSS-based (all weights) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -32,6 +34,9 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/public/custom.css">
+    
+    <!-- App JavaScript API Client -->
+    <script src="/public/js/app.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased">
     
@@ -216,7 +221,7 @@
         const swup = new Swup({
             containers: ['#swup'],
             animationSelector: '[class*="transition-"]',
-            cache: true,
+            cache: false, // Disable cache to always get fresh data
             plugins: [
                 new SwupHeadPlugin(),
                 new SwupPreloadPlugin()
@@ -269,6 +274,14 @@
 
         // Run after each Swup page transition
         swup.hooks.on('page:view', initPageScripts);
+
+        // Initialize page-specific controllers after transition
+        swup.hooks.on('page:view', () => {
+            // Re-run app.js PageRouter on every page navigation
+            if (typeof PageRouter !== 'undefined') {
+                PageRouter.init();
+            }
+        });
 
         // Update active nav link after navigation
         swup.hooks.on('page:view', () => {

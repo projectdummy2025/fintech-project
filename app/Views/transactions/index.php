@@ -2,7 +2,7 @@
 
 <?= $this->section('content') ?>
 
-<div x-data="{ showFilters: false, activeFiltersCount: <?= count(array_filter($filters ?? [])) ?> }">
+<div id="transactions-page" x-data="{ showFilters: false, activeFiltersCount: <?= count(array_filter($filters ?? [])) ?> }">
     <!-- Header -->
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div>
@@ -48,7 +48,7 @@
                 <i class="ph ph-x text-gray-400"></i>
             </button>
         </div>
-        <form method="GET" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <form method="GET" id="filter-form" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div>
                 <label for="month" class="form-label">Month</label>
                 <select name="month" id="month" class="input-custom">
@@ -167,140 +167,194 @@
         </div>
     <?php endif; ?>
 
-    <!-- Transactions Table -->
-    <?php if (!empty($transactions)): ?>
-        <div class="card-custom overflow-hidden">
-            <!-- Table Header with Summary -->
-            <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 flex items-center justify-center bg-teal-100 rounded-lg">
-                        <i class="ph-fill ph-list-bullets text-teal-600"></i>
-                    </div>
-                    <div>
-                        <h5 class="text-base font-bold text-gray-900"><?= count($transactions) ?> Transactions</h5>
-                        <p class="text-xs text-gray-500"><?= $monthName ?? date('F') ?> <?= $currentYear ?></p>
+    <!-- Transactions Container -->
+    <div id="transactions-container">
+        <?php if (!empty($transactions)): ?>
+            <div class="card-custom overflow-hidden">
+                <!-- Table Header with Summary -->
+                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 flex items-center justify-center bg-teal-100 rounded-lg">
+                            <i class="ph-fill ph-list-bullets text-teal-600"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-base font-bold text-gray-900" id="transaction-count"><?= count($transactions) ?> Transactions</h5>
+                            <p class="text-xs text-gray-500"><?= $monthName ?? date('F') ?> <?= $currentYear ?></p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="table-custom">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Category</th>
-                            <th>Wallet</th>
-                            <th>Notes</th>
-                            <th class="text-right">Amount</th>
-                            <th class="text-center w-24">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($transactions as $transaction): ?>
-                            <tr class="hover:bg-gray-50/50 transition-colors group">
-                                <td class="whitespace-nowrap">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-lg text-xs font-semibold text-gray-600">
-                                            <?= date('d', strtotime($transaction['date'])) ?>
-                                        </div>
-                                        <span class="text-sm text-gray-500"><?= date('M Y', strtotime($transaction['date'])) ?></span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium <?= $transaction['category_type'] === 'income' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700' ?>">
-                                        <i class="ph-fill <?= $transaction['category_type'] === 'income' ? 'ph-arrow-circle-down' : 'ph-arrow-circle-up' ?>"></i>
-                                        <?= htmlspecialchars($transaction['category_name']) ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="flex items-center gap-2">
-                                        <i class="ph ph-credit-card text-gray-400"></i>
-                                        <span class="text-sm text-gray-700"><?= htmlspecialchars($transaction['wallet_name']) ?></span>
-                                    </div>
-                                </td>
-                                <td class="max-w-xs">
-                                    <?php if (!empty($transaction['notes'])): ?>
-                                        <span class="text-sm text-gray-500 truncate block" title="<?= htmlspecialchars($transaction['notes']) ?>">
-                                            <?= htmlspecialchars($transaction['notes']) ?>
-                                        </span>
-                                    <?php else: ?>
-                                        <span class="text-sm text-gray-300 italic">No notes</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td class="text-right whitespace-nowrap">
-                                    <?php if ($transaction['type'] === 'income'): ?>
-                                        <span class="text-emerald-600 font-semibold tabular-nums">
-                                            +Rp <?= number_format($transaction['amount'], 0, ',', '.') ?>
-                                        </span>
-                                    <?php else: ?>
-                                        <span class="text-red-600 font-semibold tabular-nums">
-                                            -Rp <?= number_format($transaction['amount'], 0, ',', '.') ?>
-                                        </span>
-                                    <?php endif; ?>
-                                </td>
-                                <td class="text-center whitespace-nowrap">
-                                    <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <a href="/transactions/edit/<?= $transaction['id'] ?>" 
-                                           class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" 
-                                           title="Edit">
-                                            <i class="ph ph-pencil-simple"></i>
-                                        </a>
-                                        <a href="/transactions/delete/<?= $transaction['id'] ?>" 
-                                           class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" 
-                                           onclick="return confirm('Are you sure you want to delete this transaction?')" 
-                                           title="Delete">
-                                            <i class="ph ph-trash"></i>
-                                        </a>
-                                    </div>
-                                </td>
+                <div class="overflow-x-auto">
+                    <table class="table-custom">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Wallet</th>
+                                <th>Notes</th>
+                                <th class="text-right">Amount</th>
+                                <th class="text-center w-24">Actions</th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Table Footer with Totals -->
-            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
-                <div class="flex flex-wrap gap-6 justify-end">
-                    <?php 
-                    $totalIncome = 0;
-                    $totalExpense = 0;
-                    foreach ($transactions as $t) {
-                        if ($t['type'] === 'income') $totalIncome += $t['amount'];
-                        else $totalExpense += $t['amount'];
-                    }
-                    ?>
-                    <div class="text-right">
-                        <p class="text-xs text-gray-500 uppercase tracking-wider">Total Income</p>
-                        <p class="text-lg font-bold text-emerald-600 tabular-nums">+Rp <?= number_format($totalIncome, 0, ',', '.') ?></p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-xs text-gray-500 uppercase tracking-wider">Total Expense</p>
-                        <p class="text-lg font-bold text-red-600 tabular-nums">-Rp <?= number_format($totalExpense, 0, ',', '.') ?></p>
-                    </div>
-                    <div class="text-right border-l border-gray-200 pl-6">
-                        <p class="text-xs text-gray-500 uppercase tracking-wider">Net</p>
-                        <p class="text-lg font-bold <?= ($totalIncome - $totalExpense) >= 0 ? 'text-gray-900' : 'text-red-600' ?> tabular-nums">
-                            <?= ($totalIncome - $totalExpense) >= 0 ? '+' : '' ?>Rp <?= number_format($totalIncome - $totalExpense, 0, ',', '.') ?>
-                        </p>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($transactions as $transaction): ?>
+                                <tr class="hover:bg-gray-50/50 transition-colors group" data-id="<?= $transaction['id'] ?>">
+                                    <td class="whitespace-nowrap">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-lg text-xs font-semibold text-gray-600">
+                                                <?= date('d', strtotime($transaction['date'])) ?>
+                                            </div>
+                                            <span class="text-sm text-gray-500"><?= date('M Y', strtotime($transaction['date'])) ?></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium <?= $transaction['category_type'] === 'income' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700' ?>">
+                                            <i class="ph-fill <?= $transaction['category_type'] === 'income' ? 'ph-arrow-circle-down' : 'ph-arrow-circle-up' ?>"></i>
+                                            <?= htmlspecialchars($transaction['category_name']) ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="flex items-center gap-2">
+                                            <i class="ph ph-credit-card text-gray-400"></i>
+                                            <span class="text-sm text-gray-700"><?= htmlspecialchars($transaction['wallet_name']) ?></span>
+                                        </div>
+                                    </td>
+                                    <td class="max-w-xs">
+                                        <?php if (!empty($transaction['notes'])): ?>
+                                            <span class="text-sm text-gray-500 truncate block" title="<?= htmlspecialchars($transaction['notes']) ?>">
+                                                <?= htmlspecialchars($transaction['notes']) ?>
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="text-sm text-gray-300 italic">No notes</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td class="text-right whitespace-nowrap">
+                                        <?php if ($transaction['type'] === 'income'): ?>
+                                            <span class="text-emerald-600 font-semibold tabular-nums">
+                                                +Rp <?= number_format($transaction['amount'], 0, ',', '.') ?>
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="text-red-600 font-semibold tabular-nums">
+                                                -Rp <?= number_format($transaction['amount'], 0, ',', '.') ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td class="text-center whitespace-nowrap">
+                                        <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <a href="/transactions/edit/<?= $transaction['id'] ?>" 
+                                               class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" 
+                                               title="Edit">
+                                                <i class="ph ph-pencil-simple"></i>
+                                            </a>
+                                            <button onclick="deleteTransaction(<?= $transaction['id'] ?>)" 
+                                               class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" 
+                                               title="Delete">
+                                                <i class="ph ph-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Table Footer with Totals -->
+                <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
+                    <div class="flex flex-wrap gap-6 justify-end">
+                        <?php 
+                        $totalIncome = 0;
+                        $totalExpense = 0;
+                        foreach ($transactions as $t) {
+                            if ($t['type'] === 'income') $totalIncome += $t['amount'];
+                            else $totalExpense += $t['amount'];
+                        }
+                        ?>
+                        <div class="text-right">
+                            <p class="text-xs text-gray-500 uppercase tracking-wider">Total Income</p>
+                            <p class="text-lg font-bold text-emerald-600 tabular-nums" id="total-income">+Rp <?= number_format($totalIncome, 0, ',', '.') ?></p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-gray-500 uppercase tracking-wider">Total Expense</p>
+                            <p class="text-lg font-bold text-red-600 tabular-nums" id="total-expense">-Rp <?= number_format($totalExpense, 0, ',', '.') ?></p>
+                        </div>
+                        <div class="text-right border-l border-gray-200 pl-6">
+                            <p class="text-xs text-gray-500 uppercase tracking-wider">Net</p>
+                            <p class="text-lg font-bold <?= ($totalIncome - $totalExpense) >= 0 ? 'text-gray-900' : 'text-red-600' ?> tabular-nums" id="total-net">
+                                <?= ($totalIncome - $totalExpense) >= 0 ? '+' : '' ?>Rp <?= number_format($totalIncome - $totalExpense, 0, ',', '.') ?>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    <?php else: ?>
-        <div class="card-custom">
-            <div class="empty-state">
-                <div class="empty-state-icon">
-                    <i class="ph ph-magnifying-glass"></i>
+        <?php else: ?>
+            <div class="card-custom">
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="ph ph-magnifying-glass"></i>
+                    </div>
+                    <h4 class="empty-state-title">No transactions found</h4>
+                    <p class="empty-state-text">Try adjusting your filters or add a new transaction.</p>
+                    <a href="/transactions/create" class="btn btn-primary mt-4">
+                        <i class="ph-bold ph-plus"></i>
+                        Add Transaction
+                    </a>
                 </div>
-                <h4 class="empty-state-title">No transactions found</h4>
-                <p class="empty-state-text">Try adjusting your filters or add a new transaction.</p>
-                <a href="/transactions/create" class="btn btn-primary mt-4">
-                    <i class="ph-bold ph-plus"></i>
-                    Add Transaction
-                </a>
             </div>
-        </div>
-    <?php endif; ?>
+        <?php endif; ?>
+    </div>
 </div>
+
+<script>
+    // Delete transaction via API
+    async function deleteTransaction(id) {
+        const confirmed = await Swal.fire({
+            title: 'Delete Transaction?',
+            text: 'This action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#0d9488',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel'
+        });
+
+        if (confirmed.isConfirmed) {
+            try {
+                const response = await fetch(`/api/transactions/delete/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Transaction deleted successfully',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                    // Refresh the page to show updated data
+                    location.reload();
+                } else {
+                    throw new Error(data.error || 'Failed to delete');
+                }
+            } catch (error) {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: error.message || 'Failed to delete transaction',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }
+        }
+    }
+</script>
 
 <?= $this->endSection() ?>
