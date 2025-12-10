@@ -235,6 +235,13 @@ const FinanceUI = {
     },
 
     /**
+     * Get sync checksums
+     */
+    async getSync() {
+        return this.get('/api/sync');
+    },
+
+    /**
      * Confirm dialog
      */
     async confirm(title, text, confirmText = 'Yes', cancelText = 'Cancel') {
@@ -256,6 +263,107 @@ const FinanceUI = {
 };
 
 /**
+ * Finance Store - Client Side State Management
+ */
+const FinanceStore = {
+    data: {
+        transactions: [],
+        wallets: [],
+        categories: [],
+        checksums: { transactions: {}, wallets: {}, categories: {} },
+        lastUpdated: 0,
+        initialized: false
+    },
+    listeners: [],
+
+    async init() {
+        if (this.data.initialized) return;
+        await this.loadAll();
+        this.data.initialized = true;
+        this.startPolling();
+    },
+
+    async loadAll() {
+        try {
+            // Fetch all data in parallel
+            // Limit 10000 for transactions to get "all"
+            const [transactionsRes, walletsRes, categoriesRes, syncRes] = await Promise.all([
+                FinanceAPI.getTransactions({ limit: 10000 }),
+                FinanceAPI.getWallets(),
+                FinanceAPI.getCategories(),
+                FinanceAPI.getSync()
+            ]);
+
+            if (transactionsRes.success) this.data.transactions = transactionsRes.data.transactions;
+            if (walletsRes.success) this.data.wallets = walletsRes.data.wallets;
+            if (categoriesRes.success) this.data.categories = categoriesRes.data.categories; // Note: API returns { categories: [], income_categories: [], ... }
+
+            if (syncRes.success) {
+                this.data.checksums = syncRes.data;
+                this.data.lastUpdated = Date.now();
+            }
+
+            this.notify();
+        } catch (error) {
+            console.error('Failed to load initial data:', error);
+        }
+    },
+
+    async sync() {
+        try {
+            const response = await FinanceAPI.getSync();
+            if (response.success) {
+                const serverChecksums = response.data;
+                if (this.needsUpdate(serverChecksums)) {
+                    console.log('Data changed, syncing...');
+                    await this.loadAll();
+                }
+            }
+        } catch (error) {
+            console.error('Sync failed:', error);
+        }
+    },
+
+    needsUpdate(serverChecksums) {
+        const local = this.data.checksums;
+
+        // Check transactions
+        if (serverChecksums.transactions.count !== local.transactions.count ||
+            serverChecksums.transactions.sum !== local.transactions.sum ||
+            serverChecksums.transactions.last_id !== local.transactions.last_id) return true;
+
+        // Check wallets
+        if (serverChecksums.wallets.count !== local.wallets.count ||
+            serverChecksums.wallets.last_id !== local.wallets.last_id) return true;
+
+        // Check categories
+        if (serverChecksums.categories.count !== local.categories.count ||
+            serverChecksums.categories.last_id !== local.categories.last_id) return true;
+
+        return false;
+    },
+
+    startPolling() {
+        setInterval(() => this.sync(), 5000);
+    },
+
+    subscribe(listener) {
+        this.listeners.push(listener);
+        // Call immediately with current data
+        if (this.data.initialized) listener(this.data);
+    },
+
+    notify() {
+        this.listeners.forEach(l => l(this.data));
+    },
+
+    // Getters
+    getTransactions() { return this.data.transactions; },
+    getWallets() { return this.data.wallets; },
+    getCategories() { return this.data.categories; }
+};
+
+/**
  * Dashboard Page Controller
  */
 const DashboardPage = {
@@ -269,30 +377,126 @@ const DashboardPage = {
         this.currentYear = parseInt(urlParams.get('year')) || new Date().getFullYear();
         this.currentMonth = parseInt(urlParams.get('month')) || (new Date().getMonth() + 1);
 
-        await this.loadData();
+        // Subscribe to store updates
+        FinanceStore.subscribe(() => {
+            this.loadData();
+        });
+
+        // Initial load
+        await FinanceStore.init();
+        this.loadData();
     },
 
-    async loadData() {
+    loadData() {
         try {
-            // Show loading states
-            this.showLoadingStates();
-
-            const response = await FinanceAPI.getDashboard(this.currentYear, this.currentMonth);
-
-            if (response.success) {
-                this.renderSummary(response.data.summary);
-                this.renderRecentTransactions(response.data.recent_transactions);
-                this.renderWalletBalances(response.data.wallet_balances);
-                this.renderExpenseByCategory(response.data.expense_by_category);
-                this.renderIncomeByCategory(response.data.income_by_category);
-                this.renderMonthlyTrendChart(response.data.monthly_trends);
-                this.renderCategoryBreakdownChart(response.data.expense_by_category);
-                this.renderIncomeBreakdownChart(response.data.income_by_category);
+            // Show loading states if not initialized
+            if (!FinanceStore.data.initialized) {
+                this.showLoadingStates();
+                return;
             }
+
+            const transactions = FinanceStore.getTransactions();
+            const wallets = FinanceStore.getWallets();
+            const categories = FinanceStore.getCategories();
+
+            // Filter transactions for current month/year for summary
+            const currentMonthTransactions = transactions.filter(t => {
+                const date = new Date(t.date);
+                return date.getFullYear() === this.currentYear && (date.getMonth() + 1) === this.currentMonth;
+            });
+
+            // Calculate Summary
+            const summary = this.calculateSummary(currentMonthTransactions, wallets);
+            this.renderSummary(summary);
+
+            // Recent Transactions (Global, not filtered by month)
+            this.renderRecentTransactions(transactions.slice(0, 5));
+
+            // Wallet Balances (from Store directly)
+            this.renderWalletBalances(wallets);
+
+            // Expense/Income by Category (Current Month)
+            const expenseByCategory = this.calculateCategoryBreakdown(currentMonthTransactions, 'expense');
+            const incomeByCategory = this.calculateCategoryBreakdown(currentMonthTransactions, 'income');
+
+            this.renderExpenseByCategory(expenseByCategory);
+            this.renderIncomeByCategory(incomeByCategory);
+
+            // Charts
+            const monthlyTrends = this.calculateMonthlyTrends(transactions);
+            this.renderMonthlyTrendChart(monthlyTrends);
+            this.renderCategoryBreakdownChart(expenseByCategory);
+            this.renderIncomeBreakdownChart(incomeByCategory);
+
         } catch (error) {
             console.error('Dashboard load error:', error);
             FinanceUI.showToast('Failed to load dashboard data: ' + (error.message || 'Unknown error'), 'error');
         }
+    },
+
+    calculateSummary(transactions, wallets) {
+        let income = 0;
+        let expense = 0;
+        transactions.forEach(t => {
+            if (t.type === 'income') income += parseFloat(t.amount);
+            else expense += parseFloat(t.amount);
+        });
+
+        // Total wallet balance is sum of all wallet balances
+        // Note: Wallet balance in store might be stale if we don't recalculate it from transactions?
+        // Actually, Wallet model calculates balance on the fly.
+        // But FinanceStore.wallets comes from API which has balance.
+        // If we add a transaction locally, we should update wallet balance locally?
+        // For now, let's trust the store's wallet data (which is synced).
+        // BUT, if we add a transaction, we haven't implemented "optimistic UI" for adding yet.
+        // We are just syncing. So store data is from server.
+        // So wallet balance is correct from server.
+        const totalWalletBalance = wallets.reduce((sum, w) => sum + parseFloat(w.balance || 0), 0);
+
+        return {
+            total_income: income,
+            total_expense: expense,
+            net_balance: income - expense,
+            total_wallet_balance: totalWalletBalance
+        };
+    },
+
+    calculateCategoryBreakdown(transactions, type) {
+        const map = {};
+        transactions.filter(t => t.type === type).forEach(t => {
+            const name = t.category_name || 'Uncategorized';
+            if (!map[name]) map[name] = 0;
+            map[name] += parseFloat(t.amount);
+        });
+
+        return Object.entries(map)
+            .map(([name, amount]) => ({ category_name: name, total_amount: amount }))
+            .sort((a, b) => b.total_amount - a.total_amount);
+    },
+
+    calculateMonthlyTrends(transactions) {
+        // Last 6 months
+        const trends = [];
+        const today = new Date();
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+            const year = d.getFullYear();
+            const month = d.getMonth() + 1;
+
+            let income = 0;
+            let expense = 0;
+
+            transactions.forEach(t => {
+                const tDate = new Date(t.date);
+                if (tDate.getFullYear() === year && (tDate.getMonth() + 1) === month) {
+                    if (t.type === 'income') income += parseFloat(t.amount);
+                    else expense += parseFloat(t.amount);
+                }
+            });
+
+            trends.push({ year, month, total_income: income, total_expense: expense });
+        }
+        return trends;
     },
 
     showLoadingStates() {
@@ -718,6 +922,8 @@ const TransactionsPage = {
     async init() {
         const urlParams = new URLSearchParams(window.location.search);
         this.filters = {
+            start_date: urlParams.get('start_date') || '',
+            end_date: urlParams.get('end_date') || '',
             year: urlParams.get('year') || new Date().getFullYear(),
             month: urlParams.get('month') || (new Date().getMonth() + 1),
             category_id: urlParams.get('category_id') || '',
@@ -726,26 +932,96 @@ const TransactionsPage = {
             search: urlParams.get('search') || ''
         };
 
-        await this.loadData();
+        // Subscribe to store updates
+        FinanceStore.subscribe(() => {
+            this.loadData();
+        });
+
+        // Initial load
+        await FinanceStore.init();
+        this.loadData();
         this.bindEvents();
     },
 
-    async loadData() {
+    loadData() {
         const container = document.getElementById('transactions-container');
         if (!container) return;
 
         try {
-            FinanceUI.showLoading(container);
-            const response = await FinanceAPI.getTransactions(this.filters);
+            // Get all transactions from store
+            const allTransactions = FinanceStore.getTransactions();
 
-            if (response.success) {
-                this.renderTransactions(response.data.transactions);
-                this.renderTotals(response.data.totals);
-                this.updateFilterDropdowns(response.data);
+            if (allTransactions.length === 0 && !FinanceStore.data.initialized) {
+                FinanceUI.showLoading(container);
+                return;
             }
+
+            // Filter locally
+            const filtered = this.filterTransactions(allTransactions, this.filters);
+
+            // Calculate totals locally
+            const totals = this.calculateTotals(filtered);
+
+            this.renderTransactions(filtered);
+            this.renderTotals(totals);
+            // this.updateFilterDropdowns(response.data); // Dropdowns should come from Store too
         } catch (error) {
-            FinanceUI.showError(container, 'Failed to load transactions');
+            FinanceUI.showError(container, error.message || 'Failed to load transactions');
         }
+    },
+
+    filterTransactions(transactions, filters) {
+        return transactions.filter(t => {
+            const date = new Date(t.date);
+
+            // Date Range
+            if (filters.start_date && new Date(filters.start_date) > date) return false;
+            if (filters.end_date && new Date(filters.end_date) < date) return false;
+
+            // Month/Year (fallback if no date range)
+            if (!filters.start_date && !filters.end_date) {
+                if (filters.year && date.getFullYear() !== parseInt(filters.year)) return false;
+                if (filters.month && (date.getMonth() + 1) !== parseInt(filters.month)) return false;
+            }
+
+            // Category
+            if (filters.category_id && t.category_id != filters.category_id) return false;
+
+            // Wallet
+            if (filters.wallet_id && t.wallet_id != filters.wallet_id) return false;
+
+            // Type
+            if (filters.type && t.type !== filters.type) return false;
+
+            // Search
+            if (filters.search) {
+                const search = filters.search.toLowerCase();
+                const match = (t.notes && t.notes.toLowerCase().includes(search)) ||
+                    (t.category_name && t.category_name.toLowerCase().includes(search)) ||
+                    (t.wallet_name && t.wallet_name.toLowerCase().includes(search));
+                if (!match) return false;
+            }
+
+            return true;
+        });
+    },
+
+    calculateTotals(transactions) {
+        let income = 0;
+        let expense = 0;
+
+        transactions.forEach(t => {
+            const amount = parseFloat(t.amount);
+            if (t.type === 'income') income += amount;
+            else expense += amount;
+        });
+
+        return {
+            count: transactions.length,
+            income: income,
+            expense: expense,
+            net: income - expense
+        };
     },
 
     renderTransactions(transactions) {
@@ -841,10 +1117,18 @@ const TransactionsPage = {
         // Filter form submission
         const filterForm = document.getElementById('filter-form');
         if (filterForm) {
-            filterForm.addEventListener('submit', (e) => {
+            // Remove existing listener if any (to prevent duplicates)
+            if (this.filterSubmitHandler) {
+                filterForm.removeEventListener('submit', this.filterSubmitHandler);
+            }
+
+            // Create new handler
+            this.filterSubmitHandler = (e) => {
                 e.preventDefault();
                 this.applyFilters();
-            });
+            };
+
+            filterForm.addEventListener('submit', this.filterSubmitHandler);
         }
     },
 
@@ -875,7 +1159,8 @@ const TransactionsPage = {
                 const response = await FinanceAPI.deleteTransaction(id);
                 if (response.success) {
                     FinanceUI.showToast('Transaction deleted successfully');
-                    this.loadData();
+                    await FinanceStore.sync(); // Sync to get updates
+                    // loadData is called automatically via subscription, but we can call it to be sure
                 }
             } catch (error) {
                 FinanceUI.showToast('Failed to delete transaction', 'error');
@@ -889,21 +1174,32 @@ const TransactionsPage = {
  */
 const WalletsPage = {
     async init() {
-        await this.loadData();
+        // Subscribe to store updates
+        FinanceStore.subscribe(() => {
+            this.loadData();
+        });
+
+        // Initial load
+        await FinanceStore.init();
+        this.loadData();
     },
 
-    async loadData() {
+    loadData() {
         const container = document.getElementById('wallets-container');
         if (!container) return;
 
         try {
-            FinanceUI.showLoading(container);
-            const response = await FinanceAPI.getWallets();
-
-            if (response.success) {
-                this.renderWallets(response.data.wallets);
-                this.renderTotalBalance(response.data.total_balance);
+            if (!FinanceStore.data.initialized) {
+                FinanceUI.showLoading(container);
+                return;
             }
+
+            const wallets = FinanceStore.getWallets();
+            // Calculate total balance locally
+            const totalBalance = wallets.reduce((sum, w) => sum + parseFloat(w.balance || 0), 0);
+
+            this.renderWallets(wallets);
+            this.renderTotalBalance(totalBalance);
         } catch (error) {
             FinanceUI.showError(container, 'Failed to load wallets');
         }
@@ -967,7 +1263,7 @@ const WalletsPage = {
                 const response = await FinanceAPI.deleteWallet(id);
                 if (response.success) {
                     FinanceUI.showToast('Wallet deleted successfully');
-                    this.loadData();
+                    await FinanceStore.sync();
                 }
             } catch (error) {
                 FinanceUI.showToast(error.message || 'Failed to delete wallet', 'error');
@@ -1122,30 +1418,21 @@ function categoryApp(initialCategories = []) {
             return this.categories.filter(c => c.type === this.activeTab);
         },
 
-        async loadCategories() {
-            this.loading = true;
-            try {
-                // Cache busting
-                const response = await fetch('/api/categories?t=' + new Date().getTime(), {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                });
-                const data = await response.json();
+        async init() {
+            // Subscribe to store updates
+            FinanceStore.subscribe(() => {
+                this.categories = FinanceStore.getCategories();
+            });
 
-                if (data.success) {
-                    this.categories = data.data.categories || [];
-                } else {
-                    if (response.status === 401) {
-                        window.location.href = '/login';
-                        return;
-                    }
-                    throw new Error(data.error || 'Failed to load categories');
-                }
-            } catch (error) {
-                console.error('Failed to load categories:', error);
-                FinanceUI.showToast('Failed to load categories: ' + (error.message || 'Unknown error'), 'error');
-            } finally {
-                this.loading = false;
-            }
+            // Initial load
+            await FinanceStore.init();
+            this.categories = FinanceStore.getCategories();
+        },
+
+        async loadCategories() {
+            // Deprecated: Data is managed by FinanceStore
+            // But we might want to force a refresh?
+            await FinanceStore.sync();
         },
 
         openCreateModal() {
@@ -1297,9 +1584,3 @@ document.addEventListener('DOMContentLoaded', () => {
     PageRouter.init();
 });
 
-// Re-initialize after Swup page transition
-if (typeof swup !== 'undefined') {
-    swup.hooks.on('page:view', () => {
-        PageRouter.init();
-    });
-}

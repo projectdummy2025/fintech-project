@@ -20,23 +20,17 @@ class TransactionController extends Controller {
         $categoryModel = new Category();
 
         // Get filters from query parameters
-        $year = $_GET['year'] ?? date('Y');
-        $month = $_GET['month'] ?? date('m');
+        $startDate = $_GET['start_date'] ?? date('Y-m-01');
+        $endDate = $_GET['end_date'] ?? date('Y-m-t');
         $categoryId = $_GET['category_id'] ?? null;
         $walletId = $_GET['wallet_id'] ?? null;
         $type = $_GET['type'] ?? null;
         $search = $_GET['search'] ?? null;
         
-        // Validation for year and month
-        if (!is_numeric($year) || !is_numeric($month) || $year < 1970 || $year > 2100 || $month < 1 || $month > 12) {
-            $year = date('Y');
-            $month = date('m');
-        }
-
         // Prepare filters array
         $filters = [
-            'month' => $month,
-            'year' => $year
+            'start_date' => $startDate,
+            'end_date' => $endDate
         ];
         
         if (!empty($categoryId)) {

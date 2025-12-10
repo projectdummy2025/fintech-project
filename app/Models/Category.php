@@ -265,4 +265,21 @@ class Category {
         
         return $success;
     }
+    /**
+     * Get checksum for sync
+     *
+     * @param int $userId
+     * @return array
+     */
+    public function getChecksum($userId) {
+        $sql = "SELECT 
+                    COUNT(id) as count, 
+                    COALESCE(MAX(id), 0) as last_id 
+                FROM categories 
+                WHERE user_id = :user_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':user_id', $userId);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
 }

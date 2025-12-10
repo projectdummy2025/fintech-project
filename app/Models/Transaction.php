@@ -27,7 +27,18 @@ class Transaction {
         $params = [':user_id' => $userId];
 
         // Apply filters
-        if (!empty($filters['month']) && !empty($filters['year'])) {
+        // Apply filters
+        if (!empty($filters['start_date'])) {
+            $sql .= " AND t.date >= :start_date";
+            $params[':start_date'] = $filters['start_date'];
+        }
+        
+        if (!empty($filters['end_date'])) {
+            $sql .= " AND t.date <= :end_date";
+            $params[':end_date'] = $filters['end_date'];
+        }
+
+        if (!empty($filters['month']) && !empty($filters['year']) && empty($filters['start_date']) && empty($filters['end_date'])) {
             $sql .= " AND YEAR(t.date) = :year AND MONTH(t.date) = :month";
             $params[':year'] = $filters['year'];
             $params[':month'] = $filters['month'];
@@ -96,7 +107,17 @@ class Transaction {
         $params = [':user_id' => $userId];
 
         // Apply filters (same as getAllByUser)
-        if (!empty($filters['month']) && !empty($filters['year'])) {
+        if (!empty($filters['start_date'])) {
+            $sql .= " AND t.date >= :start_date";
+            $params[':start_date'] = $filters['start_date'];
+        }
+        
+        if (!empty($filters['end_date'])) {
+            $sql .= " AND t.date <= :end_date";
+            $params[':end_date'] = $filters['end_date'];
+        }
+
+        if (!empty($filters['month']) && !empty($filters['year']) && empty($filters['start_date']) && empty($filters['end_date'])) {
             $sql .= " AND YEAR(t.date) = :year AND MONTH(t.date) = :month";
             $params[':year'] = $filters['year'];
             $params[':month'] = $filters['month'];
@@ -463,5 +484,23 @@ class Transaction {
         $stmt->execute();
         $result = $stmt->fetch();
         return (int)($result['count'] ?? 0);
+    }
+    /**
+     * Get checksum for sync
+     *
+     * @param int $userId
+     * @return array
+     */
+    public function getChecksum($userId) {
+        $sql = "SELECT 
+                    COUNT(id) as count, 
+                    COALESCE(SUM(amount), 0) as sum, 
+                    COALESCE(MAX(id), 0) as last_id 
+                FROM transactions 
+                WHERE user_id = :user_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':user_id', $userId);
+        $stmt->execute();
+        return $stmt->fetch();
     }
 }

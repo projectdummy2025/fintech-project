@@ -50,20 +50,12 @@
         </div>
         <form method="GET" id="filter-form" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div>
-                <label for="month" class="form-label">Month</label>
-                <select name="month" id="month" class="input-custom">
-                    <?php for ($m = 1; $m <= 12; $m++): ?>
-                        <option value="<?= $m ?>" <?= $m == $currentMonth ? 'selected' : '' ?>><?= date('F', mktime(0, 0, 0, $m, 10)) ?></option>
-                    <?php endfor; ?>
-                </select>
+                <label for="start_date" class="form-label">Start Date</label>
+                <input type="date" name="start_date" id="start_date" class="input-custom" value="<?= htmlspecialchars($filters['start_date']) ?>">
             </div>
             <div>
-                <label for="year" class="form-label">Year</label>
-                <select name="year" id="year" class="input-custom">
-                    <?php for ($y = 2020; $y <= date('Y') + 1; $y++): ?>
-                        <option value="<?= $y ?>" <?= $y == $currentYear ? 'selected' : '' ?>><?= $y ?></option>
-                    <?php endfor; ?>
-                </select>
+                <label for="end_date" class="form-label">End Date</label>
+                <input type="date" name="end_date" id="end_date" class="input-custom" value="<?= htmlspecialchars($filters['end_date']) ?>">
             </div>
             <div>
                 <label for="wallet_id" class="form-label">Wallet</label>
@@ -122,6 +114,12 @@
     ?>
         <div class="flex items-center gap-2 mb-6 flex-wrap" x-show="!showFilters">
             <span class="text-sm text-gray-500">Active filters:</span>
+            <?php if (!empty($filters['start_date']) && !empty($filters['end_date'])): ?>
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full">
+                    <i class="ph ph-calendar"></i>
+                    <?= date('d M Y', strtotime($filters['start_date'])) ?> - <?= date('d M Y', strtotime($filters['end_date'])) ?>
+                </span>
+            <?php endif; ?>
             <?php if (!empty($filters['wallet_id'])): ?>
                 <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full">
                     <i class="ph ph-wallet"></i>
@@ -179,7 +177,9 @@
                         </div>
                         <div>
                             <h5 class="text-base font-bold text-gray-900" id="transaction-count"><?= count($transactions) ?> Transactions</h5>
-                            <p class="text-xs text-gray-500"><?= $monthName ?? date('F') ?> <?= $currentYear ?></p>
+                            <p class="text-xs text-gray-500">
+                                <?= date('d M Y', strtotime($filters['start_date'])) ?> - <?= date('d M Y', strtotime($filters['end_date'])) ?>
+                            </p>
                         </div>
                     </div>
                 </div>

@@ -126,21 +126,16 @@ class ApiController extends Controller {
     public function transactions() {
         $userId = $this->requireAuth();
 
-        $year = $_GET['year'] ?? date('Y');
-        $month = $_GET['month'] ?? date('m');
+        $startDate = $_GET['start_date'] ?? date('Y-m-01');
+        $endDate = $_GET['end_date'] ?? date('Y-m-t');
         $categoryId = $_GET['category_id'] ?? null;
         $walletId = $_GET['wallet_id'] ?? null;
         $type = $_GET['type'] ?? null;
         $search = $_GET['search'] ?? null;
 
-        if (!is_numeric($year) || !is_numeric($month) || $year < 1970 || $year > 2100 || $month < 1 || $month > 12) {
-            $year = date('Y');
-            $month = date('m');
-        }
-
         $filters = [
-            'month' => $month,
-            'year' => $year
+            'start_date' => $startDate,
+            'end_date' => $endDate
         ];
 
         if (!empty($categoryId)) $filters['category_id'] = $categoryId;
@@ -180,9 +175,8 @@ class ApiController extends Controller {
                     'count' => count($transactions)
                 ],
                 'filters' => [
-                    'year' => (int)$year,
-                    'month' => (int)$month,
-                    'month_name' => date('F', mktime(0, 0, 0, $month, 10)),
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
                     'category_id' => $categoryId,
                     'wallet_id' => $walletId,
                     'type' => $type,
@@ -581,6 +575,27 @@ class ApiController extends Controller {
                 'categories' => $categories,
                 'income_categories' => array_values(array_filter($categories, fn($c) => $c['type'] === 'income')),
                 'expense_categories' => array_values(array_filter($categories, fn($c) => $c['type'] === 'expense'))
+            ]
+        ]);
+    }
+    /**
+     * GET /api/sync
+     * Returns checksums for client-side sync
+     */
+    public function sync() {
+        $userId = $this->requireAuth();
+
+        $transactionModel = new Transaction();
+        $walletModel = new Wallet();
+        $categoryModel = new Category();
+
+        $this->json([
+            'success' => true,
+            'data' => [
+                'transactions' => $transactionModel->getChecksum($userId),
+                'wallets' => $walletModel->getChecksum($userId),
+                'categories' => $categoryModel->getChecksum($userId),
+                'timestamp' => time()
             ]
         ]);
     }
