@@ -30,7 +30,7 @@
             
             <div>
                 <label for="name" class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Wallet Name</label>
-                <input type="text" class="input-custom" id="name" name="name" value="<?= htmlspecialchars($_POST['name'] ?? '') ?>" required placeholder="e.g., Cash, Bank Account, Credit Card">
+                <input type="text" class="input-custom" id="name" name="name" value="<?= htmlspecialchars($_POST['name'] ?? '') ?>" required placeholder="e.g., Cash, Bank Account, Credit Card" autofocus>
             </div>
             
             <div>

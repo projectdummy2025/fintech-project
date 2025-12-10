@@ -162,6 +162,8 @@ class WalletController extends Controller {
                     'error' => null
                 ];
 
+                $data['csrf_field'] = Csrf::field();
+
                 $this->view('wallets/transfer_before_delete', $data);
                 return;
             } else {
@@ -189,6 +191,11 @@ class WalletController extends Controller {
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Verify CSRF
+            if (!Csrf::verify($_POST['csrf_token'] ?? '')) {
+                die("CSRF Token Mismatch");
+            }
+
             $walletModel = new Wallet();
 
             $walletId = $_POST['wallet_id'] ?? null;

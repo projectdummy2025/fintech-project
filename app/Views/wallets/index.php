@@ -36,11 +36,11 @@
                     <div class="p-3 bg-teal-50 rounded-xl">
                         <i class="ph-fill ph-wallet text-teal-700 text-2xl"></i>
                     </div>
-                    <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <a href="/wallets/edit/<?= $wallet['id'] ?>" class="btn btn-ghost p-1.5 text-blue-600 hover:bg-blue-50" title="Edit">
+                    <div class="flex gap-2">
+                        <a href="/wallets/edit/<?= $wallet['id'] ?>" class="btn btn-ghost p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors" title="Edit">
                             <i class="ph ph-pencil-simple text-lg"></i>
                         </a>
-                        <a href="/wallets/delete/<?= $wallet['id'] ?>" class="btn btn-ghost p-1.5 text-red-600 hover:bg-red-50" title="Delete">
+                        <a href="/wallets/delete/<?= $wallet['id'] ?>" class="btn btn-ghost p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete">
                             <i class="ph ph-trash text-lg"></i>
                         </a>
                     </div>
