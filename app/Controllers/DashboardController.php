@@ -94,6 +94,9 @@ class DashboardController extends Controller {
         // Get all categories for filter dropdown
         $categories = $categoryModel->getAllByUser($userId);
 
+        // Get monthly trends for the last 6 months
+        $monthlyTrends = $transactionModel->getMonthlyTrends($userId, 6);
+
         $data = [
             'title' => 'Dashboard',
             'username' => $_SESSION['username'],
@@ -101,6 +104,7 @@ class DashboardController extends Controller {
             'recentTransactions' => $recentTransactions,
             'expenseByCategory' => $expenseByCategory,
             'incomeByCategory' => $incomeByCategory,
+            'monthlyTrends' => $monthlyTrends,
             'walletBalances' => $walletBalances,
             'totalWalletBalance' => $totalWalletBalance,
             'prevTotalWalletBalance' => $prevTotalWalletBalance,

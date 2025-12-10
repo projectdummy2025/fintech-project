@@ -116,6 +116,17 @@
         </div>
     </div>
 </div>
+
+<!-- Monthly Trend Chart -->
+<div class="card-custom p-6 mb-8">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="text-lg font-bold text-gray-900">Monthly Financial Trend</h3>
+        <div class="flex items-center gap-2">
+             <span class="text-xs text-gray-500">Last 6 Months</span>
+        </div>
+    </div>
+    <div class="chart-container relative h-72 w-full">
+        <canvas id="monthlyTrendChart"></canvas>
     </div>
 </div>
 
@@ -497,6 +508,144 @@
             <div class="flex flex-col items-center justify-center h-full text-gray-400">
                 <i class="ph ph-chart-pie-slice text-4xl mb-2"></i>
                 <span class="text-sm">No expense data available</span>
+            </div>
+        `;
+    }
+
+    // Chart.js configuration for Monthly Trend
+    const ctxTrend = document.getElementById('monthlyTrendChart').getContext('2d');
+    
+    const monthlyTrends = <?= json_encode($monthlyTrends ?? []) ?>;
+    
+    if (monthlyTrends.length > 0) {
+        const trendLabels = monthlyTrends.map(item => {
+            // Create date object (month is 0-indexed in JS)
+            const date = new Date(item.year, item.month - 1);
+            return date.toLocaleString('default', { month: 'short', year: 'numeric' });
+        });
+        
+        const trendIncome = monthlyTrends.map(item => item.total_income);
+        const trendExpense = monthlyTrends.map(item => item.total_expense);
+        
+        new Chart(ctxTrend, {
+            type: 'line',
+            data: {
+                labels: trendLabels,
+                datasets: [
+                    {
+                        label: 'Income',
+                        data: trendIncome,
+                        borderColor: '#10B981', // Emerald 500
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#10B981',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    },
+                    {
+                        label: 'Expenses',
+                        data: trendExpense,
+                        borderColor: '#EF4444', // Red 500
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#EF4444',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            usePointStyle: true,
+                            boxWidth: 8,
+                            font: {
+                                family: "'Inter', sans-serif",
+                                size: 11
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1F2937',
+                        padding: 12,
+                        titleFont: {
+                            size: 13,
+                            weight: 600,
+                            family: "'Inter', sans-serif"
+                        },
+                        bodyFont: {
+                            size: 12,
+                            family: "'Inter', sans-serif"
+                        },
+                        cornerRadius: 8,
+                        displayColors: true,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += 'Rp ' + context.parsed.y.toLocaleString('id-ID');
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#F3F4F6',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                if (value >= 1000000) return (value/1000000).toFixed(1) + 'M';
+                                if (value >= 1000) return (value/1000).toFixed(0) + 'k';
+                                return value;
+                            },
+                            font: {
+                                family: "'Inter', sans-serif",
+                                size: 10
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            font: {
+                                family: "'Inter', sans-serif",
+                                size: 10
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } else {
+         const container = document.getElementById('monthlyTrendChart').parentElement;
+         container.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                <i class="ph ph-chart-line-up text-4xl mb-2"></i>
+                <span class="text-sm">No trend data available</span>
             </div>
         `;
     }

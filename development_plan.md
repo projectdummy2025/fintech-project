@@ -260,7 +260,7 @@
   - [x] Install Chart.js library
   - [x] Create income vs expense chart (line/bar)
   - [x] Create category breakdown chart (pie/doughnut)
-  - [ ] Create monthly trend chart
+  - [x] Create monthly trend chart
   - [x] Add interactive tooltips
   - [x] Implement responsive charts
 

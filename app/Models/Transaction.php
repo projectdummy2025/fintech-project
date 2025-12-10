@@ -409,4 +409,34 @@ class Transaction {
         $stmt->execute($params);
         return $stmt->fetchAll();
     }
+
+    /**
+     * Get monthly transaction trends for the last N months
+     *
+     * @param int $userId
+     * @param int $months Number of months to look back
+     * @return array
+     */
+    public function getMonthlyTrends($userId, $months = 6) {
+        // Calculate start date in PHP to be safe
+        $startDate = date('Y-m-01', strtotime("-$months months"));
+        
+        $sql = "SELECT 
+                    YEAR(date) as year, 
+                    MONTH(date) as month, 
+                    SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as total_income,
+                    SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as total_expense
+                FROM transactions 
+                WHERE user_id = :user_id 
+                AND date >= :start_date
+                GROUP BY YEAR(date), MONTH(date)
+                ORDER BY YEAR(date) ASC, MONTH(date) ASC";
+                
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':user_id', $userId);
+        $stmt->bindParam(':start_date', $startDate);
+        $stmt->execute();
+        
+        return $stmt->fetchAll();
+    }
 }
