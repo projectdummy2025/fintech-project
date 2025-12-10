@@ -137,16 +137,6 @@
                 </div>
             </div>
         </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-auto">
-        <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            <p class="text-center text-sm text-gray-500">
-                &copy; <?= date('Y') ?> Personal Finance App. Minimalist & Professional.
-            </p>
-        </div>
-    </footer>
 
     <!-- Modal Backdrop & Container -->
     <div x-show="showModal" 
