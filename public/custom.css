@@ -1,7 +1,59 @@
 /* Custom CSS untuk Personal Finance App */
 /* Menggunakan Inter untuk UI dan Roboto Mono untuk angka */
 
-/* CSS Variables untuk Color Palette - Minimalist Professional */
+/* ============================================
+   SWUP.JS PAGE TRANSITION STYLES
+   ============================================ */
+
+/* Main transition container */
+.transition-main {
+  transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
+}
+
+/* Fade out when leaving */
+html.is-animating .transition-main {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* Fade in when entering */
+html.is-rendering .transition-main {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Loading state - subtle top progress bar */
+body.swup-loading::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0d9488, #14b8a6, #0d9488);
+  background-size: 200% 100%;
+  animation: swup-loading 1s ease-in-out infinite;
+  z-index: 9999;
+}
+
+@keyframes swup-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Preload hint for links on hover */
+a[data-swup-preload]:hover,
+a:not([data-no-swup]):hover {
+  cursor: pointer;
+}
+
+/* ============================================
+   CSS Variables untuk Color Palette
+   ============================================ */
 :root {
   /* Primary Colors - Deep Teal (Muted/Professional) */
   --color-primary: #0F766E;

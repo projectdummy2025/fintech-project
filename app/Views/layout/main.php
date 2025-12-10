@@ -25,6 +25,11 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
+    <!-- Swup.js for SPA-like transitions -->
+    <script src="https://unpkg.com/swup@4"></script>
+    <script src="https://unpkg.com/@swup/head-plugin@2"></script>
+    <script src="https://unpkg.com/@swup/preload-plugin@3"></script>
+    
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/public/custom.css">
 </head>
@@ -189,8 +194,8 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main id="main-content" class="py-10" role="main">
+    <!-- Main Content - Swup Container -->
+    <main id="swup" class="transition-main py-10" role="main">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <?= $this->renderSection('content') ?>
         </div>
@@ -207,25 +212,28 @@
 
     <!-- Custom Scripts -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Swup for SPA-like page transitions
+        const swup = new Swup({
+            containers: ['#swup'],
+            animationSelector: '[class*="transition-"]',
+            cache: true,
+            plugins: [
+                new SwupHeadPlugin(),
+                new SwupPreloadPlugin()
+            ]
+        });
+
+        // Function to initialize page scripts
+        function initPageScripts() {
             // Form Submission Loading State
             const forms = document.querySelectorAll('form');
             forms.forEach(form => {
                 form.addEventListener('submit', function(e) {
-                    // Don't show loading if the form has the 'no-loading' class
                     if (this.classList.contains('no-loading')) return;
-
                     const submitBtn = this.querySelector('button[type="submit"]');
                     if (submitBtn && !submitBtn.disabled) {
-                        // Add loading state
                         submitBtn.classList.add('btn-loading');
                         submitBtn.disabled = true;
-                        
-                        // Optional: Restore button state after a timeout (in case of validation error or no navigation)
-                        // setTimeout(() => {
-                        //     submitBtn.classList.remove('btn-loading');
-                        //     submitBtn.disabled = false;
-                        // }, 5000);
                     }
                 });
             });
@@ -240,6 +248,56 @@
                     });
                 }, 5000);
             });
+
+            // Re-initialize Alpine.js components after Swup navigation
+            if (typeof Alpine !== 'undefined') {
+                document.querySelectorAll('[x-data]').forEach(el => {
+                    if (!el._x_dataStack) {
+                        Alpine.initTree(el);
+                    }
+                });
+            }
+
+            // Re-initialize Chart.js if needed (for dashboard)
+            if (typeof Chart !== 'undefined' && document.getElementById('monthlyTrendChart')) {
+                // Charts will be initialized by inline scripts on the page
+            }
+        }
+
+        // Run on initial load
+        document.addEventListener('DOMContentLoaded', initPageScripts);
+
+        // Run after each Swup page transition
+        swup.hooks.on('page:view', initPageScripts);
+
+        // Update active nav link after navigation
+        swup.hooks.on('page:view', () => {
+            const path = window.location.pathname;
+            const segment = path.split('/')[1] || 'dashboard';
+            
+            // Update desktop nav
+            document.querySelectorAll('nav a[href]').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href.startsWith('/')) {
+                    const linkSegment = href.split('/')[1] || 'dashboard';
+                    if (linkSegment === segment) {
+                        link.classList.add('bg-teal-50', 'text-teal-700');
+                        link.classList.remove('text-gray-600', 'hover:bg-gray-50', 'hover:text-gray-900');
+                    } else {
+                        link.classList.remove('bg-teal-50', 'text-teal-700');
+                        link.classList.add('text-gray-600', 'hover:bg-gray-50', 'hover:text-gray-900');
+                    }
+                }
+            });
+        });
+
+        // Show loading indicator during transition
+        swup.hooks.on('visit:start', () => {
+            document.body.classList.add('swup-loading');
+        });
+
+        swup.hooks.on('visit:end', () => {
+            document.body.classList.remove('swup-loading');
         });
     </script>
 </body>

@@ -16,11 +16,16 @@
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
+    <!-- Swup.js for SPA-like transitions -->
+    <script src="https://unpkg.com/swup@4"></script>
+    <script src="https://unpkg.com/@swup/head-plugin@2"></script>
+    <script src="https://unpkg.com/@swup/preload-plugin@3"></script>
+    
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/public/custom.css">
 </head>
 <body>
-    <div class="auth-container">
+    <div class="auth-container transition-main">
         <!-- Hero Section (Left) -->
         <div class="auth-hero">
             <div class="auth-hero-content">
@@ -167,6 +172,17 @@
                 eyeIcon.className = 'ph ph-eye text-xl';
             }
         }
+
+        // Initialize Swup for SPA-like transitions
+        const swup = new Swup({
+            containers: ['body'],
+            animationSelector: '[class*="transition-"]',
+            cache: true,
+            plugins: [
+                new SwupHeadPlugin(),
+                new SwupPreloadPlugin()
+            ]
+        });
     </script>
 </body>
 </html>

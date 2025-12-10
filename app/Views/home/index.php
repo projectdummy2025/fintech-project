@@ -32,6 +32,11 @@
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
+    <!-- Swup.js for SPA-like transitions -->
+    <script src="https://unpkg.com/swup@4"></script>
+    <script src="https://unpkg.com/@swup/head-plugin@2"></script>
+    <script src="https://unpkg.com/@swup/preload-plugin@3"></script>
+    
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/public/custom.css">
     
@@ -80,6 +85,9 @@
     </style>
 </head>
 <body class="font-sans antialiased text-gray-800 scroll-smooth">
+    
+    <!-- Main Transition Container -->
+    <div id="swup-home" class="transition-main">
     
     <!-- Navigation -->
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100" x-data="{ mobileOpen: false, scrolled: false }" @scroll.window="scrolled = window.pageYOffset > 20">
@@ -620,5 +628,30 @@
         </div>
     </footer>
 
+    </div><!-- End Transition Container -->
+
+    <!-- Initialize Swup for SPA-like transitions -->
+    <script>
+        const swup = new Swup({
+            containers: ['body'],
+            animationSelector: '[class*="transition-"]',
+            cache: true,
+            plugins: [
+                new SwupHeadPlugin(),
+                new SwupPreloadPlugin()
+            ]
+        });
+
+        // Re-initialize Alpine.js after page transition
+        swup.hooks.on('page:view', () => {
+            if (typeof Alpine !== 'undefined') {
+                document.querySelectorAll('[x-data]').forEach(el => {
+                    if (!el._x_dataStack) {
+                        Alpine.initTree(el);
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
