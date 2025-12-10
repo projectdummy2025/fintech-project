@@ -219,7 +219,7 @@
   - [x] Add quick action buttons
   - [x] Implement date range selector (month/year)
   - [x] Show category breakdown tables
-  - [x] Implement Chart.js untuk Income vs Expenses
+  - [x] Implement Chart.js untuk visualisasi data
   - [x] Apply `.empty-state` untuk no data scenarios
 
 - [x] **4.7 Category & Wallet Management Pages**
@@ -256,11 +256,10 @@
 
 ### Tasks
 
-- [ ] **5.1 Chart.js Integration**
+- [x] **5.1 Chart.js Integration**
   - [x] Install Chart.js library
-  - [x] Create income vs expense chart (line/bar)
-  - [x] Create category breakdown chart (pie/doughnut)
-  - [x] Create monthly trend chart
+  - [x] Create monthly trend chart (line chart)
+  - [x] Create category breakdown chart (doughnut)
   - [x] Add interactive tooltips
   - [x] Implement responsive charts
 

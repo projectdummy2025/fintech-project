@@ -88,36 +88,7 @@
     </div>
 </div>
 
-<!-- Chart Section -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-    <!-- Income vs Expense Chart -->
-    <div class="card-custom p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-bold text-gray-900">Income vs Expenses</h3>
-            <button class="text-gray-400 hover:text-gray-600">
-                <i class="ph ph-dots-three text-xl"></i>
-            </button>
-        </div>
-        <div class="chart-container relative h-64 w-full">
-            <canvas id="incomeExpenseChart"></canvas>
-        </div>
-    </div>
-
-    <!-- Category Breakdown Chart -->
-    <div class="card-custom p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-bold text-gray-900">Expense Breakdown</h3>
-            <button class="text-gray-400 hover:text-gray-600">
-                <i class="ph ph-dots-three text-xl"></i>
-            </button>
-        </div>
-        <div class="chart-container relative h-64 w-full flex justify-center">
-            <canvas id="categoryBreakdownChart"></canvas>
-        </div>
-    </div>
-</div>
-
-<!-- Monthly Trend Chart -->
+<!-- Monthly Trend Chart (Full Width) -->
 <div class="card-custom p-6 mb-8">
     <div class="flex justify-between items-center mb-6">
         <h3 class="text-lg font-bold text-gray-900">Monthly Financial Trend</h3>
@@ -130,7 +101,21 @@
     </div>
 </div>
 
+<!-- Charts and Data Grid -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Category Breakdown Chart -->
+    <div class="card-custom p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-bold text-gray-900">Expense Breakdown</h3>
+            <button class="text-gray-400 hover:text-gray-600">
+                <i class="ph ph-dots-three text-xl"></i>
+            </button>
+        </div>
+        <div class="chart-container relative h-64 w-full flex justify-center">
+            <canvas id="categoryBreakdownChart"></canvas>
+        </div>
+    </div>
+
     <!-- Recent Transactions -->
     <div class="card-custom overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
@@ -353,83 +338,9 @@
 </div>
 
 <script>
-    // Chart.js configuration for Income vs Expense
-    const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
-    
     // Minimalist Chart Config
     Chart.defaults.font.family = "'Inter', sans-serif";
     Chart.defaults.color = '#6B7280';
-    
-    const chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Income', 'Expenses', 'Net Balance'],
-            datasets: [{
-                label: 'Amount (Rp)',
-                data: [
-                    <?= $summary['total_income'] ?? 0 ?>,
-                    <?= $summary['total_expense'] ?? 0 ?>,
-                    <?= $summary['net_balance'] ?? 0 ?>
-                ],
-                backgroundColor: [
-                    '#10B981',  // Emerald 500
-                    '#EF4444',  // Red 500
-                    '#3B82F6'   // Blue 500
-                ],
-                borderRadius: 4,
-                barThickness: 40
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    backgroundColor: '#1F2937',
-                    padding: 12,
-                    titleFont: {
-                        size: 13,
-                        weight: 600
-                    },
-                    bodyFont: {
-                        size: 12
-                    },
-                    cornerRadius: 8,
-                    displayColors: false,
-                    callbacks: {
-                        label: function(context) {
-                            return 'Rp ' + context.parsed.y.toLocaleString('id-ID');
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: '#F3F4F6',
-                        drawBorder: false
-                    },
-                    ticks: {
-                        callback: function(value) {
-                            if (value >= 1000000) return (value/1000000).toFixed(1) + 'M';
-                            if (value >= 1000) return (value/1000).toFixed(0) + 'k';
-                            return value;
-                        }
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false,
-                        drawBorder: false
-                    }
-                }
-            }
-        }
-    });
 
     // Chart.js configuration for Expense Breakdown
     const ctxBreakdown = document.getElementById('categoryBreakdownChart').getContext('2d');
