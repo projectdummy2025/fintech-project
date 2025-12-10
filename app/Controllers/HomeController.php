@@ -4,15 +4,15 @@ require_once __DIR__ . '/../Core/Controller.php';
 
 class HomeController extends Controller {
     public function index() {
-        echo "<h1>Welcome to Personal Finance Webapp</h1>";
-        echo "<p>Routing is working correctly!</p>";
-        
-        // Test Database Connection
-        try {
-            $db = Database::getConnection();
-            echo "<p style='color:green'>Database connection successful!</p>";
-        } catch (Exception $e) {
-            echo "<p style='color:red'>Database connection failed: " . $e->getMessage() . "</p>";
+        // If user is already logged in, redirect to dashboard
+        if (isset($_SESSION['user_id'])) {
+            header('Location: /dashboard');
+            exit;
         }
+
+        // Show landing page for guests
+        $this->view('home/index', [
+            'title' => 'Take Control of Your Money'
+        ]);
     }
 }
