@@ -188,6 +188,19 @@
         </div>
     </div>
 
+    <!-- Income Breakdown Chart -->
+    <div class="card-custom p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-bold text-gray-900">Income Breakdown</h3>
+            <button class="text-gray-400 hover:text-gray-600">
+                <i class="ph ph-dots-three text-xl"></i>
+            </button>
+        </div>
+        <div class="chart-container relative h-64 w-full flex justify-center">
+            <canvas id="incomeBreakdownChart"></canvas>
+        </div>
+    </div>
+
     <!-- Wallet Balances -->
     <div class="card-custom overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
@@ -419,6 +432,87 @@
             <div class="flex flex-col items-center justify-center h-full text-gray-400">
                 <i class="ph ph-chart-pie-slice text-4xl mb-2"></i>
                 <span class="text-sm">No expense data available</span>
+            </div>
+        `;
+    }
+
+    // Chart.js configuration for Income Breakdown
+    const ctxIncomeBreakdown = document.getElementById('incomeBreakdownChart').getContext('2d');
+    
+    // Prepare data from PHP
+    const incomeLabels = <?= json_encode(array_column($incomeByCategory ?? [], 'category_name')) ?>;
+    const incomeData = <?= json_encode(array_column($incomeByCategory ?? [], 'total_amount')) ?>;
+    
+    // Check if we have data
+    if (incomeData.length > 0) {
+        new Chart(ctxIncomeBreakdown, {
+            type: 'doughnut',
+            data: {
+                labels: incomeLabels,
+                datasets: [{
+                    data: incomeData,
+                    backgroundColor: [
+                        '#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6', 
+                        '#EC4899', '#6366F1', '#14B8A6', '#F97316', '#64748B'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15,
+                            boxWidth: 8,
+                            font: {
+                                family: "'Inter', sans-serif",
+                                size: 11
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1F2937',
+                        padding: 12,
+                        titleFont: {
+                            size: 13,
+                            weight: 600,
+                            family: "'Inter', sans-serif"
+                        },
+                        bodyFont: {
+                            size: 12,
+                            family: "'Inter', sans-serif"
+                        },
+                        cornerRadius: 8,
+                        displayColors: true,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += 'Rp ' + context.parsed.toLocaleString('id-ID');
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } else {
+        // Show empty state if no data
+        const container = document.getElementById('incomeBreakdownChart').parentElement;
+        container.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                <i class="ph ph-chart-pie-slice text-4xl mb-2"></i>
+                <span class="text-sm">No income data available</span>
             </div>
         `;
     }

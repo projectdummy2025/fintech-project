@@ -97,6 +97,38 @@ class DashboardController extends Controller {
         // Get monthly trends for the last 6 months
         $monthlyTrends = $transactionModel->getMonthlyTrends($userId, 6);
 
+        // Fill in missing months to ensure continuous timeline
+        $filledTrends = [];
+        $currentDate = new DateTime();
+        // Start from 5 months ago to include current month (total 6)
+        $startDateObj = (clone $currentDate)->modify('-5 months')->modify('first day of this month');
+        
+        for ($i = 0; $i < 6; $i++) {
+            $year = (int)$startDateObj->format('Y');
+            $month = (int)$startDateObj->format('n');
+            
+            $found = false;
+            foreach ($monthlyTrends as $trend) {
+                if ($trend['year'] == $year && $trend['month'] == $month) {
+                    $filledTrends[] = $trend;
+                    $found = true;
+                    break;
+                }
+            }
+            
+            if (!$found) {
+                $filledTrends[] = [
+                    'year' => $year,
+                    'month' => $month,
+                    'total_income' => 0,
+                    'total_expense' => 0
+                ];
+            }
+            
+            $startDateObj->modify('+1 month');
+        }
+        $monthlyTrends = $filledTrends;
+
         $data = [
             'title' => 'Dashboard',
             'username' => $_SESSION['username'],
