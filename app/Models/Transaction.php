@@ -439,4 +439,19 @@ class Transaction {
         
         return $stmt->fetchAll();
     }
+
+    /**
+     * Count transactions by category ID
+     *
+     * @param int $categoryId
+     * @return int
+     */
+    public function countByCategory($categoryId) {
+        $sql = "SELECT COUNT(*) as count FROM transactions WHERE category_id = :category_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':category_id', $categoryId);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        return (int)($result['count'] ?? 0);
+    }
 }
