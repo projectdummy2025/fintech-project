@@ -259,10 +259,10 @@
 - [ ] **5.1 Chart.js Integration**
   - [x] Install Chart.js library
   - [x] Create income vs expense chart (line/bar)
-  - [ ] Create category breakdown chart (pie/doughnut)
+  - [x] Create category breakdown chart (pie/doughnut)
   - [ ] Create monthly trend chart
-  - [ ] Add interactive tooltips
-  - [ ] Implement responsive charts
+  - [x] Add interactive tooltips
+  - [x] Implement responsive charts
 
 - [ ] **5.2 Export CSV**
   - [ ] Implement CSV export untuk transactions
