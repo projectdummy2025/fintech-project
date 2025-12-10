@@ -33,93 +33,90 @@ class ApiController extends Controller {
      * Returns all dashboard data
      */
     public function dashboard() {
-        $userId = $this->requireAuth();
+        try {
+            $userId = $this->requireAuth();
 
-        $year = $_GET['year'] ?? date('Y');
-        $month = $_GET['month'] ?? date('m');
+            $year = $_GET['year'] ?? date('Y');
+            $month = $_GET['month'] ?? date('m');
 
-        if (!is_numeric($year) || !is_numeric($month) || $year < 1970 || $year > 2100 || $month < 1 || $month > 12) {
-            $year = date('Y');
-            $month = date('m');
-        }
+            if (!is_numeric($year) || !is_numeric($month) || $year < 1970 || $year > 2100 || $month < 1 || $month > 12) {
+                $year = date('Y');
+                $month = date('m');
+            }
 
-        $transactionModel = new Transaction();
-        $walletModel = new Wallet();
+            $transactionModel = new Transaction();
+            $walletModel = new Wallet();
 
-        $startDate = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-01';
-        $endDate = date('Y-m-t', strtotime($startDate));
+            $startDate = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-01';
+            $endDate = date('Y-m-t', strtotime($startDate));
 
-        // Get summary
-        $summary = $transactionModel->getSummary($userId, $startDate, $endDate);
+            // Get summary
+            $summary = $transactionModel->getSummary($userId, $startDate, $endDate);
 
-        // Get expense by category
-        $expenseByCategory = $transactionModel->getGroupedByCategory($userId, $startDate, $endDate, 'expense');
+            // Get expense by category
+            $expenseByCategory = $transactionModel->getGroupedByCategory($userId, $startDate, $endDate, 'expense');
 
-        // Get income by category
-        $incomeByCategory = $transactionModel->getGroupedByCategory($userId, $startDate, $endDate, 'income');
+            // Get income by category
+            $incomeByCategory = $transactionModel->getGroupedByCategory($userId, $startDate, $endDate, 'income');
 
-        // Get wallet balances (current, not filtered by date)
-        $walletBalances = $transactionModel->getWalletBalancesUpToDate($userId, null);
-        $totalWalletBalance = array_sum(array_column($walletBalances, 'net_balance'));
+            // Get wallet balances (current, not filtered by date)
+            $walletBalances = $transactionModel->getWalletBalancesUpToDate($userId, null);
+            $totalWalletBalance = array_sum(array_column($walletBalances, 'net_balance'));
 
-        // Get recent transactions
-        $filters = ['month' => $month, 'year' => $year];
-        $recentTransactions = $transactionModel->getAllByUser($userId, $filters, 10, 0);
+            // Get recent transactions
+            $filters = ['month' => $month, 'year' => $year];
+            $recentTransactions = $transactionModel->getAllByUser($userId, $filters, 10, 0);
 
-        // Get monthly trends (last 6 months)
-        $monthlyTrends = $transactionModel->getMonthlyTrends($userId, 6);
+            // Get monthly trends (last 6 months)
+            $monthlyTrends = $transactionModel->getMonthlyTrends($userId, 6);
 
-        // Fill missing months
-        $filledTrends = [];
-        $currentDate = new DateTime();
-        $startDateObj = (clone $currentDate)->modify('-5 months')->modify('first day of this month');
-        
-        for ($i = 0; $i < 6; $i++) {
-            $tYear = (int)$startDateObj->format('Y');
-            $tMonth = (int)$startDateObj->format('n');
+            // Fill missing months
+            $filledTrends = [];
+            $currentDate = new DateTime();
+            $startDateObj = (clone $currentDate)->modify('-5 months')->modify('first day of this month');
             
-            $found = false;
-            foreach ($monthlyTrends as $trend) {
-                if ($trend['year'] == $tYear && $trend['month'] == $tMonth) {
-                    $filledTrends[] = $trend;
-                    $found = true;
-                    break;
+            for ($i = 0; $i < 6; $i++) {
+                $tYear = (int)$startDateObj->format('Y');
+                $tMonth = (int)$startDateObj->format('n');
+                
+                $found = false;
+                foreach ($monthlyTrends as $trend) {
+                    if ($trend['year'] == $tYear && $trend['month'] == $tMonth) {
+                        $filledTrends[] = $trend;
+                        $found = true;
+                        break;
+                    }
                 }
+                
+                if (!$found) {
+                    $filledTrends[] = [
+                        'year' => $tYear,
+                        'month' => $tMonth,
+                        'total_income' => 0,
+                        'total_expense' => 0
+                    ];
+                }
+                
+                $startDateObj->modify('+1 month');
             }
-            
-            if (!$found) {
-                $filledTrends[] = [
-                    'year' => $tYear,
-                    'month' => $tMonth,
-                    'total_income' => 0,
-                    'total_expense' => 0
-                ];
-            }
-            
-            $startDateObj->modify('+1 month');
-        }
 
-        $this->json([
-            'success' => true,
-            'data' => [
-                'summary' => [
-                    'total_income' => (float)($summary['total_income'] ?? 0),
-                    'total_expense' => (float)($summary['total_expense'] ?? 0),
-                    'net_balance' => (float)($summary['net_balance'] ?? 0),
-                    'total_wallet_balance' => (float)$totalWalletBalance
-                ],
-                'expense_by_category' => $expenseByCategory,
-                'income_by_category' => $incomeByCategory,
-                'wallet_balances' => $walletBalances,
-                'recent_transactions' => $recentTransactions,
-                'monthly_trends' => $filledTrends,
-                'filters' => [
-                    'year' => (int)$year,
-                    'month' => (int)$month,
-                    'month_name' => date('F', mktime(0, 0, 0, $month, 10))
+            $summary['total_wallet_balance'] = $totalWalletBalance;
+
+            $this->json([
+                'success' => true,
+                'data' => [
+                    'summary' => $summary,
+                    'recent_transactions' => $recentTransactions,
+                    'wallet_balances' => $walletBalances,
+                    'expense_by_category' => $expenseByCategory,
+                    'income_by_category' => $incomeByCategory,
+                    'monthly_trends' => $filledTrends
                 ]
-            ]
-        ]);
+            ]);
+        } catch (Exception $e) {
+            error_log("API Dashboard Error: " . $e->getMessage());
+            $this->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**

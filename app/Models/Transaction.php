@@ -53,16 +53,26 @@ class Transaction {
             $params[':search'] = '%' . $filters['search'] . '%';
         }
 
-        $sql .= " ORDER BY t.date DESC, t.created_at DESC";
+        $sql .= " ORDER BY t.`date` DESC, t.created_at DESC";
+
+        if ($limit !== null) {
+            $sql .= " LIMIT :limit";
+            $params[':limit'] = (int)$limit;
+        }
+
+        if ($offset !== null) {
+            $sql .= " OFFSET :offset";
+            $params[':offset'] = (int)$offset;
+        }
 
         $stmt = $this->db->prepare($sql);
 
-        // Bind parameters, ensuring correct types for LIMIT and OFFSET
-        foreach ($params as $key => &$value) {
+        // Bind parameters
+        foreach ($params as $key => $value) {
             if ($key === ':limit' || $key === ':offset') {
-                $stmt->bindParam($key, $value, PDO::PARAM_INT);
+                $stmt->bindValue($key, $value, PDO::PARAM_INT);
             } else {
-                $stmt->bindParam($key, $value);
+                $stmt->bindValue($key, $value);
             }
         }
 
@@ -320,12 +330,12 @@ class Transaction {
         $params = [':user_id' => $userId];
         
         if ($startDate !== null) {
-            $sql .= " AND t.date >= :start_date";
+            $sql .= " AND t.`date` >= :start_date";
             $params[':start_date'] = $startDate;
         }
         
         if ($endDate !== null) {
-            $sql .= " AND t.date <= :end_date";
+            $sql .= " AND t.`date` <= :end_date";
             $params[':end_date'] = $endDate;
         }
         
@@ -363,12 +373,12 @@ class Transaction {
         $params = [':user_id' => $userId];
 
         if ($startDate !== null) {
-            $sql .= " AND t.date >= :start_date";
+            $sql .= " AND t.`date` >= :start_date";
             $params[':start_date'] = $startDate;
         }
 
         if ($endDate !== null) {
-            $sql .= " AND t.date <= :end_date";
+            $sql .= " AND t.`date` <= :end_date";
             $params[':end_date'] = $endDate;
         }
 
@@ -399,7 +409,7 @@ class Transaction {
         $params = [':user_id' => $userId];
 
         if ($endDate !== null) {
-            $sql .= " AND t.date <= :end_date";
+            $sql .= " AND t.`date` <= :end_date";
             $params[':end_date'] = $endDate;
         }
 

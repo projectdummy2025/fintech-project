@@ -2,7 +2,9 @@
 
 <?= $this->section('content') ?>
 
-<div id="categories-page" x-data="categoryApp()" x-init="loadCategories()">
+<style>[x-cloak] { display: none !important; }</style>
+
+<div id="categories-page" x-data="categoryApp()" x-init="loadCategories()" x-cloak>
     <!-- Header -->
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div>
@@ -43,7 +45,7 @@
         </div>
     </div>
 
-    <div x-show="!loading">
+    <div x-show="!loading" x-transition>
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <!-- Total -->
@@ -444,6 +446,26 @@ function categoryApp() {
             }
         }
     }
+}
+
+// Reinitialize on Swup page load
+document.addEventListener('DOMContentLoaded', function() {
+    const page = document.getElementById('categories-page');
+    if (page && page._x_dataStack) {
+        page._x_dataStack[0].loadCategories();
+    }
+});
+
+// Also listen for Swup content replace
+if (typeof swup !== 'undefined') {
+    swup.hooks.on('content:replace', () => {
+        setTimeout(() => {
+            const page = document.getElementById('categories-page');
+            if (page && page._x_dataStack) {
+                page._x_dataStack[0].loadCategories();
+            }
+        }, 100);
+    });
 }
 </script>
 
