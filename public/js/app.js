@@ -1152,19 +1152,7 @@ const TransactionsPage = {
         }
     },
 
-    // Global Error Handler
-    window.onerror = function (msg, url, line, col, error) {
-        const message = `JS Error: ${msg}\nLine: ${line}`;
-        console.error(message);
-        if (typeof FinanceUI !== 'undefined') {
-            FinanceUI.showToast(message, 'error');
-        } else {
-            alert(message);
-        }
-        return false;
-    };
 
-    // ... existing code ...
 
     loadData() {
         const container = document.getElementById('transactions-container');
@@ -1673,6 +1661,27 @@ const PageRouter = {
         }
         // Categories page uses Alpine.js (categoryApp) which initializes automatically
     }
+};
+
+// Expose to window for HTML event handlers
+window.FinanceAPI = FinanceAPI;
+window.FinanceUI = FinanceUI;
+window.FinanceStore = FinanceStore;
+window.DashboardPage = DashboardPage;
+window.TransactionsPage = TransactionsPage;
+window.WalletsPage = WalletsPage;
+window.PageRouter = PageRouter;
+
+// Global Error Handler
+window.onerror = function (msg, url, line, col, error) {
+    const message = `JS Error: ${msg}\nLine: ${line}`;
+    console.error(message);
+    if (typeof FinanceUI !== 'undefined') {
+        FinanceUI.showToast(message, 'error');
+    } else {
+        alert(message);
+    }
+    return false;
 };
 
 // Initialize on DOM ready

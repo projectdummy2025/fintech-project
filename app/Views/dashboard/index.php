@@ -21,6 +21,10 @@
                     <option value="<?= $y ?>" <?= $y == $currentYear ? 'selected' : '' ?>><?= $y ?></option>
                 <?php endfor; ?>
             </select>
+            <div class="w-px bg-gray-200 my-1"></div>
+            <a href="/dashboard" class="px-3 py-1.5 text-gray-400 hover:text-red-600 flex items-center" title="Reset Filters">
+                <i class="ph-fill ph-arrow-counter-clockwise"></i>
+            </a>
         </form>
     </div>
 
