@@ -1670,6 +1670,71 @@ function categoryApp(initialCategories = []) {
     };
 }
 
+// Alpine.js Component for Transaction Form
+document.addEventListener('alpine:init', () => {
+    Alpine.data('transactionForm', () => ({
+        type: '',
+        isSubmitting: false,
+
+        init() {
+            const typeSelect = document.getElementById('type');
+            if (typeSelect) {
+                this.type = typeSelect.value;
+                this.filterCategories();
+            }
+        },
+
+        filterCategories() {
+            const selectedType = this.type;
+            const categorySelect = document.getElementById('category_id');
+            if (!categorySelect) return;
+
+            const options = categorySelect.querySelectorAll('option');
+
+            options.forEach(option => {
+                if (option.value === '') return;
+
+                const optionType = option.getAttribute('data-type');
+                if (selectedType && optionType !== selectedType) {
+                    option.style.display = 'none';
+                    if (option.selected) {
+                        categorySelect.value = '';
+                    }
+                } else {
+                    option.style.display = '';
+                }
+            });
+        },
+
+        handleSubmit() {
+            this.isSubmitting = true;
+        },
+
+        async deleteTransaction(id) {
+            const confirmed = await FinanceUI.confirm(
+                'Delete Transaction?',
+                'This action cannot be undone.',
+                'Delete',
+                'Cancel'
+            );
+
+            if (confirmed) {
+                try {
+                    const response = await FinanceAPI.deleteTransaction(id);
+                    if (response.success) {
+                        FinanceUI.showToast('Transaction deleted', 'success');
+                        window.location.href = '/transactions';
+                    } else {
+                        throw new Error(response.message || 'Failed to delete');
+                    }
+                } catch (error) {
+                    FinanceUI.showToast(error.message || 'Failed to delete', 'error');
+                }
+            }
+        }
+    }));
+});
+
 /**
  * Page Router - Initialize correct page controller
  */
