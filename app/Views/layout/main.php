@@ -8,6 +8,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- App JavaScript API Client (Must be loaded before Alpine) -->
+    <script src="/public/js/app.js" defer></script>
+
     <!-- Alpine.js for interactivity -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
@@ -34,9 +37,6 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/public/custom.css">
-    
-    <!-- App JavaScript API Client -->
-    <script src="/public/js/app.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased">
     

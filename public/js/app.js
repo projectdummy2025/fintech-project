@@ -1674,8 +1674,6 @@ function categoryApp(initialCategories = []) {
 document.addEventListener('alpine:init', () => {
     Alpine.data('transactionForm', () => ({
         type: '',
-        isSubmitting: false,
-
         init() {
             const typeSelect = document.getElementById('type');
             if (typeSelect) {
@@ -1704,10 +1702,6 @@ document.addEventListener('alpine:init', () => {
                     option.style.display = '';
                 }
             });
-        },
-
-        handleSubmit() {
-            this.isSubmitting = true;
         },
 
         async deleteTransaction(id) {
