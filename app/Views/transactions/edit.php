@@ -174,12 +174,12 @@
     function transactionForm() {
         return {
             formData: {
-                wallet_id: '<?= $_POST['wallet_id'] ?? $transaction['wallet_id'] ?? '' ?>',
-                type: '<?= $_POST['type'] ?? $transaction['type'] ?? '' ?>',
-                category_id: '<?= $_POST['category_id'] ?? $transaction['category_id'] ?? '' ?>',
-                amount: '<?= $_POST['amount'] ?? $transaction['amount'] ?? '' ?>',
-                date: '<?= $_POST['date'] ?? $transaction['date'] ?? date('Y-m-d') ?>',
-                notes: '<?= addslashes($_POST['notes'] ?? $transaction['notes'] ?? '') ?>'
+                wallet_id: <?= json_encode($_POST['wallet_id'] ?? $transaction['wallet_id'] ?? '') ?>,
+                type: <?= json_encode($_POST['type'] ?? $transaction['type'] ?? '') ?>,
+                category_id: <?= json_encode($_POST['category_id'] ?? $transaction['category_id'] ?? '') ?>,
+                amount: <?= json_encode($_POST['amount'] ?? $transaction['amount'] ?? '') ?>,
+                date: <?= json_encode($_POST['date'] ?? $transaction['date'] ?? date('Y-m-d')) ?>,
+                notes: <?= json_encode($_POST['notes'] ?? $transaction['notes'] ?? '') ?>
             },
             isSubmitting: false,
             

@@ -1698,6 +1698,7 @@ const PageRouter = {
 window.FinanceAPI = FinanceAPI;
 window.FinanceUI = FinanceUI;
 window.FinanceStore = FinanceStore;
+window.categoryApp = categoryApp;
 window.DashboardPage = DashboardPage;
 window.TransactionsPage = TransactionsPage;
 window.WalletsPage = WalletsPage;
