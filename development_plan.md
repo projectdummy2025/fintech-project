@@ -136,7 +136,7 @@
   - [x] Implement filter by month/year
   - [x] Implement filter by category
   - [x] Implement filter by wallet
-  - [ ] Implement combined filters
+  - [x] Implement combined filters *(Fixed: 2025-12-11)*
   - [x] Add search functionality (by notes)
 
 - [x] **3.5 Dashboard Summary Logic**
@@ -153,6 +153,28 @@
 - ✅ Transaction CRUD functional
 - ✅ Filtering system working
 - ✅ Dashboard calculations accurate
+
+### Bug Fixes & Improvements
+
+#### Transaction Filter Bug Fix (2025-12-11)
+**Issues Fixed:**
+- ❌ Duplicate `loadData()` function causing conflicts
+- ❌ Empty filter values being processed incorrectly
+- ❌ "Clear all" button not working
+- ❌ Unnecessary default year/month filters
+
+**Solutions Implemented:**
+- ✅ Removed duplicate `loadData()` function in `TransactionsPage`
+- ✅ Enhanced `applyFilters()` to clean empty filter values
+- ✅ Improved `filterTransactions()` logic with proper string validation
+- ✅ Added event handler for "Clear all" button in `bindEvents()`
+- ✅ Removed default year/month, using only explicit user selections
+
+**Files Modified:**
+- `public/js/app.js` - TransactionsPage object (lines 911-1237)
+- `app/Controllers/TransactionController.php` - Filter logic (lines 22-64)
+
+**Result:** Combined filters now work correctly ✅
 
 ---
 

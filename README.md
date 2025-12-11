@@ -285,6 +285,38 @@ Aplikasi ini menerapkan best practices keamanan berikut:
 
 ---
 
+## Bug Fixes & Changelog
+
+### 2025-12-11: Transaction Filter Bug Fix
+
+**Problem Identified:**
+Filter pada halaman transactions mengalami beberapa bug kritis yang menyebabkan hasil filtering tidak akurat.
+
+**Issues:**
+1. Duplikasi fungsi `loadData()` menyebabkan konflik behavior
+2. Filter dengan nilai kosong tetap diproses
+3. Tombol "Clear all" tidak memiliki event handler
+4. Default year/month yang tidak perlu menyebabkan hasil tidak sesuai ekspektasi
+
+**Solutions:**
+- Menghapus duplikasi fungsi `loadData()` di `TransactionsPage` object
+- Memperbaiki `applyFilters()` untuk membersihkan nilai kosong sebelum diproses
+- Meningkatkan logika `filterTransactions()` dengan validasi string yang lebih ketat
+- Menambahkan event handler untuk tombol "Clear all"
+- Menghapus default year/month, hanya menggunakan filter yang dipilih user
+
+**Impact:**
+- ✅ Filter kombinasi sekarang bekerja dengan benar
+- ✅ Reset filter menghapus semua filter dengan sempurna
+- ✅ Performa filtering lebih cepat dan akurat
+- ✅ Kode lebih bersih dan maintainable
+
+**Files Modified:**
+- `public/js/app.js` (TransactionsPage: init, filterTransactions, bindEvents, applyFilters, resetFilters, renderActiveFilters)
+- `app/Controllers/TransactionController.php` (index method filter logic)
+
+---
+
 ## Future Extensions
 
 Beberapa fitur yang dapat dikembangkan di masa depan:
@@ -315,4 +347,4 @@ Developed as a portfolio project to demonstrate full-stack development capabilit
 
 Untuk pertanyaan atau issue, silakan buka issue di repository ini.
 
-Last Updated: 2025-12-08
+Last Updated: 2025-12-11
