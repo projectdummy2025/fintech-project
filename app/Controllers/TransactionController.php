@@ -19,19 +19,24 @@ class TransactionController extends Controller {
         $walletModel = new Wallet();
         $categoryModel = new Category();
 
-        // Get filters from query parameters
-        $startDate = $_GET['start_date'] ?? date('Y-m-01');
-        $endDate = $_GET['end_date'] ?? date('Y-m-t');
+        // Get filters from query parameters - no defaults
+        $startDate = $_GET['start_date'] ?? null;
+        $endDate = $_GET['end_date'] ?? null;
         $categoryId = $_GET['category_id'] ?? null;
         $walletId = $_GET['wallet_id'] ?? null;
         $type = $_GET['type'] ?? null;
         $search = $_GET['search'] ?? null;
         
-        // Prepare filters array
-        $filters = [
-            'start_date' => $startDate,
-            'end_date' => $endDate
-        ];
+        // Prepare filters array - only add non-empty values
+        $filters = [];
+        
+        if (!empty($startDate)) {
+            $filters['start_date'] = $startDate;
+        }
+        
+        if (!empty($endDate)) {
+            $filters['end_date'] = $endDate;
+        }
         
         if (!empty($categoryId)) {
             $filters['category_id'] = $categoryId;
@@ -61,10 +66,7 @@ class TransactionController extends Controller {
             'transactions' => $transactions,
             'wallets' => $wallets,
             'categories' => $categories,
-            'filters' => $filters,
-            'currentYear' => $year,
-            'currentMonth' => $month,
-            'monthName' => date('F', mktime(0, 0, 0, $month, 10)) // Month name
+            'filters' => $filters
         ];
 
         $this->view('transactions/index', $data);

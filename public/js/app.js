@@ -935,16 +935,16 @@ const TransactionsPage = {
 
     async init() {
         const urlParams = new URLSearchParams(window.location.search);
-        this.filters = {
-            start_date: urlParams.get('start_date') || '',
-            end_date: urlParams.get('end_date') || '',
-            year: urlParams.get('year') || new Date().getFullYear(),
-            month: urlParams.get('month') || (new Date().getMonth() + 1),
-            category_id: urlParams.get('category_id') || '',
-            wallet_id: urlParams.get('wallet_id') || '',
-            type: urlParams.get('type') || '',
-            search: urlParams.get('search') || ''
-        };
+
+        // Only get filters from URL, no defaults
+        this.filters = {};
+
+        // Parse URL params and only add non-empty values
+        for (const [key, value] of urlParams.entries()) {
+            if (value && value.trim() !== '') {
+                this.filters[key] = value.trim();
+            }
+        }
 
         // Subscribe to store updates
         FinanceStore.subscribe(() => {
@@ -957,58 +957,40 @@ const TransactionsPage = {
         this.bindEvents();
     },
 
-    loadData() {
-        const container = document.getElementById('transactions-container');
-        if (!container) return;
 
-        try {
-            // Get all transactions from store
-            const allTransactions = FinanceStore.getTransactions();
-
-            if (allTransactions.length === 0 && !FinanceStore.data.initialized) {
-                FinanceUI.showLoading(container);
-                return;
-            }
-
-            // Filter locally
-            const filtered = this.filterTransactions(allTransactions, this.filters);
-
-            // Calculate totals locally
-            const totals = this.calculateTotals(filtered);
-
-            this.renderTransactions(filtered);
-            this.renderTotals(totals);
-            // this.updateFilterDropdowns(response.data); // Dropdowns should come from Store too
-        } catch (error) {
-            FinanceUI.showError(container, error.message || 'Failed to load transactions');
-        }
-    },
 
     filterTransactions(transactions, filters) {
         return transactions.filter(t => {
             const date = new Date(t.date);
 
-            // Date Range
-            if (filters.start_date && new Date(filters.start_date) > date) return false;
-            if (filters.end_date && new Date(filters.end_date) < date) return false;
-
-            // Month/Year (fallback if no date range)
-            if (!filters.start_date && !filters.end_date) {
-                if (filters.year && date.getFullYear() !== parseInt(filters.year)) return false;
-                if (filters.month && (date.getMonth() + 1) !== parseInt(filters.month)) return false;
+            // Date Range - only apply if both dates are provided
+            if (filters.start_date && filters.start_date.trim()) {
+                if (new Date(filters.start_date) > date) return false;
+            }
+            if (filters.end_date && filters.end_date.trim()) {
+                if (new Date(filters.end_date) < date) return false;
             }
 
-            // Category
-            if (filters.category_id && t.category_id != filters.category_id) return false;
+            // Month/Year (fallback if no date range) - removed as we don't use this anymore
+            // We rely on start_date and end_date only
 
-            // Wallet
-            if (filters.wallet_id && t.wallet_id != filters.wallet_id) return false;
+            // Category - only filter if category_id is provided and not empty
+            if (filters.category_id && filters.category_id.toString().trim()) {
+                if (t.category_id != filters.category_id) return false;
+            }
 
-            // Type
-            if (filters.type && t.type !== filters.type) return false;
+            // Wallet - only filter if wallet_id is provided and not empty
+            if (filters.wallet_id && filters.wallet_id.toString().trim()) {
+                if (t.wallet_id != filters.wallet_id) return false;
+            }
 
-            // Search
-            if (filters.search) {
+            // Type - only filter if type is provided and not empty
+            if (filters.type && filters.type.trim()) {
+                if (t.type !== filters.type) return false;
+            }
+
+            // Search - only filter if search term is provided and not empty
+            if (filters.search && filters.search.trim()) {
                 const search = filters.search.toLowerCase();
                 const match = (t.notes && t.notes.toLowerCase().includes(search)) ||
                     (t.category_name && t.category_name.toLowerCase().includes(search)) ||
@@ -1145,10 +1127,16 @@ const TransactionsPage = {
             filterForm.addEventListener('submit', this.filterSubmitHandler);
         }
 
-        // Reset button
+        // Reset button (inside filter form)
         const resetButton = document.getElementById('reset-filters');
         if (resetButton) {
             resetButton.onclick = () => this.resetFilters();
+        }
+
+        // Clear all button (in active filters section)
+        const clearAllButton = document.getElementById('clear-all-filters');
+        if (clearAllButton) {
+            clearAllButton.onclick = () => this.resetFilters();
         }
     },
 
@@ -1195,17 +1183,49 @@ const TransactionsPage = {
         if (!container) return;
 
         const activeFilters = [];
-        if (this.filters.start_date && this.filters.end_date) activeFilters.push({ icon: 'ph-calendar', text: `${FinanceUI.formatDate(this.filters.start_date)} - ${FinanceUI.formatDate(this.filters.end_date)}` });
+
+        // Date range
+        if (this.filters.start_date && this.filters.end_date) {
+            activeFilters.push({
+                icon: 'ph-calendar',
+                text: `${FinanceUI.formatDate(this.filters.start_date)} - ${FinanceUI.formatDate(this.filters.end_date)}`
+            });
+        } else if (this.filters.start_date) {
+            activeFilters.push({
+                icon: 'ph-calendar',
+                text: `From: ${FinanceUI.formatDate(this.filters.start_date)}`
+            });
+        } else if (this.filters.end_date) {
+            activeFilters.push({
+                icon: 'ph-calendar',
+                text: `Until: ${FinanceUI.formatDate(this.filters.end_date)}`
+            });
+        }
+
+        // Wallet
         if (this.filters.wallet_id) {
             const wallet = FinanceStore.getWallets().find(w => w.id == this.filters.wallet_id);
             if (wallet) activeFilters.push({ icon: 'ph-wallet', text: 'Wallet: ' + wallet.name });
         }
+
+        // Category
         if (this.filters.category_id) {
             const category = FinanceStore.getCategories().find(c => c.id == this.filters.category_id);
             if (category) activeFilters.push({ icon: 'ph-tag', text: 'Category: ' + category.name });
         }
-        if (this.filters.type) activeFilters.push({ icon: 'ph-arrows-left-right', text: this.filters.type.charAt(0).toUpperCase() + this.filters.type.slice(1) });
-        if (this.filters.search) activeFilters.push({ icon: 'ph-magnifying-glass', text: `"${this.filters.search}"` });
+
+        // Type
+        if (this.filters.type) {
+            activeFilters.push({
+                icon: 'ph-arrows-left-right',
+                text: this.filters.type.charAt(0).toUpperCase() + this.filters.type.slice(1)
+            });
+        }
+
+        // Search
+        if (this.filters.search) {
+            activeFilters.push({ icon: 'ph-magnifying-glass', text: `"${this.filters.search}"` });
+        }
 
         if (activeFilters.length === 0) {
             container.innerHTML = '';
@@ -1233,11 +1253,21 @@ const TransactionsPage = {
         if (!form) return;
 
         const formData = new FormData(form);
-        this.filters = Object.fromEntries(formData.entries());
+        const rawFilters = Object.fromEntries(formData.entries());
 
-        // Update URL
+        // Clean up empty values - only keep filters that have actual values
+        this.filters = {};
+        for (const [key, value] of Object.entries(rawFilters)) {
+            if (value && value.trim() !== '') {
+                this.filters[key] = value.trim();
+            }
+        }
+
+        // Update URL with only non-empty filters
         const params = new URLSearchParams(this.filters);
-        window.history.pushState({}, '', '/transactions?' + params.toString());
+        const queryString = params.toString();
+        const newUrl = queryString ? `/transactions?${queryString}` : '/transactions';
+        window.history.pushState({}, '', newUrl);
 
         this.loadData();
     },
@@ -1246,6 +1276,7 @@ const TransactionsPage = {
         const form = document.getElementById('filter-form');
         if (form) form.reset();
 
+        // Reset to default filters (empty, no year/month defaults)
         this.filters = {};
 
         // Reset URL
