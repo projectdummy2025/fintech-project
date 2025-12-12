@@ -48,7 +48,7 @@
                 <i class="ph ph-x text-gray-400"></i>
             </button>
         </div>
-        <form method="GET" id="filter-form" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <form method="GET" id="filter-form" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 no-loading">
             <div>
                 <label for="start_date" class="form-label">Start Date</label>
                 <input type="date" name="start_date" id="start_date" class="input-custom" value="<?= htmlspecialchars($filters['start_date']) ?>">
