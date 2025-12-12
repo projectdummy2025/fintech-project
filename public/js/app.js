@@ -1286,7 +1286,7 @@ const TransactionsPage = {
 
         this.loadData();
 
-        // Remove loading state after a short delay to ensure data is loaded
+        // Remove loading state and hide filter panel after a short delay
         setTimeout(() => {
             if (submitButton) {
                 submitButton.disabled = false;
@@ -1294,6 +1294,13 @@ const TransactionsPage = {
                     <i class="ph ph-funnel"></i>
                     <span>Apply Filters</span>
                 `;
+            }
+
+            // Hide filter panel by finding and clicking the close button or dispatching event
+            const transactionsPage = document.getElementById('transactions-page');
+            if (transactionsPage && transactionsPage.__x) {
+                // Access Alpine.js component and set showFilters to false
+                transactionsPage.__x.$data.showFilters = false;
             }
         }, 300);
     },
