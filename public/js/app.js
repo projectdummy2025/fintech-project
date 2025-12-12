@@ -1296,11 +1296,35 @@ const TransactionsPage = {
                 `;
             }
 
-            // Hide filter panel by finding and clicking the close button or dispatching event
+            // Hide filter panel - try multiple methods for compatibility
             const transactionsPage = document.getElementById('transactions-page');
-            if (transactionsPage && transactionsPage.__x) {
-                // Access Alpine.js component and set showFilters to false
+            let panelClosed = false;
+
+            // Method 1: Try Alpine.js _x_dataStack (Alpine 3.x)
+            if (transactionsPage && transactionsPage._x_dataStack && transactionsPage._x_dataStack[0]) {
+                transactionsPage._x_dataStack[0].showFilters = false;
+                panelClosed = true;
+                console.log('Filter panel closed via _x_dataStack');
+            }
+            // Method 2: Try older Alpine.js __x access
+            else if (transactionsPage && transactionsPage.__x && transactionsPage.__x.$data) {
                 transactionsPage.__x.$data.showFilters = false;
+                panelClosed = true;
+                console.log('Filter panel closed via __x.$data');
+            }
+
+            // Method 3: Fallback - simulate click on close button
+            if (!panelClosed) {
+                // Try different selectors for the close button
+                const closeButton = document.querySelector('.card-custom button[class*="hover:bg-gray-100"]') ||
+                    document.querySelector('button i.ph-x')?.parentElement;
+
+                if (closeButton) {
+                    closeButton.click();
+                    console.log('Filter panel closed via button click');
+                } else {
+                    console.warn('Could not find method to close filter panel');
+                }
             }
         }, 300);
     },
