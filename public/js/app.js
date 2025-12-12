@@ -1250,7 +1250,22 @@ const TransactionsPage = {
 
     applyFilters() {
         const form = document.getElementById('filter-form');
+        const submitButton = form?.querySelector('button[type="submit"]');
+
         if (!form) return;
+
+        // Show loading state
+        if (submitButton) {
+            submitButton.disabled = true;
+            const originalHTML = submitButton.innerHTML;
+            submitButton.innerHTML = `
+                <div class="spinner spinner-sm"></div>
+                <span>Applying...</span>
+            `;
+
+            // Store original HTML for restoration
+            submitButton.dataset.originalHtml = originalHTML;
+        }
 
         const formData = new FormData(form);
         const rawFilters = Object.fromEntries(formData.entries());
@@ -1270,6 +1285,17 @@ const TransactionsPage = {
         window.history.pushState({}, '', newUrl);
 
         this.loadData();
+
+        // Remove loading state after a short delay to ensure data is loaded
+        setTimeout(() => {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.innerHTML = submitButton.dataset.originalHtml || `
+                    <i class="ph ph-funnel"></i>
+                    <span>Apply Filters</span>
+                `;
+            }
+        }, 300);
     },
 
     resetFilters() {
