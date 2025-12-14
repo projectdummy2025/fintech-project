@@ -402,6 +402,6 @@ Untuk pertanyaan atau issue, silakan buka issue di repository ini.
 ## 🔗 Links
 
 - **Live Demo:** [https://personal-finance.infinityfreeapp.com](https://personal-finance.infinityfreeapp.com)
-- **Repository:** [GitHub Repository](https://github.com/yourusername/fintech-project)
+- **Repository:** [GitHub Repository](https://github.com/projectdummy2025/fintech-project)
 
 Last Updated: 2025-12-14
