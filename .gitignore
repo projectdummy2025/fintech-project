@@ -6,6 +6,8 @@ config/database.php
 .env.php    
 .env.local
 .env.production
+.env.production.php
+.htaccess
 
 # Backup files (may contain sensitive data)
 *.db

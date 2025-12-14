@@ -69,7 +69,7 @@ class DashboardController extends Controller {
 
         // Get current wallet balances (not affected by time filter) for both table and summary card
         $walletBalances = $transactionModel->getWalletBalancesUpToDate($userId, null);
-        $totalWalletBalance = array_sum(array_column($walletBalances, 'net_balance'));
+        $totalWalletBalance = !empty($walletBalances) ? array_sum(array_column($walletBalances, 'net_balance')) : 0;
 
         // Calculate previous month's balance for comparison (this creates the "change" metric)
         $prevMonth = $month - 1;
@@ -82,7 +82,7 @@ class DashboardController extends Controller {
         $prevEndDate = date('Y-m-t', mktime(0, 0, 0, $prevMonth, 1)); // Last day of previous month
 
         $prevWalletBalances = $transactionModel->getWalletBalancesUpToDate($userId, $prevEndDate);
-        $prevTotalWalletBalance = array_sum(array_column($prevWalletBalances, 'net_balance'));
+        $prevTotalWalletBalance = !empty($prevWalletBalances) ? array_sum(array_column($prevWalletBalances, 'net_balance')) : 0;
 
         // Calculate change from previous selected period to current (now)
         $balanceChange = $totalWalletBalance - $prevTotalWalletBalance;
@@ -99,35 +99,49 @@ class DashboardController extends Controller {
 
         // Fill in missing months to ensure continuous timeline
         $filledTrends = [];
-        $currentDate = new DateTime();
-        // Start from 5 months ago to include current month (total 6)
-        $startDateObj = (clone $currentDate)->modify('-5 months')->modify('first day of this month');
-        
-        for ($i = 0; $i < 6; $i++) {
-            $year = (int)$startDateObj->format('Y');
-            $month = (int)$startDateObj->format('n');
+        try {
+            $currentDate = new DateTime();
+            // Start from 5 months ago to include current month (total 6)
+            $startDateObj = (clone $currentDate)->modify('-5 months')->modify('first day of this month');
             
-            $found = false;
-            foreach ($monthlyTrends as $trend) {
-                if ($trend['year'] == $year && $trend['month'] == $month) {
-                    $filledTrends[] = $trend;
-                    $found = true;
-                    break;
+            for ($i = 0; $i < 6; $i++) {
+                $trendYear = (int)$startDateObj->format('Y');
+                $trendMonth = (int)$startDateObj->format('n');
+                
+                $found = false;
+                foreach ($monthlyTrends as $trend) {
+                    if ($trend['year'] == $trendYear && $trend['month'] == $trendMonth) {
+                        $filledTrends[] = $trend;
+                        $found = true;
+                        break;
+                    }
                 }
+                
+                if (!$found) {
+                    $filledTrends[] = [
+                        'year' => $trendYear,
+                        'month' => $trendMonth,
+                        'total_income' => 0,
+                        'total_expense' => 0
+                    ];
+                }
+                
+                $startDateObj->modify('+1 month');
             }
-            
-            if (!$found) {
-                $filledTrends[] = [
-                    'year' => $year,
-                    'month' => $month,
+            $monthlyTrends = $filledTrends;
+        } catch (Exception $e) {
+            // Fallback: create empty trends for last 6 months
+            error_log("Dashboard DateTime Error: " . $e->getMessage());
+            $monthlyTrends = [];
+            for ($i = 5; $i >= 0; $i--) {
+                $monthlyTrends[] = [
+                    'year' => (int)date('Y', strtotime("-$i months")),
+                    'month' => (int)date('n', strtotime("-$i months")),
                     'total_income' => 0,
                     'total_expense' => 0
                 ];
             }
-            
-            $startDateObj->modify('+1 month');
         }
-        $monthlyTrends = $filledTrends;
 
         $data = [
             'title' => 'Dashboard',
