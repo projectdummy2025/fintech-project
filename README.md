@@ -2,6 +2,12 @@
 
 Aplikasi web ringan untuk pelacakan keuangan pribadi dan keluarga. Dibangun menggunakan PHP dan MariaDB, dirancang untuk berjalan optimal di shared hosting environment seperti InfinityFree.
 
+## 🌐 Live Demo
+
+**URL:** [https://personal-finance.infinityfreeapp.com](https://personal-finance.infinityfreeapp.com)
+
+Aplikasi ini sudah di-deploy dan berjalan di InfinityFree hosting. Anda dapat mengakses demo langsung untuk melihat fitur-fitur yang tersedia.
+
 ## Tentang Proyek
 
 Personal Finance Webapp adalah solusi sederhana untuk mengelola keuangan pribadi. Aplikasi ini fokus pada pencatatan transaksi harian, kategorisasi pengeluaran dan pemasukan, serta visualisasi ringkasan keuangan bulanan.
@@ -100,8 +106,23 @@ Menyimpan informasi user dan kredensial
 |--------|------|-------------|
 | id | INT (PK, AI) | User ID |
 | username | VARCHAR(50) | Username unik |
+| email | VARCHAR(255) | Email address (Unique) |
 | password_hash | VARCHAR(255) | Hashed password |
+| email_verified_at | TIMESTAMP | Waktu verifikasi email |
+| is_active | BOOLEAN | Status aktif user |
+| last_login_at | TIMESTAMP | Waktu login terakhir |
 | created_at | TIMESTAMP | Waktu registrasi |
+| updated_at | TIMESTAMP | Waktu update terakhir |
+
+#### login_attempts
+Mencatat percobaan login untuk keamanan
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK, AI) | Attempt ID |
+| ip_address | VARCHAR(45) | IP Address user |
+| username | VARCHAR(50) | Username yang dicoba |
+| attempt_time | TIMESTAMP | Waktu percobaan |
 
 #### wallets
 Menyimpan daftar wallet/sumber dana per user
@@ -123,6 +144,7 @@ Menyimpan kategori income/expense per user
 | user_id | INT (FK) | Reference ke users |
 | name | VARCHAR(100) | Nama kategori |
 | type | ENUM('income','expense') | Jenis kategori |
+| created_at | TIMESTAMP | Waktu pembuatan |
 
 #### transactions
 Menyimpan semua transaksi keuangan
@@ -138,6 +160,17 @@ Menyimpan semua transaksi keuangan
 | notes | TEXT | Catatan (optional) |
 | date | DATE | Tanggal transaksi |
 | created_at | TIMESTAMP | Waktu input |
+
+### Database Optimizations
+1. **InnoDB Engine**: Semua tabel menggunakan InnoDB untuk ACID compliance dan foreign key support.
+2. **Composite Indexes**: Index gabungan (idx_user_date, idx_user_type) untuk optimasi query umum:
+   - Dashboard summary (filter by user + date range)
+   - Transaction list (filter by user + wallet/category)
+   - Monthly reports (filter by user + date)
+3. **Data Integrity**:
+   - `ON DELETE CASCADE` untuk users memastikan data cleanup bersih.
+   - `ON DELETE RESTRICT` untuk wallets/categories mencegah penghapusan data master yang sedang digunakan.
+4. **Charset**: `utf8mb4` mendukung full Unicode termasuk emojis.
 
 ---
 
@@ -175,29 +208,45 @@ Menyimpan semua transaksi keuangan
 
 ## Deployment to InfinityFree
 
-### Step 1: Prepare Files
+### ✅ Status: Successfully Deployed
+
+**Production URL:** [https://personal-finance.infinityfreeapp.com](https://personal-finance.infinityfreeapp.com)
+
+Aplikasi ini telah berhasil di-deploy ke InfinityFree hosting dan berjalan dengan baik.
+
+### Deployment Steps (Reference)
+
+#### Step 1: Prepare Files
 
 - Pastikan file `.htaccess` sudah ada di folder `app/`, `config/`, dan `storage/` (Isinya: `Deny from all`)
 - Compress semua file project (kecuali `.git`) menjadi `.zip`
 
-### Step 2: Upload
+#### Step 2: Upload
 
 - Buka File Manager (MonstaFTP) di InfinityFree
 - Masuk ke folder `htdocs`
 - Upload dan Extract file `.zip` di dalam `htdocs`
 - Pastikan `index.php` berada langsung di dalam `htdocs`
 
-### Step 3: Database
+#### Step 3: Database
 
 - Buat database baru di Panel InfinityFree (MySQL Databases)
 - Buka phpMyAdmin
 - Import file `file/schema.sql`
 - Update `config/database.php` dengan credentials dari InfinityFree
 
-### Step 4: Security Check
+#### Step 4: Security Check
 
 - Coba akses `yourdomain.com/config/database.php` - Harus muncul **403 Forbidden**
 - Coba akses `yourdomain.com/app/Models/User.php` - Harus muncul **403 Forbidden**
+
+### Production Environment
+
+- **Hosting Provider:** InfinityFree
+- **Server:** Shared Hosting
+- **Database:** MySQL (MariaDB)
+- **PHP Version:** 7.4+
+- **Deployment Date:** December 2025
 
 ---
 
@@ -347,4 +396,11 @@ Developed as a portfolio project to demonstrate full-stack development capabilit
 
 Untuk pertanyaan atau issue, silakan buka issue di repository ini.
 
-Last Updated: 2025-12-11
+---
+
+## 🔗 Links
+
+- **Live Demo:** [https://personal-finance.infinityfreeapp.com](https://personal-finance.infinityfreeapp.com)
+- **Repository:** [GitHub Repository](https://github.com/yourusername/fintech-project)
+
+Last Updated: 2025-12-14
