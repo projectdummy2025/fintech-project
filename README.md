@@ -8,17 +8,20 @@ Aplikasi web ringan untuk pelacakan keuangan pribadi dan keluarga. Dibangun meng
 
 Aplikasi ini sudah di-deploy dan berjalan di InfinityFree hosting. Anda dapat mengakses demo langsung untuk melihat fitur-fitur yang tersedia.
 
-## Tentang Proyek
+## Why I Built My Own MVC Framework in 2025 🛠️
 
-Personal Finance Webapp adalah solusi sederhana untuk mengelola keuangan pribadi. Aplikasi ini fokus pada pencatatan transaksi harian, kategorisasi pengeluaran dan pemasukan, serta visualisasi ringkasan keuangan bulanan.
+Framework modern membuat banyak hal terasa mudah. Aku juga memakainya. Tapi lama-lama muncul rasa ingin tahu: **sebenarnya bagaimana framework itu bekerja di balik layar?**
 
-### Tujuan Pengembangan
+Karena itu, aku membangun **Personal Finance Web App** ini menggunakan **Native PHP**, tanpa framework. Bukan untuk menggantikan framework yang sudah ada, hanya untuk belajar cara berpikir di balik arsitektur MVC.
 
-Proyek ini dikembangkan dengan beberapa tujuan utama:
-- **Eksperimen MVC Native**: Membangun arsitektur MVC (Model-View-Controller) dari nol menggunakan PHP Native tanpa bantuan framework (seperti Laravel/CodeIgniter) untuk memahami cara kerja framework di balik layar.
-- **Finance Tracker Praktis**: Menyediakan alat pencatatan keuangan yang ringan dan mudah digunakan untuk kebutuhan personal.
-- **Portofolio Backend**: Mendemonstrasikan kompetensi dalam backend development, database design, dan keamanan web dasar.
-- **Optimasi Resource**: Menjaga kesederhanaan untuk memastikan performa stabil di hosting dengan resource terbatas.
+### 🚀 What I Focused On
+
+- **Understanding the Core**: Menulis routing, controller, dan model sendiri untuk memahami alur request–response.
+- **Security from Scratch**: Mengimplementasikan security dasar (CSRF, prepared statements, session) agar tahu apa yang biasanya ditangani framework secara otomatis.
+- **Modern but Simple**: Menggunakan Tailwind CSS, Alpine.js, dan Swup.js secukupnya, tanpa mengejar kompleksitas berlebih.
+- **Real World Constraint**: Dibuat ringan dan realistis, dirancang untuk bisa berjalan mulus di shared hosting dengan resource terbatas.
+
+> *Proyek ini bukan tentang membangun framework baru. Hanya usaha kecil untuk memuaskan rasa ingin tahu dan memahami fondasi sebelum bergantung pada abstraction.*
 
 ---
 
