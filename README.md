@@ -39,6 +39,7 @@ Aplikasi ini menggunakan design system minimalist professional dengan komponen-k
 - **Cards & Containers** - Card components dengan hover effects dan gradient headers
 - **Tables & Badges** - Tabel data dengan hover rows dan badges berwarna soft
 - **Alerts & UX States** - Alert dengan border-left accent, loading spinners, skeleton screens, dan empty states
+- **Page Transitions** - Transisi antar halaman yang smooth menggunakan Swup.js
 
 ### Optional Features
 
@@ -54,7 +55,7 @@ Aplikasi ini menggunakan design system minimalist professional dengan komponen-k
 |-----------|-----------|
 | Backend | PHP (mini-MVC architecture) |
 | Database | MariaDB |
-| Frontend | HTML, Tailwind CSS, Alpine.js, Chart.js |
+| Frontend | HTML, Tailwind CSS, Alpine.js, Chart.js, Swup.js |
 | Icons | Phosphor Icons |
 | Fonts | Inter (UI), Roboto Mono (numbers) |
 | Hosting | InfinityFree (shared hosting) |
