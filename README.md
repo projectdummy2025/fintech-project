@@ -14,10 +14,11 @@ Personal Finance Webapp adalah solusi sederhana untuk mengelola keuangan pribadi
 
 ### Tujuan Pengembangan
 
-Proyek ini dikembangkan dengan tiga tujuan utama:
-- Menyediakan finance tracker yang praktis dan mudah digunakan untuk kebutuhan personal dan keluarga
-- Sebagai proyek portofolio terstruktur untuk mendemonstrasikan kompetensi dalam backend development, database design, dan basic security
-- Menjaga kesederhanaan untuk memastikan performa stabil di hosting dengan resource terbatas
+Proyek ini dikembangkan dengan beberapa tujuan utama:
+- **Eksperimen MVC Native**: Membangun arsitektur MVC (Model-View-Controller) dari nol menggunakan PHP Native tanpa bantuan framework (seperti Laravel/CodeIgniter) untuk memahami cara kerja framework di balik layar.
+- **Finance Tracker Praktis**: Menyediakan alat pencatatan keuangan yang ringan dan mudah digunakan untuk kebutuhan personal.
+- **Portofolio Backend**: Mendemonstrasikan kompetensi dalam backend development, database design, dan keamanan web dasar.
+- **Optimasi Resource**: Menjaga kesederhanaan untuk memastikan performa stabil di hosting dengan resource terbatas.
 
 ---
 
